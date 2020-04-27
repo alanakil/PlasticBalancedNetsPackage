@@ -1,8 +1,7 @@
 %% Simulation of a plastic balanced network %%
-%%% Do corrs matter? Analyze dynamics over a range of values for cx.%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Purpose: To study correlations and rates in the large N limit and compare
-% to theory for a plastic I to E balanced network.
+% Purpose: To compute weights and rates in the as input correlations are increased and compare
+% to theory for a plastic E to E (Kohonen's rule) balanced network.
 clear
 
 %% Define variables that repeat over trials.

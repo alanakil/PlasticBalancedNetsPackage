@@ -1,9 +1,9 @@
 %% Simulation of a plastic balanced network %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Purpose: To study correlations and rates in the large N limit and compare
-% to theory for a plastic E to E balanced network.
-clear all
-clc
+%%% Purpose: To compute correlations and rates in the large N limit and compare
+%%% to theory for a plastic E to E (Hebbian STDP) balanced network.
+
+clear 
 
 %% Define variables that repeat over trials.
 

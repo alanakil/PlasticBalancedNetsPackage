@@ -1,7 +1,8 @@
 %% Simulation of a plastic balanced network %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Purpose: To study correlations and rates in the large N limit and compare
-% to theory for a plastic I to E balanced network.
+% Purpose: To compute weigths, correlations and rates in the large N limit and compare
+% to theory for a plastic balanced network undergoing Kohonen rules on EE and 
+% iSTDP on I->E synapses.
 clear
 
 %% Define variables that repeat over trials.

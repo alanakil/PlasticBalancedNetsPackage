@@ -1,5 +1,8 @@
 %% Simulation of nonplastic balanced network for different values of Jei
-% We Want to see the change in corrs as a fcn of Jee. 2/20/2020
+% We want to know how changes in synaptic weights affect rates and
+% correlations. So we simulate several networks with different I->E weights
+% and compute the rates and correlations and compare them to theory to see
+% how changes in weights affects correlated activity.
 
 % Number of neurons in each population
 N = 10000;

@@ -1,8 +1,10 @@
 %% Simulation of a plastic balanced network %%
-%%% Do corrs matter? Analyze dynamics over a range of values for cx.%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Purpose: To study correlations and rates in the large N limit and compare
-% to theory for a plastic I to E balanced network.
+%%% What is the impact of correlations in weights and rates? 
+%%% Analyze dynamics over a range of values for c_x (input correlations).
+%%% We simulate a network undergoing classical Hebbian STDP on EE synapses
+%%% for small and large networks over N_realizations values of the input
+%%% correlations c_x.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear
 
 %% Define variables that repeat over trials.

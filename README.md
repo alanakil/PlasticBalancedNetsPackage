@@ -4,9 +4,9 @@ Here we provide code for a series of simulations of plastic balanced networks. T
 
 The code used here to simulate a balanced network is the same as in https://github.com/alanakil/BalancedNetworkPackage. Please refer to that Package for more details on how simulations were run along with details about the neuron model, initial connectivity, etc.
 
-We provide code to run a number of STDP rules: Kohonen, Oja, classical Hebbian, and inhibitory STDP (as in Vogels et al 2011). 
+We provide code to simulate balanced networks undergoing a number of STDP rules: Kohonen, Oja, classical Hebbian, and inhibitory STDP (as in Vogels et al 2011). 
 
-In addition to that, we provide code where we run several realizations of a plastic balanced networks with varying: 
+In addition to that, we provide code where we run several realizations of plastic balanced networks with varying: 
 
 - Network size. To compare with theoretical predictions of rates, covariances, and synaptic weights.
 

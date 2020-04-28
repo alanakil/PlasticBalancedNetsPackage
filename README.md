@@ -2,7 +2,7 @@
 
 Here we provide code for a series of simulations of plastic balanced networks. The results were reported in Akil et al 2020 ("Synaptic Plasticity in Correlated Balanced Networks").
 
-The code used here to simulate a balanced network is the same as in https://github.com/alanakil/BalancedNetworkPackage. Please refer to that Package for more details on how simulations were run along with details about the neuron model, initial connectivity, etc.
+The code used here to simulate a balanced network is almost the same as in https://github.com/alanakil/BalancedNetworkPackage. Please refer to that Package for more details on how simulations were run along with details about the neuron model, initial connectivity, etc.
 
 We provide code to simulate balanced networks undergoing a number of STDP rules: Kohonen, Oja, classical Hebbian, and inhibitory STDP (as in Vogels et al 2011). 
 

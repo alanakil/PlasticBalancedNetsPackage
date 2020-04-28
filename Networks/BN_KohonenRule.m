@@ -1,13 +1,13 @@
-%% Simulation of EE plastic balanced network.
-%%% Here EE synapses change according to Kohonen's competitive unsupervised
-%%% learning rule.
+%% Simulation of an EE plastic balanced network. April 2020.
+%%% This code simulates a single run of a balanced network with Kohonen's
+%%% rule on EE synapses.
 
 clear
 
 rng(1);
 
 % Number of neurons in each population
-N = 10000;
+N = 5000;
 Ne=0.8*N;
 Ni=0.2*N;
 
@@ -22,7 +22,7 @@ Px=[.1; .1];
 
 %%%
 % Correlation between the spike trains in the ffwd layer
-c=0;
+c=0.1;
 
 % Timescale of correlation
 taujitter=5;
@@ -31,15 +31,8 @@ taujitter=5;
 Jm=[5 -100; 112.5 -250]/sqrt(N);
 Jxm=[180; 135]/sqrt(N);
 
-% Plasticity parameters. Set the upper bound.
-gamma=1;
-beta=2/sqrt(N);
-eta=0.5; % Learning rate 
-tauSTDP=200;
-
-
 % Time (in ms) for sim
-T=150000;
+T=1000;
 
 % Time discretization
 dt=.1;
@@ -86,8 +79,7 @@ tGen=toc;
 disp(sprintf('\nTime to generate connections: %.2f sec',tGen))
 
 
-%%% Make (correlated) Poisson spike times for ffwd layer
-%%% See section 5 of SimDescription.pdf for a description of this algorithm
+%%% Make correlated Poisson spike times for ffwd layer
 tic
 if(c<1e-5) % If uncorrelated
     nspikeX=poissrnd(Nx*rx*T);
@@ -138,6 +130,12 @@ Vre=-75;
 DeltaT=1;
 VT=-55;
 
+% Plasticity parameters. Set the upper bound.
+gamma=1;
+beta=2/sqrt(N);
+eta=0.1; % Learning rate 
+tauSTDP=200;
+
 % Random initial voltages
 V0=rand(N,1)*(VT-Vre)+Vre;
 
@@ -155,7 +153,7 @@ numrecord=numel(Irecord); % total number to record
 % Synaptic weights to record. 
 % The first row of Jrecord is the postsynaptic indices
 % The second row is the presynaptic indices
-nJrecord0=5000; % Number to record
+nJrecord0=1000; % Number to record
 [II,JJ]=find(J(1:Ne,1:Ne)); % Find non-zero E to E weights
 III=randperm(numel(II),nJrecord0); % Choose some at random to record
 II=II(III);
@@ -203,7 +201,6 @@ TooManySpikes=0;
 
 tic
 for i=1:numel(time)
-
 
     % Propogate ffwd spikes
     while(sx(1,iFspike)<=time(i) && iFspike<nspikeX)
@@ -286,7 +283,7 @@ for i=1:numel(time)
     IiRec(:,ii)=IiRec(:,ii)+Ii(Irecord);
     IxRec(:,ii)=IxRec(:,ii)+Ix(Irecord);
     VRec(:,ii)=VRec(:,ii)+V(Irecord);
-    JRec(:,ii)=mean(J(sub2ind(size(J),Jrecord(1,:),Jrecord(2,:)))) * sqrt(N);
+    JRec(1,ii)=mean(J(sub2ind(size(J),Jrecord(1,:),Jrecord(2,:))));
     
     % Reset mem pot.
     V(Ispike)=Vre;
@@ -354,14 +351,14 @@ xlabel('time (s)')
 
 %% If plastic, plot mean connection weights over time
 if(eta~=0)
-    figure
-    plot(timeRecord/1000,mean(JRec), 'linewidth',3)
+    figure;
+    plot(timeRecord/1000,JRec*sqrt(N), 'linewidth',3)
     xlabel('time (s)')
     ylabel('Mean E to E synaptic weight')
     
     figure;
-    histogram(nonzeros(J(1:Ne,1:Ne)*sqrt(N)),40)
-    xlabel('J_{EE}')
+    histogram(nonzeros(J(1:Ne,1:Ne)*sqrt(N)))
+    xlabel('j_{EE}')
     ylabel('Count')
 
 end
@@ -409,13 +406,10 @@ if(ComputeSpikeCountCorrs)
 
 end
 
-%% Mean final E to E synaptic weight: 
-Jtemp = mean(JRec);
-Jee_mean = mean(Jtemp(length(Jtemp)/2:end))
 
-%% Compute Cv of ISI.
+%% Compute distribution of CV of ISI's. - optional
 % Column 1 has spike times and column 2 the neuron index
-ComputeCV=1;
+ComputeCV=0;
 if ComputeCV~=0
     spikeTrain = transpose(s);
     % Sort neuron index in ascending order, keeping the correct spike time for
@@ -437,12 +431,8 @@ if ComputeCV~=0
             spikes{i} = [];
         end
     end
-    
-    % CV of ISI of e cells.
-    ISI=cell(Ne,1);
-    sigma=zeros(Ne,1);
-    mu=zeros(Ne,1);
-    for i=1:Ne
+    ISI=cell(N,1);
+    for i=1:N
         ISI{i} = diff(spikes{i}(:),1,1);
         sigma(i) = std(ISI{i}(:));
         mu(i) = mean(ISI{i}(:));
@@ -452,52 +442,19 @@ if ComputeCV~=0
     
     CV_ISI = sigma./mu;
     CV_ISI = CV_ISI(~isnan(CV_ISI));
-    CV_ISI_e_cells = CV_ISI(CV_ISI~=0);
     
-    MEAN_CV_ISI_e_cells = mean(CV_ISI_e_cells)
+    % Plot distribution of ISI's.
+    figure;
+    histogram(CV_ISI(CV_ISI~=0),1000)
     
-    % CV ISI of i cells.
-    ISI=cell(Ni,1);
-    sigma=zeros(Ni,1);
-    mu=zeros(Ni,1);
-    for i=1:Ni
-        ISI{i} = diff(spikes{Ne+i}(:),1,1);
-        sigma(i) = std(ISI{i}(:));
-        mu(i) = mean(ISI{i}(:));
-    end
-    tSim=toc;
-    disp(sprintf('\nTime for CV: %.2f min',tSim/60))
-    
-    CV_ISI = sigma./mu;
-    CV_ISI = CV_ISI(~isnan(CV_ISI));
-    CV_ISI_i_cells = CV_ISI(CV_ISI~=0);
-    
-%     % Plot distribution of ISI's.
-%     figure;
-%     histogram(CV_ISI,1000)
-    
-    MEAN_CV_ISI_i_cells = mean(CV_ISI_i_cells)
+    MEAN_CV_ISI = mean(CV_ISI(CV_ISI~=0))
     
 end
 
-Jee_dist = nonzeros(J(1:Ne,1:Ne));
-%
-save('./SavedSimulations/Koh_ee_dist_CV_weights_Uncorr.mat', 'CV_ISI_e_cells',...
-    'CV_ISI_i_cells','Jee_dist');
-
-
 %% Compute cov(J,S) to check if this is the issue with weights.
-% Use the final steady state weights and the final currents: Ii, Ie.
-
-COV_J_Se = zeros(N,1);
-CORR_J_Se = zeros(N,1);
+% Use the final steady state weights and the final currents: Ii, Ie,Ix.
 mean_conv_Spike = sum_conv_Spike/(T/dt/2);
 mean_conv_Spike_X = sum_conv_Spike_X/(T/dt/2);
-
-
-%% Compute including the X external input.
-% Compute cov(J,S) to check if this is the issue with weights.
-% Use the final steady state weights and the final currents: Ii, Ie.
 
 Mean_J_times_Se = zeros(N,1);
 Mean_JSe = zeros(N,1);
@@ -511,7 +468,7 @@ plot(Mean_JSe)
 plot(Mean_J_times_Se - Mean_JSe, 'linewidth',1)
 xlabel('N','fontsize',15)
 
-leg = legend('mean(J*Se)','mean(J)*mean(Se)','cov(J,Se)');
+leg = legend('mean(J*Si)','mean(J)*mean(Si)','cov(J,Si)');
 leg.FontSize=11;
 
 mean(Mean_J_times_Se)
@@ -526,21 +483,8 @@ toc
 colvect= Corr_EE_syn(find(~tril(ones(size(Corr_EE_syn)))));
 Avg_Corr_EE = mean( colvect )
 
+%% Here we check if <Jr> is well approximated by <J><r> or not.
 
-%% Check currents.
-% figure; hold on
-% plot(mean(IeRec))
-% plot(mean(IiRec))
-% plot(mean(IxRec))
-% plot(mean(IeRec)+mean(IiRec)+mean(IxRec))
-% 
-% IeRec1 = mean(IeRec);
-% IiRec2 = mean(IiRec);
-% IxRec3 = mean(IxRec);
-
-%%
-
-% plot(IeRecord(1:N)+IiRecord(1:N))
 R_e_sims = mean(IeRecord(1:Ne)+IiRecord(1:Ne))
 R_i_sims = mean(IeRecord(Ne+1:N)+IiRecord(Ne+1:N))
 
@@ -550,114 +494,4 @@ R_e_theory = (W(1,1) * eFR + W(1,2) * iFR)*sqrt(N)
 R_i_theory = (W(2,1) * eFR + W(2,2) * iFR)*sqrt(N)
 
 
-%% Compute the covariance between weights and rates over time.
-
-for i = 1:(T-1)/dt/1000
-    Ie_Record_Wholetime1(i) = mean(Ie_Record_Wholetime(1,1000*i:1000*i+999));
-    Ii_Record_Wholetime1(i) = mean(Ii_Record_Wholetime(1,1000*i:1000*i+999));
-%     Record_J1(i) = mean(Record_J(1,i:i+1000));
-end
-
-% Actual total input to E neurons as a function of time.
-R_e_sims_time = Ie_Record_Wholetime1;
-
-% Theoretical total input to E neurons as a function of time.
-Wee_time = mean(JRec)*sqrt(N)*0.1*0.8;
-R_e_theory_time = zeros(1,T/dt/1000-1);
-for i = 1:length(eRateT)-1
-    R_e_theory_time(1,i) = ( Wee_time(1,i) * eRateT(1,i))*sqrt(N);
-end
-
-Cov_J_r = R_e_sims_time - R_e_theory_time;
-
-Jee_time = (Wee_time/0.1/0.2);
-Jee_time = Jee_time(1:999);
-Wee_time = Wee_time(1:999);
-eRateT = eRateT(1:999);
-mean_Jeere = Cov_J_r + Jee_time .* eRateT ;
-
-mean_Jeere = mean_Jeere(2:end-1);
-Jee_time = Jee_time(2:end-1);
-
-Jee_IC = Jm(1,1)*sqrt(N);
-
-%  save('./SavedSimulations/JeiriTrajectories-60.mat', 'Jei_time', ...
-%      'iRateT', 'mean_Jeiri','Jei_IC');
-
-%% Check theory vs sims.
-
-% Check the synaptic weights.
-Jee_sims = sqrt(N)*mean(nonzeros(J(1:Ne,1:Ne)))
-
-fun = @(jee) jee^2-67.5*jee+0.2475*tauSTDP*beta*sqrt(N);
-
-Jee_theory = fzero(fun, 2)
-
-% Check the rates.
-
-r_e_sims = mean(reSim)*1000
-r_i_sims = mean(riSim)*1000
-
-r_e_theory = -0.2475/(Jee_theory - 67.5) *1000
-r_i_theory = (0.81-0.0054*Jee_theory)/(67.5-Jee_theory) *1000
-
-
-
-%% Look at distribution of rates and weights.
-
-%% Histogram of r_e. 
-% Mean rate of each neuron (excluding burn-in period)
-Tburn=T/2;
-reSim=hist(s(2,s(1,:)>Tburn & s(2,:)<=Ne),1:Ne)/(Tburn);
-riSim=hist(s(2,s(1,:)>Tburn & s(2,:)>Ne)-Ne,1:Ni)/(Tburn);
-
-figure; 
-hist(reSim*1000,40)
-xlabel('Excitatory rate (Hz)','fontsize',15)
-ylabel('Count','fontsize',15)
-
-%% Analyze which neurons are firing high and which weights change the most.
-% Get a vector of mean rates for I neurons.
-reSim=hist(s(2,s(1,:)>Tburn & s(2,:)>Ne)-Ne,1:Ni)/(Tburn);
-
-threshold = 1; % cut of to look at the tails of the rate distribution.
-t = find(1000*reSim<threshold);
-
-figure;
-plot(t,1000*reSim(t),'linewidth',2)
-ylabel('Inhibitory rate (Hz)','fontsize',15)
-xlabel('Neuron (Exc)','fontsize',15)
-
-figure; mean(nonzeros(sqrt(N)*J(t(1),1:Ne)))
-ylabel('Count','fontsize',15)
-xlabel('j_{ee}','fontsize',15)
-
-
-%% Correlations between Jee and re.
-
-% Get a vector of mean rates for I neurons.
-reSim=hist(s(2,s(1,:)>Tburn & s(2,:)<=Ne),1:Ne)/(Tburn);
-
-Jee_jk = zeros(1,Ne);
-for i =1:Ne
-    Jee_jk(i) = mean(nonzeros(sqrt(N)*J(1:Ne,i)));
-end
-
-figure;
-hold on
-
-scatter( 1000*reSim ,Jee_jk )
-p = polyfit(1000*reSim ,Jee_jk, 1);
-linear_fit = polyval(p,1000*reSim);
-plot(1000*reSim, linear_fit)
-
-xlabel('Rate of E cells','fontsize',15)
-ylabel('j_{ee}','fontsize',15)
-
-% save('./SavedSimulations/JeeRe_Corrs.mat', 'reSim', 'Jee_jk','linear_fit','p');
-
-
-
-
-
-
+ 

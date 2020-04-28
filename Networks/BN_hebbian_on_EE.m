@@ -7,7 +7,7 @@ clear
 rng(1);
 
 % Number of neurons in each population
-N = 10000;
+N = 5000;
 Ne=0.8*N;
 Ni=0.2*N;
 
@@ -22,7 +22,7 @@ Px=[.1; .1];
 
 %%%
 % Correlation between the spike trains in the ffwd layer
-c=0.5;
+c=0.1;
 
 % Timescale of correlation
 taujitter=5;
@@ -35,7 +35,7 @@ Jxm=[180; 135]/sqrt(N);
 Jmax=25/sqrt(N); % Fp: Jmax
 
 % Time (in ms) for sim
-T=20000;
+T=1000;
 
 % Time discretization
 dt=.1;
@@ -82,8 +82,7 @@ tGen=toc;
 disp(sprintf('\nTime to generate connections: %.2f sec',tGen))
 
 
-%%% Make (correlated) Poisson spike times for ffwd layer
-%%% See section 5 of SimDescription.pdf for a description of this algorithm
+%%% Make correlated Poisson spike times for ffwd layer
 tic
 if(c<1e-5) % If uncorrelated
     nspikeX=poissrnd(Nx*rx*T);
@@ -134,9 +133,8 @@ Vre=-75;
 DeltaT=1;
 VT=-55;
 
-
 % Plasticity params
-eta=5/1000; % Learning rate 
+eta=1/1000; % Learning rate 
 tauSTDP=200;
 
 % Random initial voltages
@@ -204,7 +202,6 @@ TooManySpikes=0;
 
 tic
 for i=1:numel(time)
-
 
     % Propogate ffwd spikes
     while(sx(1,iFspike)<=time(i) && iFspike<nspikeX)
@@ -362,7 +359,7 @@ if(eta~=0)
     
     figure;
     histogram(nonzeros(J(1:Ne,1:Ne)*sqrt(N)))
-    xlabel('J_{EE}')
+    xlabel('j_{EE}')
     ylabel('Count')
 
 end
@@ -410,11 +407,8 @@ if(ComputeSpikeCountCorrs)
 
 end
 
-%% Mean final E to E synaptic weight: 
-mean(nonzeros(J(1:Ne,1:Ne)))*sqrt(N)
 
-
-%% Compute Cv of ISI.
+%% Compute distribution of CV of ISI's. - optional
 % Column 1 has spike times and column 2 the neuron index
 ComputeCV=0;
 if ComputeCV~=0
@@ -458,19 +452,10 @@ if ComputeCV~=0
     
 end
 
-
 %% Compute cov(J,S) to check if this is the issue with weights.
-% Use the final steady state weights and the final currents: Ii, Ie.
-
-COV_J_Se = zeros(N,1);
-CORR_J_Se = zeros(N,1);
+% Use the final steady state weights and the final currents: Ii, Ie,Ix.
 mean_conv_Spike = sum_conv_Spike/(T/dt/2);
 mean_conv_Spike_X = sum_conv_Spike_X/(T/dt/2);
-
-
-%% Compute including the X external input.
-% Compute cov(J,S) to check if this is the issue with weights.
-% Use the final steady state weights and the final currents: Ii, Ie.
 
 Mean_J_times_Se = zeros(N,1);
 Mean_JSe = zeros(N,1);
@@ -499,21 +484,8 @@ toc
 colvect= Corr_EE_syn(find(~tril(ones(size(Corr_EE_syn)))));
 Avg_Corr_EE = mean( colvect )
 
+%% Here we check if <Jr> is well approximated by <J><r> or not.
 
-%% Check currents.
-% figure; hold on
-% plot(mean(IeRec))
-% plot(mean(IiRec))
-% plot(mean(IxRec))
-% plot(mean(IeRec)+mean(IiRec)+mean(IxRec))
-% 
-% IeRec1 = mean(IeRec);
-% IiRec2 = mean(IiRec);
-% IxRec3 = mean(IxRec);
-
-%%
-
-% plot(IeRecord(1:N)+IiRecord(1:N))
 R_e_sims = mean(IeRecord(1:Ne)+IiRecord(1:Ne))
 R_i_sims = mean(IeRecord(Ne+1:N)+IiRecord(Ne+1:N))
 
@@ -522,40 +494,5 @@ eFR = mean(reSim); iFR = mean(riSim);
 R_e_theory = (W(1,1) * eFR + W(1,2) * iFR)*sqrt(N)
 R_i_theory = (W(2,1) * eFR + W(2,2) * iFR)*sqrt(N)
 
-
-%% Compute the covariance between weights and rates over time.
-
-for i = 1:(T-1)/dt/1000
-    Ie_Record_Wholetime1(i) = mean(Ie_Record_Wholetime(1,1000*i:1000*i+999));
-    Ii_Record_Wholetime1(i) = mean(Ii_Record_Wholetime(1,1000*i:1000*i+999));
-%     Record_J1(i) = mean(Record_J(1,i:i+1000));
-end
-
-% Actual total input to E neurons as a function of time.
-R_e_sims_time = Ie_Record_Wholetime1;
-
-% Theoretical total input to E neurons as a function of time.
-Wee_time = mean(JRec)*sqrt(N)*0.1*0.8;
-R_e_theory_time = zeros(1,T/dt/1000-1);
-for i = 1:length(eRateT)-1
-    R_e_theory_time(1,i) = ( Wee_time(1,i) * eRateT(1,i))*sqrt(N);
-end
-
-Cov_J_r = R_e_sims_time - R_e_theory_time;
-
-Jee_time = (Wee_time/0.1/0.2);
-Jee_time = Jee_time(1:999);
-Wee_time = Wee_time(1:999);
-eRateT = eRateT(1:999);
-mean_Jeere = Cov_J_r + Jee_time .* eRateT ;
-
-mean_Jeere = mean_Jeere(2:end-1);
-Jee_time = Jee_time(2:end-1);
-
-Jee_IC = Jm(1,1)*sqrt(N);
-
-
-%%  save('./SavedSimulations/JeiriTrajectories-60.mat', 'Jei_time', ...
-%      'iRateT', 'mean_Jeiri','Jei_IC');
 
  

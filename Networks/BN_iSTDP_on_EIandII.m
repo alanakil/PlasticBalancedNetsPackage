@@ -1,9 +1,9 @@
 %% Simulation of a balanced network with iSTDP on I->E and I->I synapses.
-%%%
+%%%%%% Both synapses can change as inhibitory STDP (Vogels et al 2011). 
 
 clear
 
-rng(1);
+rng(10);
 
 % Number of neurons in each population
 N = 5000;
@@ -30,7 +30,7 @@ Jm=[25 -50; 112.5 -100]/sqrt(N);
 Jxm=[180; 135]/sqrt(N);
 
 % Time (in ms) for sim
-T=500000;
+T=1000;
 
 % Time discretization
 dt=.1;
@@ -138,7 +138,7 @@ alpha_e=2*rho_e*tauSTDP;
 
 % Plasticity ii parameters. 
 Jmax_ii = -500/sqrt(N);
-eta2_ii=0.001/Jmax_ii; % Learning rate
+eta_ii=0.001/Jmax_ii; % Learning rate
 rho_i=0.023; % Target rate 10Hz
 alpha_i=2*rho_i*tauSTDP;
 
@@ -279,19 +279,16 @@ for i=1:numel(time)
                 -repmat(eta_ei*x(Ne+1:N)',nnz(Ispike<=Ne),1).*(J(Ispike(Ispike<=Ne),Ne+1:N));
         end
         
-        
-        
-        % If there is ii Hebbian plasticity
-        if(eta2_ii~=0)
+        % If there is II inhibitory plasticity
+        if(eta_ii~=0)
             % Update synaptic weights according to plasticity rules
             % I to I after a presyanptic spike    
             J(Ne+1:N,Ispike(Ispike>Ne))=J(Ne+1:N,Ispike(Ispike>Ne))+ ... 
-                -repmat(eta2_ii*(x(Ne+1:N)-alpha_i),1,nnz(Ispike>Ne)).*(J(Ne+1:N,Ispike(Ispike>Ne)));
+                -repmat(eta_ii*(x(Ne+1:N)-alpha_i),1,nnz(Ispike>Ne)).*(J(Ne+1:N,Ispike(Ispike>Ne)));
             % I to I after a postsynaptic spike
             J(Ispike(Ispike>Ne),Ne+1:N)=J(Ispike(Ispike>Ne),Ne+1:N)+ ... 
-                -repmat(eta2_ii*x(Ne+1:N)',nnz(Ispike>Ne),1).*(J(Ispike(Ispike>Ne),Ne+1:N));
+                -repmat(eta_ii*x(Ne+1:N)',nnz(Ispike>Ne),1).*(J(Ispike(Ispike>Ne),Ne+1:N));
         end
-        
         
         
         % Update rate estimates for plasticity rules
@@ -406,7 +403,7 @@ if(eta_ei~=0)
     xlabel('J_{EI}')
     ylabel('Count')
 end
-if(eta2_ii~=0)
+if(eta_ii~=0)
     figure
     plot(timeRecord/1000,JRec_II, 'linewidth',3)
     
@@ -538,20 +535,11 @@ Jii_dist = nonzeros(J(Ne+1:N,Ne+1:N));
 %     'CV_ISI_i_cells','Jei_dist','Jii_dist');
 
 
-
-%% Compute cov(J,S) to check if this is the issue with weights.
-% Use the final steady state weights and the final currents: Ii, Ie.
-
-COV_J_Se = zeros(N,1);
-CORR_J_Se = zeros(N,1);
-mean_conv_Spike = sum_conv_Spike/(T/dt/2);
-mean_conv_Spike_X = sum_conv_Spike_X/(T/dt/2);
-
-
-
 %% Compute including the X external input.
 % Compute cov(J,S) to check if this is the issue with weights.
 % Use the final steady state weights and the final currents: Ii, Ie.
+mean_conv_Spike = sum_conv_Spike/(T/dt/2);
+mean_conv_Spike_X = sum_conv_Spike_X/(T/dt/2);
 
 Mean_J_times_Si = zeros(N,1);
 Mean_JSi = zeros(N,1);
@@ -591,9 +579,9 @@ plot(mean(IeRec)+mean(IiRec)+mean(IxRec))
 IeRec1 = mean(IeRec);
 IiRec2 = mean(IiRec);
 IxRec3 = mean(IxRec);
-%%
-% Accounting for ALL inputs, not only recurrent!!!
-plot(IeRecord(1:N)+IiRecord(1:N)+IxRecord(1:N))
+%% Compute <Jr> and <J><r> to see if weights and rates are correlated or not.
+
+% plot(IeRecord(1:N)+IiRecord(1:N)+IxRecord(1:N))
 R_e_sims = mean(IeRecord(1:Ne)+IiRecord(1:Ne)+IxRecord(1:Ne))
 R_i_sims = mean(IeRecord(Ne+1:N)+IiRecord(Ne+1:N)+IxRecord(Ne+1:N))
 
@@ -609,27 +597,5 @@ R_i_theory = (W(2,1) * eFR + W(2,2) * iFR + Wx(2,1) * rx)*sqrt(N)
 
 Diff_e = -R_e_theory + R_e_sims
 Diff_i = -R_i_theory + R_i_sims
-
-%% Check theory vs sims.
-
-% fun = @(jei) (-0.45-0.00135*jei)/(beta*alpha/2+0.45*jei) - alpha/(2*tauSTDP);
-% x0 = [-150];
-% x = fzero(fun,x0);
-% Jee_theory = beta*tauSTDP*alpha/2/tauSTDP
-% Jei_theory = x
-% 
-% % Check the rates.
-% r_e_sims = mean(reSim)*1000
-% r_i_sims = mean(riSim)*1000
-% 
-% r_e_theory = (-0.45-0.00135*Jei_theory) / (Jee_theory+0.45*Jei_theory) *1000
-% r_i_theory = (-0.81+0.0054*Jee_theory)/(Jee_theory+0.45*Jei_theory) *1000
-
-%% Save variables to show one stable fixed point, no manifold.
-
-% save('./SavedSimulations/Jei_Jii_traces_IC_3.mat', 'c','N','T','Jm',...
-%     'JRec_EI','JRec_II','timeRecord');
-
-
 
 

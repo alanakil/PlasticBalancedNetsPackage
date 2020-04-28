@@ -1,5 +1,6 @@
-%% Simulation of a balanced network with iSTDP on I->E and E->I synapses.
-%%%
+%% Simulation of a balanced network with plastic I->E and E->I synapses.
+%%% Both synapses can change as inhibitory STDP (Vogels et al 2011). 
+%%% E->I can also be run as simple Hebbian STDP too.
 
 clear
 
@@ -30,7 +31,7 @@ Jm=[25 -100; 112.5 -250]/sqrt(N);
 Jxm=[180; 135]/sqrt(N);
 
 % Time (in ms) for sim
-T=10000;
+T=1000;
 
 % Time discretization
 dt=.1;
@@ -130,18 +131,19 @@ DeltaT=1;
 VT=-55;
 
 % Plasticity EI params
-Jmax = -200/sqrt(N);
-eta1=0.000/Jmax; % Learning rate
+Jmax_ei = -200/sqrt(N);
+eta_ei=0.0001/Jmax_ei; % Learning rate
 tauSTDP=200;
 rho1=0.010; % Target E rate 10Hz
 alpha1=2*rho1*tauSTDP;
 
 % Plasticity ie parameters. 
 Jmax1 = 200/sqrt(N);
-eta_ie=0.001/Jmax1; % Learning rate
+eta_ie_homeo=0.0001/Jmax1; % Learning rate
 rho2=0.020; % Target I rate 20Hz
 alpha2=2*rho2*tauSTDP;
 
+eta_ie_hebb=0; % 0.001; % Learning rate
 Jmax_ie = 140/sqrt(N);
 
 
@@ -160,36 +162,33 @@ Irecord=[randperm(Ne,nrecord0) randperm(Ni,nrecord0)+Ne];
 numrecord=numel(Irecord); % total number to record
 
 
+% Synaptic weights I->E to record.
+% The first row of Jrecord is the postsynaptic indices
+% The second row is the presynaptic indices
+nJrecord0_EI=2000; % Number to record
+[II,JJ]=find(J(1:Ne,Ne+1:N)); % Find non-zero I to E weights
+III=randperm(numel(II),nJrecord0_EI); % Choose some at random to record
+II=II(III);
+JJ=JJ(III);
+Jrecord_EI=[II JJ+Ne]'; % Record these
+numrecordJ1=size(Jrecord_EI,2);
+if(size(Jrecord_EI,1)~=2)
+    error('Jrecord must be 2xnumrecordJ');
+end
 
 % Synaptic weights II to record.
 % The first row of Jrecord is the postsynaptic indices
 % The second row is the presynaptic indices
-nJrecord0=500; % Number of ii synapses to record
+nJrecord0_IE=500; % Number of ii synapses to record
 [II,JJ]=find(J(Ne+1:N,1:Ne)); % Find non-zero i to i weights
-III=randperm(numel(II),nJrecord0); % Choose some at random to record
+III=randperm(numel(II),nJrecord0_IE); % Choose some at random to record
 II=II(III);
 JJ=JJ(III);
-Jrecord=[II+Ne JJ]'; % Record these
-numrecordJ=size(Jrecord,2);
-if(size(Jrecord,1)~=2)
-    error('Jrecord must be 2xnumrecordJ');
-end
-
-% Synaptic weights EI to record.
-% The first row of Jrecord is the postsynaptic indices
-% The second row is the presynaptic indices
-nJrecord0_EI=5000; % Number to record
-[II1,JJ1]=find(J(1:Ne,Ne+1:N)); % Find non-zero I to E weights
-III1=randperm(numel(II1),nJrecord0_EI); % Choose some at random to record
-II1=II1(III1);
-JJ1=JJ1(III1);
-Jrecord_IE=[II1 JJ1+Ne]'; % Record these
-numrecordJ1=size(Jrecord_IE,2);
+Jrecord_IE=[II+Ne JJ]'; % Record these
+numrecordJ=size(Jrecord_IE,2);
 if(size(Jrecord_IE,1)~=2)
     error('Jrecord must be 2xnumrecordJ');
 end
-
-
 
 % Number of time bins to average over when recording
 nBinsRecord=1000;
@@ -222,7 +221,7 @@ IiRec=zeros(numrecord,Ntrec);
 IxRec=zeros(numrecord,Ntrec);
 % VRec=zeros(numrecord,Ntrec);
 % wRec=zeros(numrecord,Ntrec);
-JRec=zeros(1,Ntrec);
+JRec_EI=zeros(1,Ntrec);
 JRec_IE=zeros(1,Ntrec);
 iFspike=1;
 s=zeros(2,maxns);
@@ -274,34 +273,34 @@ for i=1:numel(time)
         conv_Spike(:,1) = conv_Spike(:,1) + Spikes;    
         
         % If there is I->E plasticity
-        if(eta1~=0)
+        if(eta_ei~=0)
             % Update synaptic weights according to plasticity rules
             % I to E after an I spike    
             J(1:Ne,Ispike(Ispike>Ne))=J(1:Ne,Ispike(Ispike>Ne))+ ... 
-                -repmat(eta1*(x(1:Ne)-alpha1),1,nnz(Ispike>Ne)).*(J(1:Ne,Ispike(Ispike>Ne)));
+                -repmat(eta_ei*(x(1:Ne)-alpha1),1,nnz(Ispike>Ne)).*(J(1:Ne,Ispike(Ispike>Ne)));
             % I to E after an E spike
             J(Ispike(Ispike<=Ne),Ne+1:N)=J(Ispike(Ispike<=Ne),Ne+1:N)+ ... 
-                -repmat(eta1*x(Ne+1:N)',nnz(Ispike<=Ne),1).*(J(Ispike(Ispike<=Ne),Ne+1:N));
+                -repmat(eta_ei*x(Ne+1:N)',nnz(Ispike<=Ne),1).*(J(Ispike(Ispike<=Ne),Ne+1:N));
         end
-%         % If there is E->I Homeostatic plasticity
-%         if(eta2~=0)
-%             % Update synaptic weights according to plasticity rules
-%             % after an E spike    
-%             J(Ne+1:N,Ispike(Ispike<=Ne))=J(Ne+1:N,Ispike(Ispike<=Ne))+ ... 
-%                 +repmat(eta2*(x(Ne+1:N)-alpha2),1,nnz(Ispike<=Ne)).*(J(Ne+1:N,Ispike(Ispike<=Ne)));
-%             % I to E after an I spike
-%             J(Ispike(Ispike>Ne),1:Ne)=J(Ispike(Ispike>Ne),1:Ne)+ ... 
-%                 +repmat(eta2*x(1:Ne)',nnz(Ispike>Ne),1).*(J(Ispike(Ispike>Ne),1:Ne));
-%         end
-        % If there is IE *Hebbian* plasticity
-        if(eta_ie~=0)
+        % If there is E->I Homeostatic plasticity
+        if(eta_ie_homeo~=0)
+            % Update synaptic weights according to plasticity rules
+            % after an E spike    
+            J(Ne+1:N,Ispike(Ispike<=Ne))=J(Ne+1:N,Ispike(Ispike<=Ne))+ ... 
+                +repmat(eta_ie_homeo*(x(Ne+1:N)-alpha2),1,nnz(Ispike<=Ne)).*(J(Ne+1:N,Ispike(Ispike<=Ne)));
+            % I to E after an I spike
+            J(Ispike(Ispike>Ne),1:Ne)=J(Ispike(Ispike>Ne),1:Ne)+ ... 
+                +repmat(eta_ie_homeo*x(1:Ne)',nnz(Ispike>Ne),1).*(J(Ispike(Ispike>Ne),1:Ne));
+        end
+        % If there is E->I *Hebbian* plasticity
+        if(eta_ie_hebb~=0)
             %Update synaptic weights according to plasticity rules
             %E to E after presynaptic spike
             J(Ne+1:N,Ispike(Ispike<=Ne))=J(Ne+1:N,Ispike(Ispike<=Ne))+ ...
-                -repmat(eta_ie*(x(Ne+1:N)),1,nnz(Ispike<=Ne)).*(J(Ne+1:N,Ispike(Ispike<=Ne)));
+                -repmat(eta_ie_hebb*(x(Ne+1:N)),1,nnz(Ispike<=Ne)).*(J(Ne+1:N,Ispike(Ispike<=Ne)));
             %E to E after a postsynaptic spike
             J(Ispike(Ispike>Ne),1:Ne)=J(Ispike(Ispike>Ne),1:Ne)+ ...
-                +repmat(eta_ie*x(1:Ne)',nnz(Ispike>Ne),1).*(Jmax_ie).*(J(Ispike(Ispike>Ne),1:Ne)~=0);
+                +repmat(eta_ie_hebb*x(1:Ne)',nnz(Ispike>Ne),1).*(Jmax_ie).*(J(Ispike(Ispike>Ne),1:Ne)~=0);
         end
         
         % Update rate estimates for plasticity rules
@@ -335,8 +334,8 @@ for i=1:numel(time)
     IiRec(:,ii)=IiRec(:,ii)+Ii(Irecord);
     IxRec(:,ii)=IxRec(:,ii)+Ix(Irecord);
 %     VRec(:,ii)=VRec(:,ii)+V(Irecord);
-    JRec_IE(:,ii)= mean(J(sub2ind(size(J),Jrecord_IE(1,:),Jrecord_IE(2,:))));
-    JRec(:,ii)= mean(J(sub2ind(size(J),Jrecord(1,:),Jrecord(2,:))));
+    JRec_EI(:,ii)= mean(J(sub2ind(size(J),Jrecord_IE(1,:),Jrecord_IE(2,:))));
+    JRec_IE(:,ii)= mean(J(sub2ind(size(J),Jrecord_EI(1,:),Jrecord_EI(2,:))));
 
 
     % Reset mem pot.
@@ -404,28 +403,28 @@ xlabel('time (s)')
 
 
 %% If plastic, plot mean connection weights over time
-if(eta1~=0)
+if(eta_ei~=0)
     figure
-    plot(timeRecord/1000,JRec_IE*sqrt(N), 'linewidth',3)
+    plot(timeRecord/1000,JRec_EI*sqrt(N), 'linewidth',3)
     
     xlabel('time (s)')
     ylabel('Mean I to E synaptic weight')
    
     figure;
     histogram(nonzeros(J(1:Ne,Ne+1:N)*sqrt(N)))
-    xlabel('J_{ei}')
+    xlabel('j_{ei}')
     ylabel('Count')
 end
-if(eta_ie~=0)
+if(eta_ie_homeo~=0)
     figure
-    plot(timeRecord/1000,JRec*sqrt(N), 'linewidth',3)
+    plot(timeRecord/1000,JRec_IE*sqrt(N), 'linewidth',3)
     
     xlabel('time (s)')
     ylabel('Mean E to I synaptic weight')
    
     figure;
     histogram(nonzeros(J(Ne+1:N,1:Ne)*sqrt(N)))
-    xlabel('J_{ie}')
+    xlabel('j_{ie}')
     ylabel('Count')
 end
 
@@ -434,7 +433,7 @@ end
 %%
 %%% All the code below computes spike count covariances and correlations
 %%% We want to compare the resulting covariances to what is predicted by
-%%% the theory, first for non-plastic netowrks (eta=0)
+%%% the theory.
 
 % Compute spike count covariances over windows of size
 % winsize starting at time T1 and ending at time T2.
@@ -541,27 +540,12 @@ if ComputeCV~=0
     
 end
 
-Jei_dist = nonzeros(J(1:Ne,Ne+1:N));
-Jii_dist = nonzeros(J(Ne+1:N,Ne+1:N));
-%%
-save('./SavedSimulations/ei_ii_dist_CV_weights_Uncorr.mat', 'CV_ISI_e_cells',...
-    'CV_ISI_i_cells','Jei_dist','Jii_dist');
-
-
-
-%% Compute cov(J,S) to check if this is the issue with weights.
-% Use the final steady state weights and the final currents: Ii, Ie.
-
-COV_J_Se = zeros(N,1);
-CORR_J_Se = zeros(N,1);
-mean_conv_Spike = sum_conv_Spike/(T/dt/2);
-mean_conv_Spike_X = sum_conv_Spike_X/(T/dt/2);
-
-
 
 %% Compute including the X external input.
 % Compute cov(J,S) to check if this is the issue with weights.
 % Use the final steady state weights and the final currents: Ii, Ie.
+mean_conv_Spike = sum_conv_Spike/(T/dt/2);
+mean_conv_Spike_X = sum_conv_Spike_X/(T/dt/2);
 
 Mean_J_times_Si = zeros(N,1);
 Mean_JSi = zeros(N,1);
@@ -585,7 +569,7 @@ mean(Mean_J_times_Si) - mean(Mean_JSi)
 
 %% Compute correlations between I to E synapses over time.
 tic
-Corr_IE_syn = corr(JRec(:,T/dt/nBinsRecord/2:end)');
+Corr_IE_syn = corr(JRec_EI(:,T/dt/nBinsRecord/2:end)');
 toc
 colvect= Corr_IE_syn(find(~tril(ones(size(Corr_IE_syn)))));
 Avg_Corr_IE = mean( colvect )
@@ -601,16 +585,16 @@ plot(mean(IeRec)+mean(IiRec)+mean(IxRec))
 IeRec1 = mean(IeRec);
 IiRec2 = mean(IiRec);
 IxRec3 = mean(IxRec);
-%%
+%% Compute <Jr> and <J><r>.
 % Accounting for ALL inputs, not only recurrent!!!
 plot(IeRecord(1:N)+IiRecord(1:N)+IxRecord(1:N))
 R_e_sims = mean(IeRecord(1:Ne)+IiRecord(1:Ne)+IxRecord(1:Ne))
 R_i_sims = mean(IeRecord(Ne+1:N)+IiRecord(Ne+1:N)+IxRecord(Ne+1:N))
 
-Jii_sims = sqrt(N)*mean(JRec(length(JRec)/2:end))
+Jie_sims = sqrt(N)*mean(JRec_EI(length(JRec_EI)/2:end))
 Jei_sims = sqrt(N)*mean(JRec_IE(length(JRec_IE)/2:end))
 
-W(2,2) = 0.1*Jii_sims*0.2;
+W(2,2) = 0.1*Jie_sims*0.2;
 W(1,2) = 0.1*Jei_sims*0.2;
 eFR = mean(reSim); iFR = mean(riSim);
 R_e_theory = (W(1,1) * eFR + W(1,2) * iFR + Wx(1,1) * rx)*sqrt(N)
@@ -619,18 +603,3 @@ R_i_theory = (W(2,1) * eFR + W(2,2) * iFR + Wx(2,1) * rx)*sqrt(N)
 
 Diff_e = -R_e_theory + R_e_sims
 Diff_i = -R_i_theory + R_i_sims
-
-%% Check theory vs sims.
-
-% fun = @(jei) (-0.45-0.00135*jei)/(beta*alpha/2+0.45*jei) - alpha/(2*tauSTDP);
-% x0 = [-150];
-% x = fzero(fun,x0);
-% Jee_theory = beta*tauSTDP*alpha/2/tauSTDP
-% Jei_theory = x
-% 
-% % Check the rates.
-% r_e_sims = mean(reSim)*1000
-% r_i_sims = mean(riSim)*1000
-% 
-% r_e_theory = (-0.45-0.00135*Jei_theory) / (Jee_theory+0.45*Jei_theory) *1000
-% r_i_theory = (-0.81+0.0054*Jee_theory)/(Jee_theory+0.45*Jei_theory) *1000

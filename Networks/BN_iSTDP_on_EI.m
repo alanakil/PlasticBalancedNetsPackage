@@ -443,7 +443,7 @@ if(eta~=0)
    
     figure;
     histogram(nonzeros(J(1:Ne,Ne+1:N)*sqrt(N)))
-    xlabel('J_{EI}')
+    xlabel('j_{EI}')
     ylabel('Count')
 end
 
@@ -540,10 +540,10 @@ end
 %% Compute cov(J,S) to check if this is the issue with weights.
 % Use the final steady state weights and the final currents: Ii, Ie.
 
-COV_J_Se = zeros(N,1);
-CORR_J_Se = zeros(N,1);
-mean_conv_Spike = sum_conv_Spike/(T/dt/2);
-mean_conv_Spike_X = sum_conv_Spike_X/(T/dt/2);
+% COV_J_Se = zeros(N,1);
+% CORR_J_Se = zeros(N,1);
+% mean_conv_Spike = sum_conv_Spike/(T/dt/2);
+% mean_conv_Spike_X = sum_conv_Spike_X/(T/dt/2);
 
 %mean_conv_Spike = mean(conv_Spike(:,:),2);%,numel(time)/2:end),2);
 %mean_conv_Spike_X = mean(conv_Spike_X(:,:),2);%,numel(time)/2:end),2);
@@ -673,9 +673,9 @@ plot(mean(IeRec)+mean(IiRec)+mean(IxRec))
 IeRec1 = mean(IeRec);
 IiRec2 = mean(IiRec);
 IxRec3 = mean(IxRec);
-%%
+%% Here we check if <Jr> is well approximated by <J><r> or not.
 
-plot(IeRecord(1:N)+IiRecord(1:N))
+% plot(IeRecord(1:N)+IiRecord(1:N))
 R_e_sims = mean(IeRecord(1:Ne)+IiRecord(1:Ne))
 R_i_sims = mean(IeRecord(Ne+1:N)+IiRecord(Ne+1:N))
 

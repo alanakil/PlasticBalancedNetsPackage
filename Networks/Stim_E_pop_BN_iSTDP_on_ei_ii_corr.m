@@ -26,8 +26,8 @@ Px=0.1;
 
 %%%
 % Correlation between the spike trains in the ffwd layer
-c1=0; % 0.1
-c2=0; % 0.1
+c1=0.1; % 0.1
+c2=0.1; % 0.1
 
 % Timescale of correlation
 taujitter=5;
@@ -636,7 +636,7 @@ end
 
 %% Save variables
 
-save('/scratch/AlanAkil/Stim_E_ei_ii.mat', 'e1RateT','e2RateT','iRateT','dtRate','T',...
+save('/scratch/AlanAkil/Stim_E_ei_ii_corr.mat', 'e1RateT','e2RateT','iRateT','dtRate','T',...
     'JRec_ei_stim','JRec_ei_unstim','Tburn_raster','eta_ei',...
     'rho_e','rho_i','eta_ii','tauSTDP','Jm','Jxm','dt','seed',...
     'W','Wx','rx1','rx2','winsize','Jmax_ei','Jmax_ii',...

@@ -1,6 +1,6 @@
 # PlasticBalancedNetsPackage
 
-Here we provide code for a series of simulations of plastic balanced networks. The results were reported in Akil et al 2020 ("Synaptic Plasticity in Correlated Balanced Networks").
+Here we provide code for a series of simulations of plastic balanced networks. The results were reported in Akil et al 2021 ("Balanced Networks Under Spike-Timing Dependent Plasticity"). Link to preprint: https://www.biorxiv.org/content/10.1101/2020.04.26.061515v1
 
 The code used here to simulate a balanced network is the same as in https://github.com/alanakil/BalancedNetworkPackage. Please refer to that Package for more details on how simulations were run along with details about the neuron model, initial connectivity, etc.
 

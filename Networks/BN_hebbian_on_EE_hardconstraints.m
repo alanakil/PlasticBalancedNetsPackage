@@ -2,12 +2,16 @@
 %%% This code simulates a single run of a balanced network with Hebbian
 %%% STDP on EE synapses.
 
+% Authors: Alan Akil, Robert Rosenbaum, and Kre?imir Josi?.
+% Publication: "Balanced Networks Under Spike-Timing Dependent Plasticity"
+% Date published: March 2021.
+
 clear
 
 rng(1);
 
 % Number of neurons in each population
-N = 5000;
+N = 2000;
 Ne=0.8*N;
 Ni=0.2*N;
 
@@ -35,7 +39,7 @@ Jxm=[180; 135]/sqrt(N);
 Jmax=25/sqrt(N); % Fp: Jmax
 
 % Time (in ms) for sim
-T=1000;
+T=2000000;
 
 % Time discretization
 dt=.1;
@@ -133,9 +137,15 @@ Vre=-75;
 DeltaT=1;
 VT=-55;
 
-% Plasticity params
-eta=1/1000; % Learning rate 
+% Plasticity params EE
+eta=1/10000; % Learning rate 
 tauSTDP=200;
+
+% Plasticity params EI
+Jmax = -200/sqrt(N);
+eta_EI=1/1000/Jmax; % Learning rate 
+rho0=0.010; % Target rate 10Hz
+alpha=2*rho0*tauSTDP;
 
 % Random initial voltages
 V0=rand(N,1)*(VT-Vre)+Vre;
@@ -147,11 +157,11 @@ V0=rand(N,1)*(VT-Vre)+Vre;
 maxns=ceil(.05*N*T);
 
 % Indices of neurons to record currents, voltages
-nrecord0=100; % Number to record from each population
+nrecord0=10; % Number to record from each population
 Irecord=[randperm(Ne,nrecord0) randperm(Ni,nrecord0)+Ne];
 numrecord=numel(Irecord); % total number to record
 
-% Synaptic weights to record. 
+% Synaptic weights EE to record. 
 % The first row of Jrecord is the postsynaptic indices
 % The second row is the presynaptic indices
 nJrecord0=1000; % Number to record
@@ -163,6 +173,21 @@ Jrecord=[II JJ]'; % Record these
 numrecordJ=size(Jrecord,2);
 if(size(Jrecord,1)~=2)
     error('Jrecord must be 2xnumrecordJ');
+end
+
+
+% Synaptic weights to record. 
+% The first row of Jrecord is the postsynaptic indices
+% The second row is the presynaptic indices
+nJrecord0_EI=1000; % Number to record
+[II,JJ]=find(J(1:Ne,Ne+1:N)); % Find non-zero I to E weights
+III=randperm(numel(II),nJrecord0_EI); % Choose some at random to record
+II=II(III);
+JJ=JJ(III);
+Jrecord_EI=[II JJ+Ne]'; % Record these
+numrecordJ_EI=size(Jrecord_EI,2);
+if(size(Jrecord_EI,1)~=2)
+    error('Jrecord_EI must be 2xnumrecordJ');
 end
 
 % Number of time bins to average over when recording
@@ -195,6 +220,7 @@ sum_conv_Spike_X = zeros(Nx,1);
 VRec=zeros(numrecord,Ntrec);
 wRec=zeros(numrecord,Ntrec);
 JRec=zeros(1,Ntrec);
+JRec_EI=zeros(1,Ntrec);
 iFspike=1;
 s=zeros(2,maxns);
 nspike=0;
@@ -243,16 +269,29 @@ for i=1:numel(time)
         conv_Spike(:,1) = conv_Spike(:,1) + Spikes;         
         
         
-        % If there is plasticity
+        % If there is EE plasticity
         if(eta~=0)
             % Update synaptic weights according to plasticity rules
-            % E to E after presynaptic spike    
+            % E to E after presynaptic spike (LTD)
             J(1:Ne,Ispike(Ispike<=Ne))=J(1:Ne,Ispike(Ispike<=Ne))+ ... 
-                -repmat(eta*(x(1:Ne)),1,nnz(Ispike<=Ne)).*(J(1:Ne,Ispike(Ispike<=Ne)));
-            % E to E after a postsynaptic spike
+                -repmat(eta*(x(1:Ne)),1,nnz(Ispike<=Ne)).*(J(1:Ne,Ispike(Ispike<=Ne))>0);
+            % E to E after a postsynaptic spike (LTP)
             J(Ispike(Ispike<=Ne),1:Ne)=J(Ispike(Ispike<=Ne),1:Ne)+ ... 
-                +repmat(eta*x(1:Ne)',nnz(Ispike<=Ne),1).*(Jmax).*(J(Ispike(Ispike<=Ne),1:Ne)~=0);
+                +repmat(eta*x(1:Ne)',nnz(Ispike<=Ne),1).*(J(Ispike(Ispike<=Ne),1:Ne)>0);
+                %.*(J(Ispike(Ispike<=Ne),1:Ne)<40/sqrt(N));
         end
+        
+        % If there is plasticity
+        if(eta_EI~=0)
+            % Update synaptic weights according to plasticity rules
+            % I to E after an I spike    
+            J(1:Ne,Ispike(Ispike>Ne))=J(1:Ne,Ispike(Ispike>Ne))+ ... 
+                -repmat(eta_EI*(x(1:Ne)-alpha),1,nnz(Ispike>Ne)).*(J(1:Ne,Ispike(Ispike>Ne)));
+            % I to E after an E spike
+            J(Ispike(Ispike<=Ne),Ne+1:N)=J(Ispike(Ispike<=Ne),Ne+1:N)+ ... 
+                -repmat(eta_EI*x(Ne+1:N)',nnz(Ispike<=Ne),1).*(J(Ispike(Ispike<=Ne),Ne+1:N));
+        end
+        
         
         % Update rate estimates for plasticity rules
         x(Ispike)=x(Ispike)+1;
@@ -285,6 +324,7 @@ for i=1:numel(time)
     IxRec(:,ii)=IxRec(:,ii)+Ix(Irecord);
     VRec(:,ii)=VRec(:,ii)+V(Irecord);
     JRec(1,ii)=mean(J(sub2ind(size(J),Jrecord(1,:),Jrecord(2,:))));
+    JRec_EI(1,ii)=mean(J(sub2ind(size(J),Jrecord_EI(1,:),Jrecord_EI(2,:))));
     
     % Reset mem pot.
     V(Ispike)=Vre;
@@ -321,10 +361,11 @@ disp(sprintf('\nTime for simulation: %.2f min',tSim/60))
 % s(1,:) are the spike times
 % s(2,:) are the associated neuron indices
 figure
-plot(s(1,s(2,:)<5000),s(2,s(2,:)<5000),'k.','Markersize',0.25)
+plot(s(1,s(2,:)<5000),s(2,s(2,:)<5000),'k.','Markersize',0.01)
 xlabel('time (ms)')
 ylabel('Neuron index')
-xlim([0 2000])
+% xlim([0 2000])
+ylim([0,1600])
 
 % Mean rate of each neuron (excluding burn-in period)
 Tburn=T/2;
@@ -358,12 +399,24 @@ if(eta~=0)
     ylabel('Mean E to E synaptic weight')
     
     figure;
-    histogram(nonzeros(J(1:Ne,1:Ne)*sqrt(N)))
+    a = J(1:Ne,1:Ne)*sqrt(N);
+    histogram( a(a>0) )
+    mean(a(a>0))
     xlabel('j_{EE}')
     ylabel('Count')
-
 end
 
+if(eta_EI~=0)
+    figure;
+    plot(timeRecord/1000,JRec_EI*sqrt(N), 'linewidth',3)
+    xlabel('time (s)')
+    ylabel('Mean I to E synaptic weight')
+    
+    figure;
+    histogram(nonzeros(J(1:Ne,Ne+1:N)*sqrt(N)))
+    xlabel('j_{EI}')
+    ylabel('Count')
+end
 
 %% All the code below computes spike count covariances and correlations
 %%% We want to compare the resulting covariances to what is predicted by

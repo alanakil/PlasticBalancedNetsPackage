@@ -16,3 +16,4 @@ In addition to that, we provide code where we run several realizations of plasti
 
 Lastly, we also provided code that simulates optogenetic activation of subset of E neurons in a plastic balanced network.
 
+In this repository, there are several files that simulate balanced networks under different STDP rules and under different conditions. For people interested in simulating themselves a plastic balanced network, please refer to the file named "BN_all_STDPs.ipynb".

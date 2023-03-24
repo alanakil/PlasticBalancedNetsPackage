@@ -8,7 +8,7 @@ from setuptools.command.build_ext import build_ext
 
 
 ####### Metadata ########
-NAME = "plastic-balanced-network"
+NAME = "plastic_balanced_network"
 DESCRIPTION = "Plastic Balanced Network Package (Akil et al., 2021)"
 LDESCRIPTION = "This is a package with functions to simulate a plastic balanced network as defined in Akil et al., 2021."
 # URL = text/markdown

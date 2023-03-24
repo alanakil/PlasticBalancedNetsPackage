@@ -17,14 +17,12 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import time
 import logging
-import sys
 from datetime import datetime as dtm
 import datetime as dt
 import os
 from pathlib import Path
 
-#%%
-from pbn.helpers import plasticNeuralNetwork
+from plastic_balanced_network.helpers import plasticNeuralNetwork
 
 #%%
 
@@ -169,11 +167,11 @@ alpha_ii = 2*rho_ii*tauSTDP
 
 # Indices of neurons to record currents, voltages
 numrecord = int(100)  # Number to record from each population
-Irecord = np.array([[random.sample(list(np.arange(0,frac_exc*N)), numrecord), random.sample(list(np.arange(frac_exc*N,N)), numrecord) ]])
+Irecord = np.array([[random2.sample(list(np.arange(0,frac_exc*N)), numrecord), random2.sample(list(np.arange(frac_exc*N,N)), numrecord) ]])
 Ierecord = np.sort(Irecord[0,0]).astype(int)
 Iirecord = np.sort(Irecord[0,1]).astype(int)
-Ixrecord = np.sort(random.sample(list(np.arange(0,frac_ext*N)), numrecord)).astype(int)
-Vrecord = np.sort( [[random.sample(list(np.arange(0,frac_exc*N)), int(round(numrecord/2)) ), random.sample( list(np.arange(frac_exc*N,N)), int(round(numrecord/2)) ) ]])[0].reshape(1, numrecord).astype(int)[0]
+Ixrecord = np.sort(random2.sample(list(np.arange(0,frac_ext*N)), numrecord)).astype(int)
+Vrecord = np.sort( [[random2.sample(list(np.arange(0,frac_exc*N)), int(round(numrecord/2)) ), random2.sample( list(np.arange(frac_exc*N,N)), int(round(numrecord/2)) ) ]])[0].reshape(1, numrecord).astype(int)[0]
 del Irecord
 
 # Number of time bins to average over when recording

@@ -2,7 +2,7 @@
 logs/**
 pbn/**
 **.egg
-src/plastic-balanced-network/**
+src/plastic_balanced_network/**
 .eggs/**
 .eggs/
 build/**

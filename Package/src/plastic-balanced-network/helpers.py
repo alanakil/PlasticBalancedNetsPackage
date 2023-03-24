@@ -6,9 +6,8 @@ __date__ = "MARCH 2023"
 
 #%%
 import numpy as np
-import random
+import random2
 import time
-import math
 import logging
 
 #%%
@@ -127,11 +126,11 @@ class plasticNeuralNetwork:
                     (
                         np.array(
                             self.Jm[0, 0]
-                            * np.random.binomial(1, self.P[0, 0], (self.Ne, self.Ne))
+                            * np.random2.binomial(1, self.P[0, 0], (self.Ne, self.Ne))
                         ),
                         np.array(
                             self.Jm[0, 1]
-                            * np.random.binomial(1, self.P[0, 1], (self.Ne, self.Ni))
+                            * np.random2.binomial(1, self.P[0, 1], (self.Ne, self.Ni))
                         ),
                     )
                 ),
@@ -139,11 +138,11 @@ class plasticNeuralNetwork:
                     (
                         np.array(
                             self.Jm[1, 0]
-                            * np.random.binomial(1, self.P[1, 0], (self.Ni, self.Ne))
+                            * np.random2.binomial(1, self.P[1, 0], (self.Ni, self.Ne))
                         ),
                         np.array(
                             self.Jm[1, 1]
-                            * np.random.binomial(1, self.P[1, 1], (self.Ni, self.Ni))
+                            * np.random2.binomial(1, self.P[1, 1], (self.Ni, self.Ni))
                         ),
                     )
                 ),
@@ -154,11 +153,11 @@ class plasticNeuralNetwork:
             (
                 np.array(
                     self.Jxm[0, 0]
-                    * np.random.binomial(1, self.Px[0, 0], (self.Ne, self.Nx))
+                    * np.random2.binomial(1, self.Px[0, 0], (self.Ne, self.Nx))
                 ),
                 np.array(
                     self.Jxm[1, 0]
-                    * np.random.binomial(1, self.P[1, 0], (self.Ni, self.Nx))
+                    * np.random2.binomial(1, self.P[1, 0], (self.Ni, self.Nx))
                 ),
             )
         )
@@ -173,7 +172,7 @@ class plasticNeuralNetwork:
         )  # Find non-zero I to E weights
         II = IIJJ_rec[:, 0]
         JJ = IIJJ_rec[:, 1]
-        III = random.sample(list(II), nJrecord0)  # Choose some at random to record
+        III = random2.sample(list(II), nJrecord0)  # Choose some at random to record
         II = II[III]
         JJ = JJ[III]
         self.Jrecord_ee = np.array([II, JJ])  # Record these
@@ -188,7 +187,7 @@ class plasticNeuralNetwork:
         )  # Find non-zero I to E weights
         II = IIJJ_rec[:, 0]
         JJ = IIJJ_rec[:, 1]
-        III = random.sample(list(II), nJrecord0)  # Choose some at random to record
+        III = random2.sample(list(II), nJrecord0)  # Choose some at random to record
         II = II[III]
         JJ = JJ[III]
         self.Jrecord_ie = np.array([II + self.Ne, JJ])  # Record these
@@ -203,7 +202,7 @@ class plasticNeuralNetwork:
         )  # Find non-zero I to E weights
         II = IIJJ_rec[:, 0]
         JJ = IIJJ_rec[:, 1]
-        III = random.sample(list(II), nJrecord0)  # Choose some at random to record
+        III = random2.sample(list(II), nJrecord0)  # Choose some at random to record
         II = II[III]
         JJ = JJ[III]
         self.Jrecord_ei = np.array([II, JJ + self.Ne])  # Record these
@@ -218,7 +217,7 @@ class plasticNeuralNetwork:
         )  # Find non-zero I to E weights
         II = IIJJ_rec[:, 0]
         JJ = IIJJ_rec[:, 1]
-        III = random.sample(list(II), nJrecord0)  # Choose some at random to record
+        III = random2.sample(list(II), nJrecord0)  # Choose some at random to record
         II = II[III]
         JJ = JJ[III]
         self.Jrecord_ii = np.array([II + self.Ne, JJ + self.Ne])  # Record these
@@ -250,7 +249,7 @@ class plasticNeuralNetwork:
                 ns0 = np.random.binomial(
                     nstm, self.c
                 )  # Number of spikes for this spike train
-                st = random.sample(list(stm[:, 0]), ns0)  # Sample spike times randomly
+                st = random2.sample(list(stm[:, 0]), ns0)  # Sample spike times randomly
                 st = st + self.taujitter * np.random.normal(
                     0, 1, size=len(st)
                 )  # jitter spike times

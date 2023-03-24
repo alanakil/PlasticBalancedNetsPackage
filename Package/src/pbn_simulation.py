@@ -12,7 +12,7 @@ __date__ = "MARCH 2023"
 #%%
 # Load python packages.
 import numpy as np
-import random
+import random2
 import matplotlib.pyplot as plt
 import seaborn as sns
 import time

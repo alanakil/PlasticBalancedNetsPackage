@@ -1,4 +1,9 @@
-logs/
-pbn/
+logs/**
+pbn/**
+**.egg
+src/plastic-balanced-network/**.egg
+.eggs/**
+.eggs/
+build/**
 
 !pbn/**.py

@@ -2,11 +2,14 @@
 logs/**
 pbn/**
 **.egg
-src/plastic_balanced_network/**
+# src/plastic_balanced_network/**
 .eggs/**
 .eggs/
 build/**
-src/**
+src/plastic_balanced_network.egg-info/
+src/plastic_balanced_network/__pycache__/
+
 
 # But keep these.
-!src/plastic-balanced-network/**.py
+# !src/plastic-balanced-network/**.py
+# !src/plastic_balanced_network/VERSION

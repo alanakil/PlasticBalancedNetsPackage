@@ -1,0 +1,13 @@
+numpy
+random
+matplotlib
+math
+seaborn
+datetime
+black
+flake8
+pre-commit
+isort
+pytest
+coverage
+pytest-cov

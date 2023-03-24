@@ -41,7 +41,9 @@ datadatetime = todaysdate.strftime(datetime_format).upper()
 
 start_time = time.time()
 
-log_format = "%(asctime)s - %(levelname)-8s - %(name)s - %(funcName)s:%(lineno)d - %(message)s"
+log_format = (
+    "%(asctime)s - %(levelname)-8s - %(name)s - %(funcName)s:%(lineno)d - %(message)s"
+)
 loglevel = "INFO"
 loglevel = str(loglevel).replace('"', "")
 levels = {
@@ -57,10 +59,10 @@ level = levels.get(loglevel)
 _ = [logging.root.removeHandler(handler) for handler in logging.root.handlers[:]]
 logging.basicConfig(
     filename=os.path.join(LOG_DIR, f"pbn_{datadatetime}.log"),
-    filemode = "w",
+    filemode="w",
     format=log_format,
     datefmt="%Y-%m-%d %H:%M:%S",
-    level = level,
+    level=level,
 )
 
 logging.info("Start simulation of plastic balanced network.")
@@ -82,12 +84,12 @@ p_ii = 0.1
 p_ex = 0.1
 p_ix = 0.1
 # Recurrent net connection probabilities
-P=np.array([[p_ee, p_ei], [p_ie, p_ii]])
+P = np.array([[p_ee, p_ei], [p_ie, p_ii]])
 # Ffwd connection probs
-Px=np.array([[p_ex],[p_ix]])
+Px = np.array([[p_ex], [p_ix]])
 
 # Timescale of correlation in ms
-taujitter=5
+taujitter = 5
 # Mean connection strengths between each cell type pair
 jee = 25
 jei = -150
@@ -95,96 +97,161 @@ jie = 112.5
 jii = -250
 jex = 180
 jix = 135
-Jm=np.array([[jee, jei],[jie, jii]])/np.sqrt(N)
-Jxm=np.array([[jex],[jix]])/np.sqrt(N)
+Jm = np.array([[jee, jei], [jie, jii]]) / np.sqrt(N)
+Jxm = np.array([[jex], [jix]]) / np.sqrt(N)
 
 # Total_time (in ms) for sim
-T=5000
+T = 5000
 
 # Total_time discretization
-dt=.1
+dt = 0.1
 
 # FFwd spike train rate (in kHz)
-rx=10/1000
+rx = 10 / 1000
 
 # Extra stimulus: Istim is a Total_time-dependent stimulus
 # it is delivered to all neurons with weights given by JIstim.
 # Specifically, the stimulus to neuron j at Total_time index i is:
 # Istim(i)*JIstim(j)
-jestim=0
-jistim=0
+jestim = 0
+jistim = 0
 
 # Synaptic timescales in ms
-taux=10
-taue=8
-taui=4
+taux = 10
+taue = 8
+taui = 4
 
-# Generate FFwd spike trains 
+# Generate FFwd spike trains
 # Correlation of ffwd spike trains.
-c=0.1
+c = 0.1
 
 # Neuron parameters
-Cm=1
-gL=1/15
-EL=-72
-Vth=-50
-Vre=-75
-DeltaT=1
-VT=-55
+Cm = 1
+gL = 1 / 15
+EL = -72
+Vth = -50
+Vre = -75
+DeltaT = 1
+VT = -55
 
 # Plasticity parameters
-tauSTDP=200 # ms
+tauSTDP = 200  # ms
 
-#EE hebb
-Jmax_ee = 30/np.sqrt(N)
-eta_ee_hebb= 0/10**3 # Learning rate 
+# EE hebb
+Jmax_ee = 30 / np.sqrt(N)
+eta_ee_hebb = 0 / 10**3  # Learning rate
 
-#EE kohonen
-beta = 2/np.sqrt(N)
-eta_ee_koh= 0/10**2 # Learning rate 
+# EE kohonen
+beta = 2 / np.sqrt(N)
+eta_ee_koh = 0 / 10**2  # Learning rate
 
-#IE hebb
-Jmax_ie_hebb = 125/np.sqrt(N)
-eta_ie_hebb= 0/10**3 # Learning rate 
+# IE hebb
+Jmax_ie_hebb = 125 / np.sqrt(N)
+eta_ie_hebb = 0 / 10**3  # Learning rate
 
-#IE homeo
-Jnorm_ie = 200/np.sqrt(N)
-eta_ie_homeo = 0/10**3 /Jnorm_ie # Learning rate 
-rho_ie=0.020 # Target rate 20Hz
-alpha_ie=2*rho_ie*tauSTDP
+# IE homeo
+Jnorm_ie = 200 / np.sqrt(N)
+eta_ie_homeo = 0 / 10**3 / Jnorm_ie  # Learning rate
+rho_ie = 0.020  # Target rate 20Hz
+alpha_ie = 2 * rho_ie * tauSTDP
 
-#EI homeo
-Jnorm_ei = -200/np.sqrt(N)
-eta_ei=0/10**3 /Jnorm_ei # Learning rate 
-rho_ei=0.010 # Target rate 10Hz
-alpha_ei=2*rho_ei*tauSTDP
+# EI homeo
+Jnorm_ei = -200 / np.sqrt(N)
+eta_ei = 0 / 10**3 / Jnorm_ei  # Learning rate
+rho_ei = 0.010  # Target rate 10Hz
+alpha_ei = 2 * rho_ei * tauSTDP
 
-#II
-Jnorm_ii = -300/np.sqrt(N)
-eta_ii = 0/10**3 /Jnorm_ii # Learning rate 
-rho_ii = 0.020 # Target rate 20Hz
-alpha_ii = 2*rho_ii*tauSTDP
+# II
+Jnorm_ii = -300 / np.sqrt(N)
+eta_ii = 0 / 10**3 / Jnorm_ii  # Learning rate
+rho_ii = 0.020  # Target rate 20Hz
+alpha_ii = 2 * rho_ii * tauSTDP
 
 # Indices of neurons to record currents, voltages
 numrecord = int(100)  # Number to record from each population
-Irecord = np.array([[random2.sample(list(np.arange(0,frac_exc*N)), numrecord), random2.sample(list(np.arange(frac_exc*N,N)), numrecord) ]])
-Ierecord = np.sort(Irecord[0,0]).astype(int)
-Iirecord = np.sort(Irecord[0,1]).astype(int)
-Ixrecord = np.sort(random2.sample(list(np.arange(0,frac_ext*N)), numrecord)).astype(int)
-Vrecord = np.sort( [[random2.sample(list(np.arange(0,frac_exc*N)), int(round(numrecord/2)) ), random2.sample( list(np.arange(frac_exc*N,N)), int(round(numrecord/2)) ) ]])[0].reshape(1, numrecord).astype(int)[0]
+Irecord = np.array(
+    [
+        [
+            random2.sample(list(np.arange(0, frac_exc * N)), numrecord),
+            random2.sample(list(np.arange(frac_exc * N, N)), numrecord),
+        ]
+    ]
+)
+Ierecord = np.sort(Irecord[0, 0]).astype(int)
+Iirecord = np.sort(Irecord[0, 1]).astype(int)
+Ixrecord = np.sort(random2.sample(list(np.arange(0, frac_ext * N)), numrecord)).astype(
+    int
+)
+Vrecord = (
+    np.sort(
+        [
+            [
+                random2.sample(
+                    list(np.arange(0, frac_exc * N)), int(round(numrecord / 2))
+                ),
+                random2.sample(
+                    list(np.arange(frac_exc * N, N)), int(round(numrecord / 2))
+                ),
+            ]
+        ]
+    )[0]
+    .reshape(1, numrecord)
+    .astype(int)[0]
+)
 del Irecord
 
 # Number of time bins to average over when recording
-nBinsRecord=10
-dtRecord=nBinsRecord*dt
+nBinsRecord = 10
+dtRecord = nBinsRecord * dt
 
 #%%
 # Define the model.
-nn = plasticNeuralNetwork(N, frac_exc, frac_ext, P, Px, taujitter, Jm, Jxm, T, dt, rx, jestim, 
-                jistim, taue, taui, taux, c, Cm, gL, EL, Vth, Vre, DeltaT, VT, tauSTDP, 
-                Jmax_ee, eta_ee_hebb, eta_ee_koh, beta, eta_ie_hebb, Jmax_ie_hebb, 
-                eta_ie_homeo, alpha_ie, alpha_ei, eta_ei, alpha_ii, eta_ii, nBinsRecord,
-                dtRecord, Ierecord, Iirecord, Ixrecord, Vrecord, numrecord)
+nn = plasticNeuralNetwork(
+    N,
+    frac_exc,
+    frac_ext,
+    P,
+    Px,
+    taujitter,
+    Jm,
+    Jxm,
+    T,
+    dt,
+    rx,
+    jestim,
+    jistim,
+    taue,
+    taui,
+    taux,
+    c,
+    Cm,
+    gL,
+    EL,
+    Vth,
+    Vre,
+    DeltaT,
+    VT,
+    tauSTDP,
+    Jmax_ee,
+    eta_ee_hebb,
+    eta_ee_koh,
+    beta,
+    eta_ie_hebb,
+    Jmax_ie_hebb,
+    eta_ie_homeo,
+    alpha_ie,
+    alpha_ei,
+    eta_ei,
+    alpha_ii,
+    eta_ii,
+    nBinsRecord,
+    dtRecord,
+    Ierecord,
+    Iirecord,
+    Ixrecord,
+    Vrecord,
+    numrecord,
+)
 
 #%%
 # Initialize the connectivity

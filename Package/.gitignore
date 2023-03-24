@@ -1,9 +1,12 @@
+# Ignore these.
 logs/**
 pbn/**
 **.egg
-src/plastic-balanced-network/**.egg
+src/plastic-balanced-network/**
 .eggs/**
 .eggs/
 build/**
+src/**
 
-!pbn/**.py
+# But keep these.
+!src/plastic-balanced-network/**.py

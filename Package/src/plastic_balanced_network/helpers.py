@@ -490,4 +490,15 @@ class plasticNeuralNetwork:
 
         s = s[:, 0:nspike]  # Get rid of padding in s
 
-        return s, JRec_ee, JRec_ie, JRec_ei, JRec_ii, IeRec, IiRec, IxRec, VRec, self.timeRecord
+        return (
+            s,
+            JRec_ee,
+            JRec_ie,
+            JRec_ei,
+            JRec_ii,
+            IeRec,
+            IiRec,
+            IxRec,
+            VRec,
+            self.timeRecord,
+        )

@@ -203,6 +203,8 @@ del Irecord
 # Number of time bins to average over when recording
 nBinsRecord = 10
 dtRecord = nBinsRecord * dt
+# Number of synapses to be sampled
+nJrecord0 = 1000
 
 #%%
 # Define the model.
@@ -251,6 +253,7 @@ nn = plasticNeuralNetwork(
     Ixrecord,
     Vrecord,
     numrecord,
+    nJrecord0,
 )
 
 #%%

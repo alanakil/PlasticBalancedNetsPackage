@@ -101,7 +101,7 @@ Jm = np.array([[jee, jei], [jie, jii]]) / np.sqrt(N)
 Jxm = np.array([[jex], [jix]]) / np.sqrt(N)
 
 # Total_time (in ms) for sim
-T = 50000
+T = 5000
 
 # Total_time discretization
 dt = 0.1
@@ -123,7 +123,7 @@ taui = 4
 
 # Generate FFwd spike trains
 # Correlation of ffwd spike trains.
-c = 0.1
+c = 0
 
 # Neuron parameters
 Cm = 1
@@ -400,24 +400,23 @@ sns.set_context("talk", font_scale=1.9, rc={"lines.linewidth": 3.3})
 
 
 if eta_ee_hebb != 0:
-    sns.distplot(JRec_ee[:, -1], color="darkgrey", rug=False, kde=True, bins=100)
+    sns.histplot(JRec_ee[:, -1], color="darkgrey", stat="density", element="step", fill=False, bins=100)
 if eta_ee_koh != 0:
-    sns.distplot(JRec_ee[:, -1], color="darkgrey", rug=False, kde=True, bins=50)
+    sns.histplot(JRec_ee[:, -1], color="darkgrey", stat="density", element="step", fill=False, bins=100)
 if eta_ie_hebb != 0:
-    sns.distplot(JRec_ie[:, -1], color="pink", rug=False, kde=True, bins=100)
+    sns.histplot(JRec_ie[:, -1], color="pink", stat="density", element="step", fill=False, bins=100)
 if eta_ie_homeo != 0:
-    sns.distplot(JRec_ie[:, -1], color="pink", rug=False, kde=True, bins=100)
+    sns.histplot(JRec_ie[:, -1], color="pink", stat="density", element="step", fill=False, bins=100)
 if eta_ei != 0:
-    sns.distplot(JRec_ei[:, -1], color="darkgreen", rug=False, kde=True, bins=50)
+    sns.histplot(JRec_ei[:, -1], color="darkgreen", stat="density", element="step", fill=False, bins=100)
 if eta_ii != 0:
-    sns.distplot(JRec_ii[:, -1], color="darkviolet", rug=False, kde=True, bins=50)
+    sns.histplot(JRec_ii[:, -1], color="darkviolet", stat="density", element="step", fill=False, bins=100)
 
 plt.xlabel("Syn. weight")
 plt.ylabel("Count")
 plt.yticks(())
 
 sns.despine()
-
 plt.show()
 
 # %% [markdown]

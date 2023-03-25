@@ -67,11 +67,7 @@ class plasticNeuralNetwork:
         self.Ni = int(round((1 - frac_exc) * N))
         self.Nx = int(round(frac_ext * N))
         self.rx = rx
-        self.P = P
-        self.Px = Px
         self.taujitter = taujitter
-        self.Jm = Jm
-        self.Jxm = Jxm
         self.T = T
         self.dt = dt
         self.Nt = round(T / dt)
@@ -116,7 +112,7 @@ class plasticNeuralNetwork:
         self.Vrecord = Vrecord
         self.numrecord = numrecord
 
-    def connectivity(self):
+    def connectivity(self, Jm, Jxm, P, Px):
         """
         Create connectivity matrix and arrays to record individual weights of all four connections.
         """
@@ -126,24 +122,24 @@ class plasticNeuralNetwork:
                 np.hstack(
                     (
                         np.array(
-                            self.Jm[0, 0]
-                            * np.random.binomial(1, self.P[0, 0], (self.Ne, self.Ne))
+                            Jm[0, 0]
+                            * np.random.binomial(1, P[0, 0], (self.Ne, self.Ne))
                         ),
                         np.array(
-                            self.Jm[0, 1]
-                            * np.random.binomial(1, self.P[0, 1], (self.Ne, self.Ni))
+                            Jm[0, 1]
+                            * np.random.binomial(1, P[0, 1], (self.Ne, self.Ni))
                         ),
                     )
                 ),
                 np.hstack(
                     (
                         np.array(
-                            self.Jm[1, 0]
-                            * np.random.binomial(1, self.P[1, 0], (self.Ni, self.Ne))
+                            Jm[1, 0]
+                            * np.random.binomial(1, P[1, 0], (self.Ni, self.Ne))
                         ),
                         np.array(
-                            self.Jm[1, 1]
-                            * np.random.binomial(1, self.P[1, 1], (self.Ni, self.Ni))
+                            Jm[1, 1]
+                            * np.random.binomial(1, P[1, 1], (self.Ni, self.Ni))
                         ),
                     )
                 ),
@@ -153,12 +149,12 @@ class plasticNeuralNetwork:
         self.Jx = np.vstack(
             (
                 np.array(
-                    self.Jxm[0, 0]
-                    * np.random.binomial(1, self.Px[0, 0], (self.Ne, self.Nx))
+                    Jxm[0, 0]
+                    * np.random.binomial(1, Px[0, 0], (self.Ne, self.Nx))
                 ),
                 np.array(
-                    self.Jxm[1, 0]
-                    * np.random.binomial(1, self.P[1, 0], (self.Ni, self.Nx))
+                    Jxm[1, 0]
+                    * np.random.binomial(1, Px[1, 0], (self.Ni, self.Nx))
                 ),
             )
         )
@@ -170,12 +166,12 @@ class plasticNeuralNetwork:
         nJrecord0 = 1000  # Number to record
         IIJJ_rec = np.argwhere(
             self.J[0 : self.Ne, 0 : self.Ne]
-        )  # Find non-zero I to E weights
+        )  # Find non-zero E to E weights
         II = IIJJ_rec[:, 0]
         JJ = IIJJ_rec[:, 1]
-        III = random2.sample(list(II), nJrecord0)  # Choose some at random to record
-        II = II[III]
-        JJ = JJ[III]
+        sampled_indices = np.random.choice(len(IIJJ_rec[:,0]), size=nJrecord0, replace=False)
+        II = II[sampled_indices]
+        JJ = JJ[sampled_indices]
         self.Jrecord_ee = np.array([II, JJ])  # Record these
         self.numrecordJ_ee = len(JJ)
 
@@ -184,13 +180,13 @@ class plasticNeuralNetwork:
         # The second row is the presynaptic indices
         nJrecord0 = 1000  # Number to record
         IIJJ_rec = np.argwhere(
-            self.J[self.Ne + 1 : self.N, 0 : self.Ne]
-        )  # Find non-zero I to E weights
+            self.J[self.Ne : self.N, 0 : self.Ne]
+        )  # Find non-zero E to I weights
         II = IIJJ_rec[:, 0]
         JJ = IIJJ_rec[:, 1]
-        III = random2.sample(list(II), nJrecord0)  # Choose some at random to record
-        II = II[III]
-        JJ = JJ[III]
+        sampled_indices = np.random.choice(len(IIJJ_rec[:,0]), size=nJrecord0, replace=False)
+        II = II[sampled_indices]
+        JJ = JJ[sampled_indices]
         self.Jrecord_ie = np.array([II + self.Ne, JJ])  # Record these
         self.numrecordJ_ie = len(JJ)
 
@@ -199,13 +195,13 @@ class plasticNeuralNetwork:
         # The second row is the presynaptic indices
         nJrecord0 = 1000  # Number to record
         IIJJ_rec = np.argwhere(
-            self.J[0 : self.Ne, self.Ne + 1 : self.N]
+            self.J[0 : self.Ne, self.Ne : self.N]
         )  # Find non-zero I to E weights
         II = IIJJ_rec[:, 0]
         JJ = IIJJ_rec[:, 1]
-        III = random2.sample(list(II), nJrecord0)  # Choose some at random to record
-        II = II[III]
-        JJ = JJ[III]
+        sampled_indices = np.random.choice(len(IIJJ_rec[:,0]), size=nJrecord0, replace=False)
+        II = II[sampled_indices]
+        JJ = JJ[sampled_indices]
         self.Jrecord_ei = np.array([II, JJ + self.Ne])  # Record these
         self.numrecordJ_ei = len(JJ)
 
@@ -214,13 +210,13 @@ class plasticNeuralNetwork:
         # The second row is the presynaptic indices
         nJrecord0 = 1000  # Number to record
         IIJJ_rec = np.argwhere(
-            self.J[self.Ne + 1 : self.N, self.Ne + 1 : self.N]
-        )  # Find non-zero I to E weights
+            self.J[self.Ne : self.N, self.Ne : self.N]
+        )  # Find non-zero I to I weights
         II = IIJJ_rec[:, 0]
         JJ = IIJJ_rec[:, 1]
-        III = random2.sample(list(II), nJrecord0)  # Choose some at random to record
-        II = II[III]
-        JJ = JJ[III]
+        sampled_indices = np.random.choice(len(IIJJ_rec[:,0]), size=nJrecord0, replace=False)
+        II = II[sampled_indices]
+        JJ = JJ[sampled_indices]
         self.Jrecord_ii = np.array([II + self.Ne, JJ + self.Ne])  # Record these
         self.numrecordJ_ii = len(JJ)
         return None
@@ -230,11 +226,11 @@ class plasticNeuralNetwork:
         Create all spike trains of the Poisson feedforward, external layer.
         """
         if self.c < 1e-5:  # If uncorrelated
-            nspikeX = np.random.poisson(self.Nx * self.rx * self.T)
-            st = np.random.uniform(0, 1, (1, nspikeX)) * self.T
-            sx = np.zeros((2, len(st[0])))
-            sx[0, :] = np.sort(st)[0]  # spike time
-            sx[1, :] = np.random.randint(
+            self.nspikeX = np.random.poisson(self.Nx * self.rx * self.T)
+            st = np.random.uniform(0, 1, (1, self.nspikeX)) * self.T
+            self.sx = np.zeros((2, len(st[0])))
+            self.sx[0, :] = np.sort(st)[0]  # spike time
+            self.sx[1, :] = np.random.randint(
                 1, self.Nx, (1, len(st[0]))
             )  # neuron index that spiked
         else:  # If correlated
@@ -483,10 +479,10 @@ class plasticNeuralNetwork:
         IiRec = IiRec / self.nBinsRecord
         IxRec = IxRec / self.nBinsRecord
         VRec = VRec / self.nBinsRecord
-        JRec_ee = JRec_ee * np.sqrt(self.N)
-        JRec_ie = JRec_ie * np.sqrt(self.N)
-        JRec_ei = JRec_ei * np.sqrt(self.N)
-        JRec_ii = JRec_ii * np.sqrt(self.N)
+        JRec_ee = JRec_ee * np.sqrt(self.N) / self.nBinsRecord
+        JRec_ie = JRec_ie * np.sqrt(self.N) / self.nBinsRecord
+        JRec_ei = JRec_ei * np.sqrt(self.N) / self.nBinsRecord
+        JRec_ii = JRec_ii * np.sqrt(self.N) / self.nBinsRecord
 
         s = s[:, 0:nspike]  # Get rid of padding in s
 

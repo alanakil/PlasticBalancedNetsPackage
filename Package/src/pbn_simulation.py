@@ -101,7 +101,7 @@ Jm = np.array([[jee, jei], [jie, jii]]) / np.sqrt(N)
 Jxm = np.array([[jex], [jix]]) / np.sqrt(N)
 
 # Total_time (in ms) for sim
-T = 5000
+T = 50000
 
 # Total_time discretization
 dt = 0.1
@@ -157,7 +157,7 @@ alpha_ie = 2 * rho_ie * tauSTDP
 
 # EI homeo
 Jnorm_ei = -200 / np.sqrt(N)
-eta_ei = 0 / 10**3 / Jnorm_ei  # Learning rate
+eta_ei = 0.015 / 10**3 / Jnorm_ei  # Learning rate
 rho_ei = 0.010  # Target rate 10Hz
 alpha_ei = 2 * rho_ei * tauSTDP
 
@@ -263,7 +263,327 @@ nn.ffwd_spikes()
 
 #%%
 # Simulate plastic network
-s, JRec_ee, JRec_ie, JRec_ei, JRec_ii, IeRec, IiRec, IxRec, VRec = nn.simulate()
+s, JRec_ee, JRec_ie, JRec_ei, JRec_ii, IeRec, IiRec, IxRec, VRec, timeRecord = nn.simulate()
 
 # %% [markdown]
-# Analysis of simulation
+### Analysis of simulation
+
+# %% [markdown]
+# Raster plot of neurons firing.
+
+#%%
+# s(0,:) are the spike times
+# s(1,:) are the associated neuron indices
+
+fig=plt.figure(figsize=(8,5))
+ax = plt.subplot(111)
+
+sns.set()
+sns.set_style('whitegrid')
+sns.set_style('white')
+sns.set_style("ticks")
+sns.set_context("talk", font_scale=1.9, rc={"lines.linewidth":2.3}) 
+
+plt.scatter(s[0,:]/1000,s[1,:],s=0.02,color='black')
+plt.xlabel('time (s)')
+plt.ylabel('Neuron index')
+plt.ylim((0,N))
+plt.yticks((0,N))
+plt.xlim((0,T/1000/10))
+plt.xticks((0,T/1000/10))
+plt.show()
+
+# %% [markdown]
+# Balance of mean currents.
+
+# %%
+# Start the figure.
+fig=plt.figure(figsize=(8,5))
+ax = plt.subplot(111)
+# ax.spines['left'].set_color('black')
+# ax.spines['left'].set_linewidth(3)
+
+sns.set()
+sns.set_style('whitegrid')
+sns.set_style('white')
+sns.set_style("ticks")
+sns.set_context("talk", font_scale=1.9, rc={"lines.linewidth":0.3}) 
+
+plt.plot(timeRecord/1000,np.mean(IeRec,axis=0)+np.mean(IxRec,axis=0),color='blue',label=r'e+x')
+plt.plot(timeRecord/1000,np.mean(IiRec,axis=0),color='red',label=r'i')
+plt.plot(timeRecord/1000,np.mean(IeRec,axis=0)+np.mean(IxRec,axis=0)+np.mean(IiRec,axis=0),color='black',label=r'e+i+x')
+
+plt.xlabel('Time (s)')
+plt.ylabel('Input')
+
+plt.xlim((0,T/1000))
+
+leg = plt.legend(loc='upper left',fontsize=18,frameon='none',markerscale=1)
+leg.get_frame().set_linewidth(0.0)
+
+sns.despine()
+
+plt.show()
+
+# %% [markdown]
+# Time course of mean synaptic weight.
+
+# %%
+# Start the figure.
+fig=plt.figure(figsize=(8,5))
+ax = plt.subplot(111)
+
+sns.set()
+sns.set_style('whitegrid')
+sns.set_style('white')
+sns.set_style("ticks")
+sns.set_context("talk", font_scale=1.9, rc={"lines.linewidth":3.3}) 
+
+if eta_ee_hebb !=0:
+    plt.plot(timeRecord/1000,np.mean(JRec_ee,0),color='darkgrey',label=r'$EE$')
+if eta_ee_koh !=0:
+    plt.plot(timeRecord/1000,np.mean(JRec_ee,0),color='darkgrey',label=r'$EE$')
+if eta_ie_hebb !=0:
+    plt.plot(timeRecord/1000,np.mean(JRec_ie,0),color='pink',label=r'$IE$')
+if eta_ie_homeo !=0:
+    plt.plot(timeRecord/1000,np.mean(JRec_ie,0),color='pink',label=r'$IE$')
+if eta_ei !=0:
+    plt.plot(timeRecord/1000,np.mean(JRec_ei,0),color='darkgreen',label=r'$EI$')
+if eta_ii !=0:
+    plt.plot(timeRecord/1000,np.mean(JRec_ii,0),color='darkviolet',label=r'$II$')
+
+leg = plt.legend(loc='center left',fontsize=18,frameon='none',markerscale=1)
+leg.get_frame().set_linewidth(0.0)
+
+plt.xlabel('Time (s)')
+plt.ylabel('Syn. weight')
+plt.xticks((0,T/1000))
+plt.xlim((0,T/1000))
+sns.despine()
+
+plt.show()
+
+# %% [markdown]
+# Distribution synaptic weight over connections.
+
+# %%
+# Start the figure.
+fig=plt.figure(figsize=(8,5))
+ax = plt.subplot(111)
+
+sns.set()
+sns.set_style('whitegrid')
+sns.set_style('white')
+sns.set_style("ticks")
+sns.set_context("talk", font_scale=1.9, rc={"lines.linewidth":3.3})
+
+
+if eta_ee_hebb !=0:
+    sns.distplot(JRec_ee[:,-1],color='darkgrey',rug=False, kde=True,bins = 100)
+if eta_ee_koh !=0:
+    sns.distplot(JRec_ee[:,-1],color='darkgrey',rug=False, kde=True,bins = 50)
+if eta_ie_hebb !=0:
+    sns.distplot(JRec_ie[:,-1],color='pink',rug=False, kde=True,bins = 100)
+if eta_ie_homeo !=0:
+    sns.distplot(JRec_ie[:,-1],color='pink',rug=False, kde=True,bins = 100)
+if eta_ei !=0:
+    sns.distplot(JRec_ei[:,-1],color='darkgreen',rug=False, kde=True,bins = 50)
+if eta_ii !=0:
+    sns.distplot(JRec_ii[:,-1],color='darkviolet',rug=False, kde=True,bins = 50)
+
+plt.xlabel('Syn. weight')
+plt.ylabel('Count')
+plt.yticks(())
+
+sns.despine()
+
+plt.show()
+
+# %% [markdown]
+# Time course of firing rates.
+
+#%%
+# Compute histogram of rates (over time)
+dtRate=100  # ms
+timeVector = np.arange(dtRate,T+dtRate,dtRate) / 1000 
+hist, bin_edges = np.histogram(s[0,s[1,:]<frac_exc*N], bins = len(timeVector)) 
+eRateT = hist / (dtRate*frac_exc*N) *1000
+
+hist, bin_edges = np.histogram(s[0,s[1,:]>=frac_exc*N], bins = len(timeVector)) 
+iRateT = hist / (dtRate*(1-frac_exc)*N) *1000
+
+# Slide a window over the rates to smooth them.
+window = 5
+Num_points = int(len(eRateT) - window)
+eRate_New = np.zeros((Num_points,1))
+iRate_New = np.zeros((Num_points,1))
+for i in range(Num_points):
+    eRate_New[i,0] = np.mean(eRateT[i:i+window])
+    iRate_New[i,0] = np.mean(iRateT[i:i+window])
+
+# Start the figure.
+fig=plt.figure(figsize=(8,5))
+ax = plt.subplot(111)
+
+sns.set()
+sns.set_style('whitegrid')
+sns.set_style('white')
+sns.set_style("ticks")
+sns.set_context("talk", font_scale=1.9, rc={"lines.linewidth":3.3}) 
+
+# Plot time-dependent rates
+plt.plot(np.linspace(0,T/1000,num=Num_points),eRate_New,color='blue',label=r'e')
+plt.plot(np.linspace(0,T/1000,num=Num_points),iRate_New,color='red',label=r'i')
+
+plt.ylabel('rate (Hz)')
+plt.xlabel('time (s)')
+plt.xticks((0,T/1000))
+plt.xlim((0,T/1000))
+
+leg = plt.legend(loc='upper right',fontsize=18,frameon='none',markerscale=1)
+leg.get_frame().set_linewidth(0.0)
+
+sns.despine()
+plt.show()
+
+# %% [markdown]
+# Define functions to compute empirical spike train covariances and correlations.
+
+# %%
+
+#  Compute spike count covariance matrix.
+#  s is a 2x(ns) matrix where ns is the number of spikes
+#  s(0,:) lists spike times
+#  and s(1,:) lists corresponding neuron indices
+#  Neuron indices are assumed to go from 1 to N
+
+#  Spikes are counts starting at time T1 and ending at 
+#  time T2.
+
+#  winsize is the window size over which spikes are counted,
+#  so winsize is assumed to be much smaller than T2-T1
+
+#  Covariances are only computed between neurons whose
+#  indices are listed in the vector Inds. If Inds is not
+#  passed in then all NxN covariances are computed.
+
+def SpikeCountCov(s,N,T1,T2,winsize):
+ 
+    Inds=np.arange(0,N)
+
+#   Count only spikes between T1, T2
+    s1=s[:,(s[0,:]<=T2) & (s[1,:]>=T1)]
+
+#   Count only for neurons between 0, N
+    s1=s[:,(s[1,:]<N) & (s[1,:]>=0)]
+
+#   Edges for histogram
+    edgest=np.arange(T1,T2, winsize)
+    edgesi=np.arange(0,N+1)
+
+#   Get 2D histogram of spike indices and times
+    counts, xedges, yedges = np.histogram2d(s1[0,:], 
+                                            s1[1,:],
+                                            bins=(edgest, edgesi))
+
+#   Compute and return covariance matrix
+    return np.array(np.cov(counts.transpose()))
+
+def cov2corr(cov):
+    '''convert covariance matrix to correlation matrix
+
+    Parameters
+    ----------
+    cov : array_like, 2d
+        covariance matrix, see Notes
+
+    Returns
+    -------
+    corr : ndarray (subclass)
+        correlation matrix
+    return_std : bool
+        If this is true then the standard deviation is also returned.
+        By default only the correlation matrix is returned.
+
+    Notes
+    -----
+    This function does not convert subclasses of ndarrays. This requires
+    that division is defined elementwise. np.ma.array and np.matrix are allowed.
+
+    '''
+    cov = np.asanyarray(cov)
+    std_ = np.sqrt(np.diag(cov))
+    corr = cov / np.outer(std_, std_)
+    return corr
+
+# %% [markdown]
+# Apply functions above to compute covariances and correlations.
+
+#%%
+
+## All the code below computes spike count covariances and correlations
+
+# Compute spike count covariances over windows of size
+# winsize starting at time T1 and ending at time T2.
+winsize=250 # ms
+T1=T/2 # ms
+T2=T # ms
+# Do computation
+C=SpikeCountCov(s,N,T1,T2,winsize)
+
+
+# Get mean spike count covariances over each sub-pop
+II,JJ=np.meshgrid(np.arange(0,N),np.arange(0,N))
+mCee=np.nanmean(C[(II<frac_exc*N) & (JJ<II)])
+mCei=np.nanmean(C[(II<frac_exc*N) & (JJ>=frac_exc*N)])
+mCii=np.nanmean(C[(II>frac_exc*N) & (JJ>II)])
+
+# Mean-field spike count cov matrix
+# Compare this to the theoretical prediction
+mC=[[mCee, mCei], [mCei, mCii]]
+
+# Compute spike count correlations
+# This takes a while, so make it optional
+ComputeSpikeCountCorrs=1
+if(ComputeSpikeCountCorrs):
+    
+#    Get correlation matrix from cov matrix
+    start_time = time.time()
+    R=cov2corr(C)
+    elapsed_time = time.time()-start_time
+    print(elapsed_time/60, 'minutes')
+
+    mRee=np.nanmean(R[(II<frac_exc*N) & (JJ<II)])
+    mRei=np.nanmean(R[(II<frac_exc*N) & (JJ>=frac_exc*N)])
+    mRii=np.nanmean(R[(II>frac_exc*N) & (JJ>II)])
+
+    # Mean-field spike count correlation matrix
+    mR=[[mRee, mRei], [mRei, mRii]]
+    print('mR =',mR)
+
+# %% [markdown]
+# Plot distributions of EE, EI, II correlations.
+
+# %%
+# Start the figure.
+fig=plt.figure(figsize=(8,5))
+ax = plt.subplot(111)
+
+sns.set()
+sns.set_style('whitegrid')
+sns.set_style('white')
+sns.set_style("ticks")
+sns.set_context("talk", font_scale=1.9, rc={"lines.linewidth":3.3}) 
+
+sns.histplot(R[(II<frac_exc*N) & (JJ<II)], bins=100, kde=False, stat="density", element="step", fill=False)
+sns.histplot(R[(II<frac_exc*N) & (JJ>=frac_exc*N)], bins=100, kde=False, stat="density", element="step", fill=False)
+sns.histplot(R[(II>frac_exc*N) & (JJ>II)], bins=100, kde=False, stat="density", element="step", fill=False)
+
+plt.xlabel('spike count corr')
+plt.ylabel('Count')
+
+sns.despine()
+plt.show()
+
+
+# %%

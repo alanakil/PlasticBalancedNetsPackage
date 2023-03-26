@@ -268,6 +268,7 @@ nn.ffwd_spikes()
 # Simulate plastic network
 (
     s,
+    sx,
     JRec_ee,
     JRec_ie,
     JRec_ei,
@@ -403,17 +404,59 @@ sns.set_context("talk", font_scale=1.9, rc={"lines.linewidth": 3.3})
 
 
 if eta_ee_hebb != 0:
-    sns.histplot(JRec_ee[:, -1], color="darkgrey", stat="density", element="step", fill=False, bins=100)
+    sns.histplot(
+        JRec_ee[:, -1],
+        color="darkgrey",
+        stat="density",
+        element="step",
+        fill=False,
+        bins=100,
+    )
 if eta_ee_koh != 0:
-    sns.histplot(JRec_ee[:, -1], color="darkgrey", stat="density", element="step", fill=False, bins=100)
+    sns.histplot(
+        JRec_ee[:, -1],
+        color="darkgrey",
+        stat="density",
+        element="step",
+        fill=False,
+        bins=100,
+    )
 if eta_ie_hebb != 0:
-    sns.histplot(JRec_ie[:, -1], color="pink", stat="density", element="step", fill=False, bins=100)
+    sns.histplot(
+        JRec_ie[:, -1],
+        color="pink",
+        stat="density",
+        element="step",
+        fill=False,
+        bins=100,
+    )
 if eta_ie_homeo != 0:
-    sns.histplot(JRec_ie[:, -1], color="pink", stat="density", element="step", fill=False, bins=100)
+    sns.histplot(
+        JRec_ie[:, -1],
+        color="pink",
+        stat="density",
+        element="step",
+        fill=False,
+        bins=100,
+    )
 if eta_ei != 0:
-    sns.histplot(JRec_ei[:, -1], color="darkgreen", stat="density", element="step", fill=False, bins=100)
+    sns.histplot(
+        JRec_ei[:, -1],
+        color="darkgreen",
+        stat="density",
+        element="step",
+        fill=False,
+        bins=100,
+    )
 if eta_ii != 0:
-    sns.histplot(JRec_ii[:, -1], color="darkviolet", stat="density", element="step", fill=False, bins=100)
+    sns.histplot(
+        JRec_ii[:, -1],
+        color="darkviolet",
+        stat="density",
+        element="step",
+        fill=False,
+        bins=100,
+    )
 
 plt.xlabel("Syn. weight")
 plt.ylabel("Count")

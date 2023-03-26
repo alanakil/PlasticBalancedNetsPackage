@@ -115,12 +115,10 @@ class plasticNeuralNetwork:
         self.Jx = np.vstack(
             (
                 np.array(
-                    Jxm[0, 0]
-                    * np.random.binomial(1, Px[0, 0], (self.Ne, self.Nx))
+                    Jxm[0, 0] * np.random.binomial(1, Px[0, 0], (self.Ne, self.Nx))
                 ),
                 np.array(
-                    Jxm[1, 0]
-                    * np.random.binomial(1, Px[1, 0], (self.Ni, self.Nx))
+                    Jxm[1, 0] * np.random.binomial(1, Px[1, 0], (self.Ni, self.Nx))
                 ),
             )
         )
@@ -134,7 +132,9 @@ class plasticNeuralNetwork:
         )  # Find non-zero E to E weights
         II = IIJJ_rec[:, 0]
         JJ = IIJJ_rec[:, 1]
-        sampled_indices = np.random.choice(len(IIJJ_rec[:,0]), size=nJrecord0, replace=False)
+        sampled_indices = np.random.choice(
+            len(IIJJ_rec[:, 0]), size=nJrecord0, replace=False
+        )
         II = II[sampled_indices]
         JJ = JJ[sampled_indices]
         self.Jrecord_ee = np.array([II, JJ])  # Record these
@@ -148,7 +148,9 @@ class plasticNeuralNetwork:
         )  # Find non-zero E to I weights
         II = IIJJ_rec[:, 0]
         JJ = IIJJ_rec[:, 1]
-        sampled_indices = np.random.choice(len(IIJJ_rec[:,0]), size=nJrecord0, replace=False)
+        sampled_indices = np.random.choice(
+            len(IIJJ_rec[:, 0]), size=nJrecord0, replace=False
+        )
         II = II[sampled_indices]
         JJ = JJ[sampled_indices]
         self.Jrecord_ie = np.array([II + self.Ne, JJ])  # Record these
@@ -162,7 +164,9 @@ class plasticNeuralNetwork:
         )  # Find non-zero I to E weights
         II = IIJJ_rec[:, 0]
         JJ = IIJJ_rec[:, 1]
-        sampled_indices = np.random.choice(len(IIJJ_rec[:,0]), size=nJrecord0, replace=False)
+        sampled_indices = np.random.choice(
+            len(IIJJ_rec[:, 0]), size=nJrecord0, replace=False
+        )
         II = II[sampled_indices]
         JJ = JJ[sampled_indices]
         self.Jrecord_ei = np.array([II, JJ + self.Ne])  # Record these
@@ -176,7 +180,9 @@ class plasticNeuralNetwork:
         )  # Find non-zero I to I weights
         II = IIJJ_rec[:, 0]
         JJ = IIJJ_rec[:, 1]
-        sampled_indices = np.random.choice(len(IIJJ_rec[:,0]), size=nJrecord0, replace=False)
+        sampled_indices = np.random.choice(
+            len(IIJJ_rec[:, 0]), size=nJrecord0, replace=False
+        )
         II = II[sampled_indices]
         JJ = JJ[sampled_indices]
         self.Jrecord_ii = np.array([II + self.Ne, JJ + self.Ne])  # Record these
@@ -229,8 +235,39 @@ class plasticNeuralNetwork:
 
         return None
 
-    def simulate(self, Cm, gL, VT, Vre, Vth, EL, DeltaT, taue, taui, taux, tauSTDP, numrecord, eta_ee_hebb, Jmax_ee, eta_ee_koh, beta, eta_ie_homeo, alpha_ie,
-                 eta_ie_hebb, Jmax_ie_hebb, eta_ei, alpha_ei, eta_ii, alpha_ii, dt, nBinsRecord, Ierecord, Iirecord, Ixrecord, Vrecord):
+    def simulate(
+        self,
+        Cm,
+        gL,
+        VT,
+        Vre,
+        Vth,
+        EL,
+        DeltaT,
+        taue,
+        taui,
+        taux,
+        tauSTDP,
+        numrecord,
+        eta_ee_hebb,
+        Jmax_ee,
+        eta_ee_koh,
+        beta,
+        eta_ie_homeo,
+        alpha_ie,
+        eta_ie_hebb,
+        Jmax_ie_hebb,
+        eta_ei,
+        alpha_ei,
+        eta_ii,
+        alpha_ii,
+        dt,
+        nBinsRecord,
+        Ierecord,
+        Iirecord,
+        Ixrecord,
+        Vrecord,
+    ):
         """
         Execute Network simulation.
         """
@@ -452,6 +489,7 @@ class plasticNeuralNetwork:
 
         return (
             s,
+            self.sx,
             JRec_ee,
             JRec_ie,
             JRec_ei,

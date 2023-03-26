@@ -99,7 +99,7 @@ Jm = np.array([[jee, jei], [jie, jii]]) / np.sqrt(N)
 Jxm = np.array([[jex], [jix]]) / np.sqrt(N)
 
 # Total_time (in ms) for sim
-T = 5000
+T = 50000
 
 # Total_time discretization
 dt = 0.1
@@ -161,46 +161,14 @@ alpha_ei = 2 * rho_ei * tauSTDP
 
 # II
 Jnorm_ii = -300 / np.sqrt(N)
-eta_ii = 0 / 10**3 / Jnorm_ii  # Learning rate
+eta_ii = 0.015 / 10**3 / Jnorm_ii  # Learning rate
 rho_ii = 0.020  # Target rate 20Hz
 alpha_ii = 2 * rho_ii * tauSTDP
 
 # Indices of neurons to record currents, voltages
 numrecord = int(100)  # Number to record from each population
-Irecord = np.array(
-    [
-        [
-            random2.sample(list(np.arange(0, frac_exc * N)), numrecord),
-            random2.sample(list(np.arange(frac_exc * N, N)), numrecord),
-        ]
-    ]
-)
-Ierecord = np.sort(Irecord[0, 0]).astype(int)
-Iirecord = np.sort(Irecord[0, 1]).astype(int)
-Ixrecord = np.sort(random2.sample(list(np.arange(0, frac_ext * N)), numrecord)).astype(
-    int
-)
-Vrecord = (
-    np.sort(
-        [
-            [
-                random2.sample(
-                    list(np.arange(0, frac_exc * N)), int(round(numrecord / 2))
-                ),
-                random2.sample(
-                    list(np.arange(frac_exc * N, N)), int(round(numrecord / 2))
-                ),
-            ]
-        ]
-    )[0]
-    .reshape(1, numrecord)
-    .astype(int)[0]
-)
-del Irecord
-
 # Number of time bins to average over when recording
 nBinsRecord = 10
-dtRecord = nBinsRecord * dt
 # Number of synapses to be sampled
 nJrecord0 = 1000
 
@@ -214,7 +182,7 @@ nn = plasticNeuralNetwork(
     dt,
     jestim,
     jistim,
-    dtRecord,
+    nBinsRecord,
 )
 
 #%%
@@ -266,10 +234,6 @@ nn.ffwd_spikes(cx, rx, taujitter, T)
     alpha_ii,
     dt,
     nBinsRecord,
-    Ierecord,
-    Iirecord,
-    Ixrecord,
-    Vrecord,
 )
 
 # %% [markdown]
@@ -296,8 +260,8 @@ plt.xlabel("time (s)")
 plt.ylabel("Neuron index")
 plt.ylim((0, N))
 plt.yticks((0, N))
-plt.xlim((0, T / 1000 / 10))
-plt.xticks((0, T / 1000 / 10))
+plt.xlim((0, T / 1000))
+plt.xticks((0, T / 1000))
 plt.show()
 
 # %% [markdown]

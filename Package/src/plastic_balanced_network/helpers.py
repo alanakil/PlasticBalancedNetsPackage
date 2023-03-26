@@ -23,8 +23,36 @@ class plasticNeuralNetwork:
         dt,
         jestim,
         jistim,
-        dtRecord,
+        nBinsRecord,
     ):
+        """
+        plasticNeuralNetwork is a class that builds a neural network with
+        correlated or uncorrelated firing as well as with plastic or static
+        synaptic weights on any connection.
+        It contains functions to define the connectivity, simulate feedforward external
+        spike trains, and to simulate the recurrent network's firing.
+
+        Inputs
+        N : Total number of neurons in recurrent neural network.
+        frac_exc : Fraction of excitatory neurons. Typically 0.8.
+        frac_ext : Fraction of excitatory neurons in external layer. Typically 0.2.
+        T : Total time of simulation in milliseconds.
+        dt : Time bin size for time discretization.
+        jestim : Added constant current to excitatory neurons.
+        jistim : Added constant current to inhibitory neurons.
+        nBinsRecord : Number of bins to record average and record over.
+
+        Returns
+        Ne : Number of excitatory neurons.
+        Ni : Number of inhibitory neurons.
+        Nx : Number of external neurons.
+        Nt : Total number of discretized time points.
+        Istim : Time vector of added constant stimulation.
+        Jstim : Weight coupling for Istim.
+        maxns : Maximum number of spikes to terminate pathologic behavior.
+        timeRecord : Discretized recorded time domain.
+        Ntrec : Number of points in discretized recorded time domain.
+        """
 
         self.N = N
         self.Ne = int(round(frac_exc * N))
@@ -38,12 +66,30 @@ class plasticNeuralNetwork:
             (jestim * np.ones((1, self.Ne)), jistim * np.ones((1, self.Ni)))
         )
         self.maxns = round(0.05 * N * T)  # Max num of spikes (50 Hz).
+        dtRecord = nBinsRecord * dt
         self.timeRecord = np.arange(dtRecord, T + dtRecord, dtRecord)
         self.Ntrec = len(self.timeRecord)
 
     def connectivity(self, Jm, Jxm, P, Px, nJrecord0):
         """
         Create connectivity matrix and arrays to record individual weights of all four connections.
+        Jm : Mean field matrix J for recurrent connections. It contains avg value of connection for recurrent connections.
+        Jm : Mean field matrix J for recurrent connections. It contains avg value of connection for feedforward connections.
+        P : Matrix containing probability of connection for each pair of populations.
+        P : Matrix containing probability of connection for each pair of populations from external to recurrent.
+        nJrecord0 : Count of synaptic weights recorded. Relevant when network is plastic.
+
+        Returns (as part of `self`)
+        J : Recurrent connectivity matrix.
+        Jx : External feedforward connectivity matrix.
+        Jrecord_ee : Indices of recorded EE synaptic weights.
+        Jrecord_ie : Indices of recorded IE synaptic weights.
+        Jrecord_ei : Indices of recorded EI synaptic weights.
+        Jrecord_ii : Indices of recorded II synaptic weights.
+        numrecordJ_ee : Number of recorded EE synaptic weights.
+        numrecordJ_ie : Number of recorded IE synaptic weights.
+        numrecordJ_ei : Number of recorded EI synaptic weights.
+        numrecordJ_ii : Number of recorded II synaptic weights.
         """
         # Define connectivity
         self.J = np.vstack(
@@ -156,6 +202,14 @@ class plasticNeuralNetwork:
     def ffwd_spikes(self, cx, rx, taujitter, T):
         """
         Create all spike trains of the Poisson feedforward, external layer.
+        cx : Value of mean correlation between feedforward Poisson spike trains.
+        rx : Rate of feedforward Poisson neurons in Hz.
+        taujitter : Spike trains are jittered by taujitter milliseconds to avoid perfect synchrony.
+        T : Total time of simulation.
+        
+        Returns (as part of `self`)
+        sx : Feedforward, Poisson spike trains recorded as spike time and neuron index.
+        nspikeX : Total number of spikes in sx.
         """
         if cx < 1e-5:  # If uncorrelated
             self.nspikeX = np.random.poisson(self.Nx * rx * T)
@@ -226,13 +280,48 @@ class plasticNeuralNetwork:
         alpha_ii,
         dt,
         nBinsRecord,
-        Ierecord,
-        Iirecord,
-        Ixrecord,
-        Vrecord,
     ):
         """
         Execute Network simulation.
+        Cm : Membrane capacitance.
+        gL : Leak conductance.
+        VT : Threshold in EIF neuron.
+        Vre : Reset voltage.
+        Vth : Hard threshold that determines when a spike happened.
+        EL : 
+        DeltaT : EIF neuron parameter. Determines the shape of the rise to spike.
+        taue : Timescale of excitatory neurons in milliseconds.
+        taui : Timescale of inhibitory neurons in milliseconds.
+        taux  : Timescale of external neurons in milliseconds.
+        tauSTDP :  Timescale of eligibility trace used for STDP.
+        numrecord : Number of neurons to record currents and voltage from.
+        eta_ee_hebb : Learning rate of EE Hebbian STDP.
+        Jmax_ee : Hard constraint on EE Hebbian STDP.
+        eta_ee_koh : Learning rate of Kohonen STDP.
+        beta : Parameter for Kohonen STDP.
+        eta_ie_homeo : Learning rate of iSTDP.
+        alpha_ie : Parameter that determines target rate in iSTDP.
+        eta_ie_hebb : Learning rate of IE Hebbian STDP.
+        Jmax_ie_hebb : Hard constraint on IE Hebbian STDP.
+        eta_ei : Learning rate of iSTDP.
+        alpha_ei : Parameter that determines target rate in iSTDP.
+        eta_ii : Learning rate of iSTDP.
+        alpha_ii : Parameter that determines target rate in iSTDP.
+        dt : Time bin size in ms.
+        nBinsRecord : Number of bins to record average and record over.
+
+        Returns
+        s : Spike trains of all neurons in recurrent network, recorded by neuron index and spike time.
+        sx : Same as sx coming from `ffwd_spikes()`.
+        JRec_ee : Matrix of neurons (rows) by time bins (cols) for EE recorded weights.
+        JRec_ie : Matrix of neurons (rows) by time bins (cols) for IE recorded weights.
+        JRec_ei : Matrix of neurons (rows) by time bins (cols) for EI recorded weights.
+        JRec_ii : Matrix of neurons (rows) by time bins (cols) for II recorded weights.
+        IeRec : Matrix of neurons (rows) by time bins (cols) for E input currents.
+        IiRec : Matrix of neurons (rows) by time bins (cols) for I input currents.
+        IxRec : Matrix of neurons (rows) by time bins (cols) for X input currents.
+        VRec : Matrix of neurons (rows) by time bins (cols) for recurrent network voltages.
+        timeRecord : Discretized, recorded time domain.
         """
         # Initialize some variables
         # Random initial voltages
@@ -244,6 +333,37 @@ class plasticNeuralNetwork:
         Ix = np.zeros((1, self.N))
         # Initialize eligibility traces.
         x = np.zeros((1, self.N))
+        # Sample neurons to record from.
+        Irecord = np.array(
+            [
+                [
+                    random2.sample(list(np.arange(0, self.Ne)), numrecord),
+                    random2.sample(list(np.arange(self.Ne, self.N)), numrecord),
+                ]
+            ]
+        )
+        Ierecord = np.sort(Irecord[0, 0]).astype(int)
+        Iirecord = np.sort(Irecord[0, 1]).astype(int)
+        Ixrecord = np.sort(random2.sample(list(np.arange(0, self.Ne)), numrecord)).astype(
+            int
+        )
+        Vrecord = (
+            np.sort(
+                [
+                    [
+                        random2.sample(
+                            list(np.arange(0, self.Ne)), int(round(numrecord / 2))
+                        ),
+                        random2.sample(
+                            list(np.arange(self.Ne, self.N)), int(round(numrecord / 2))
+                        ),
+                    ]
+                ]
+            )[0]
+            .reshape(1, numrecord)
+            .astype(int)[0]
+        )
+        del Irecord
         # Initialize recorded currents vectors.
         IeRec = np.zeros((numrecord, self.Ntrec))
         IiRec = np.zeros((numrecord, self.Ntrec))

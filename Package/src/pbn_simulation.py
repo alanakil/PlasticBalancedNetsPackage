@@ -88,8 +88,6 @@ P = np.array([[p_ee, p_ei], [p_ie, p_ii]])
 # Ffwd connection probs
 Px = np.array([[p_ex], [p_ix]])
 
-# Timescale of correlation in ms
-taujitter = 5
 # Mean connection strengths between each cell type pair
 jee = 25
 jei = -150
@@ -108,6 +106,10 @@ dt = 0.1
 
 # FFwd spike train rate (in kHz)
 rx = 10 / 1000
+# Correlation of ffwd spike trains.
+cx = 0
+# Timescale of correlation in ms. Jitter spike trains in external layer by taujitter.
+taujitter = 5
 
 # Extra stimulus: Istim is a Total_time-dependent stimulus
 # it is delivered to all neurons with weights given by JIstim.
@@ -120,10 +122,6 @@ jistim = 0
 taux = 10
 taue = 8
 taui = 4
-
-# Generate FFwd spike trains
-# Correlation of ffwd spike trains.
-c = 0
 
 # Neuron parameters
 Cm = 1
@@ -212,57 +210,20 @@ nn = plasticNeuralNetwork(
     N,
     frac_exc,
     frac_ext,
-    P,
-    Px,
-    taujitter,
-    Jm,
-    Jxm,
     T,
     dt,
-    rx,
     jestim,
     jistim,
-    taue,
-    taui,
-    taux,
-    c,
-    Cm,
-    gL,
-    EL,
-    Vth,
-    Vre,
-    DeltaT,
-    VT,
-    tauSTDP,
-    Jmax_ee,
-    eta_ee_hebb,
-    eta_ee_koh,
-    beta,
-    eta_ie_hebb,
-    Jmax_ie_hebb,
-    eta_ie_homeo,
-    alpha_ie,
-    alpha_ei,
-    eta_ei,
-    alpha_ii,
-    eta_ii,
-    nBinsRecord,
     dtRecord,
-    Ierecord,
-    Iirecord,
-    Ixrecord,
-    Vrecord,
-    numrecord,
-    nJrecord0,
 )
 
 #%%
 # Initialize the connectivity
-nn.connectivity()
+nn.connectivity(Jm, Jxm, P, Px, nJrecord0)
 
 #%%
 # Generate Poisson ffwd spike trains
-nn.ffwd_spikes()
+nn.ffwd_spikes(cx, rx, taujitter, T)
 
 #%%
 # Simulate plastic network
@@ -278,7 +239,38 @@ nn.ffwd_spikes()
     IxRec,
     VRec,
     timeRecord,
-) = nn.simulate()
+) = nn.simulate(
+    Cm,
+    gL,
+    VT,
+    Vre,
+    Vth,
+    EL,
+    DeltaT,
+    taue,
+    taui,
+    taux,
+    tauSTDP,
+    numrecord,
+    eta_ee_hebb,
+    Jmax_ee,
+    eta_ee_koh,
+    beta,
+    eta_ie_homeo,
+    alpha_ie,
+    eta_ie_hebb,
+    Jmax_ie_hebb,
+    eta_ei,
+    alpha_ei,
+    eta_ii,
+    alpha_ii,
+    dt,
+    nBinsRecord,
+    Ierecord,
+    Iirecord,
+    Ixrecord,
+    Vrecord,
+)
 
 # %% [markdown]
 ### Analysis of simulation

@@ -25,19 +25,19 @@ from pathlib import Path
 from plastic_balanced_network.helpers import plasticNeuralNetwork
 
 #%%
+todaysdate = dtm.today()
+datetime_format = "%Y%b%d-%H%M"
+datadatetime = todaysdate.strftime(datetime_format).upper()
 
 PROJECTROOT = Path(__file__).parent.parent
-
 DATA_DIR = os.path.join(PROJECTROOT, "data", "processed")
 LOG_DIR = os.path.join(PROJECTROOT, "logs")
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(LOG_DIR, exist_ok=True)
-
+DATA_FILE_PATH = f"{DATA_DIR}/pbn_data_{datadatetime}.npz"
 
 #%%
-todaysdate = dtm.today()
-datetime_format = "%Y%b%d-%H%M"
-datadatetime = todaysdate.strftime(datetime_format).upper()
+
 
 start_time = time.time()
 
@@ -99,7 +99,7 @@ Jm = np.array([[jee, jei], [jie, jii]]) / np.sqrt(N)
 Jxm = np.array([[jex], [jix]]) / np.sqrt(N)
 
 # Total_time (in ms) for sim
-T = 50000
+T = 5000
 
 # Total_time discretization
 dt = 0.1
@@ -235,6 +235,60 @@ nn.ffwd_spikes(cx, rx, taujitter, T)
     dt,
     nBinsRecord,
 )
+
+#%% [markdown]
+## Save and load relevant data variables for analysis and plotting.
+
+#%%
+# Save data containing relevant variables.
+np.savez(
+    DATA_FILE_PATH,  # File name
+    s=s,
+    sx=sx,
+    JRec_ee=JRec_ee,
+    JRec_ie=JRec_ie,
+    JRec_ei=JRec_ei,
+    JRec_ii=JRec_ii,
+    IeRec=IeRec,
+    IiRec=IiRec,
+    IxRec=IxRec,
+    VRec=VRec,
+    timeRecord=timeRecord,
+    N=N,
+    frac_exc=frac_exc,
+    frac_ext=frac_ext,
+    P=P,
+    Px=Px,
+    Jm=Jm,
+    Jxm=Jxm,
+    T=T,
+    dt=dt,
+    cx=cx,
+    rx=rx,
+    tauSTDP=tauSTDP,
+    Jmax_ee=Jmax_ee,
+    eta_ee_hebb=eta_ee_hebb,
+    beta=beta,
+    eta_ee_koh=eta_ee_koh,
+    Jmax_ie_hebb=Jmax_ie_hebb,
+    eta_ie_hebb=eta_ie_hebb,
+    Jnorm_ie=Jnorm_ie,
+    eta_ie_homeo=eta_ie_homeo,
+    rho_ie=rho_ie,
+    Jnorm_ei=Jnorm_ei,
+    eta_ei=eta_ei,
+    rho_ei=rho_ei,
+    Jnorm_ii=Jnorm_ii,
+    eta_ii=eta_ii,
+    rho_ii=rho_ii
+    )
+
+#%%
+# Load data from previous runs.
+data = np.load(DATA_FILE_PATH)
+# loop through the variables and set them as local variables with the same name as the key
+for key, value in data.items():
+    exec(f"{key} = value")
 
 # %% [markdown]
 ### Analysis of simulation

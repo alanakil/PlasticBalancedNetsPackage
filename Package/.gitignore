@@ -8,7 +8,7 @@ pbn/**
 build/**
 src/plastic_balanced_network.egg-info/
 src/plastic_balanced_network/__pycache__/
-
+data/processed/**
 
 # But keep these.
 # !src/plastic-balanced-network/**.py

@@ -1,15 +1,14 @@
 # Ignore these.
-logs/**
-pbn/**
 **.egg
-# src/plastic_balanced_network/**
 .eggs/**
 .eggs/
 build/**
+data/processed/**
+dist/**
+logs/**
+pbn/**
 src/plastic_balanced_network.egg-info/
 src/plastic_balanced_network/__pycache__/
-data/processed/**
 
-# But keep these.
-# !src/plastic-balanced-network/**.py
-# !src/plastic_balanced_network/VERSION
+# But keep
+!dist/.gitkeep

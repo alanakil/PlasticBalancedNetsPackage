@@ -53,6 +53,64 @@ class plasticNeuralNetwork:
         timeRecord : Discretized recorded time domain.
         Ntrec : Number of points in discretized recorded time domain.
         """
+        # Type tests.
+        if type(N) not in [int]:
+            err = TypeError("ERROR: N is not int")
+            logging.exception(err)
+            raise err
+        if type(frac_exc) not in [int, float]:
+            err = TypeError("ERROR: frac_exc is not one of these - int, float")
+            logging.exception(err)
+            raise err
+        if type(frac_ext) not in [int, float]:
+            err = TypeError("ERROR: frac_exc is not one of these - int, float")
+            logging.exception(err)
+            raise err
+        if type(T) not in [int]:
+            err = TypeError("ERROR: T is not int")
+            logging.exception(err)
+            raise err
+        if type(dt) not in [int, float]:
+            err = TypeError("ERROR: dt is not one of these - int, float")
+            logging.exception(err)
+            raise err
+        if type(jestim) not in [int, float]:
+            err = TypeError("ERROR: jestim is not one of these - int, float")
+            logging.exception(err)
+            raise err
+        if type(jistim) not in [int, float]:
+            err = TypeError("ERROR: jistim is not one of these - int, float")
+            logging.exception(err)
+            raise err
+        if type(nBinsRecord) not in [int]:
+            err = TypeError("ERROR: nBinsRecord is not int")
+            logging.exception(err)
+            raise err
+        # Value tests.
+        if N < 1:
+            err = ValueError("ERROR: N has to be greater than or equal to 1.")
+            logging.exception(err)
+            raise err
+        if (frac_exc > 1) | (frac_exc < 0):
+            err = ValueError("ERROR: frac_exc hast be between 0 and 1.")
+            logging.exception(err)
+            raise err
+        if (frac_ext > 1) | (frac_ext < 0):
+            err = ValueError("ERROR: frac_ext hast be between 0 and 1.")
+            logging.exception(err)
+            raise err
+        if T < 1:
+            err = ValueError("ERROR: T has to be at least 1 millisecond.")
+            logging.exception(err)
+            raise err
+        if dt <= 0:
+            err = ValueError("ERROR: dt has to be positive.")
+            logging.exception(err)
+            raise err
+        if nBinsRecord <= 0:
+            err = ValueError("ERROR: nBinsRecord has to be positive.")
+            logging.exception(err)
+            raise err
 
         self.N = N
         self.Ne = int(round(frac_exc * N))
@@ -74,9 +132,9 @@ class plasticNeuralNetwork:
         """
         Create connectivity matrix and arrays to record individual weights of all four connections.
         Jm : Mean field matrix J for recurrent connections. It contains avg value of connection for recurrent connections.
-        Jm : Mean field matrix J for recurrent connections. It contains avg value of connection for feedforward connections.
+        Jxm : Mean field matrix Jx for feedforward connections. It contains avg value of connection for feedforward connections.
         P : Matrix containing probability of connection for each pair of populations.
-        P : Matrix containing probability of connection for each pair of populations from external to recurrent.
+        Px : Matrix containing probability of connection for each pair of populations from external to recurrent.
         nJrecord0 : Count of synaptic weights recorded. Relevant when network is plastic.
 
         Returns (as part of `self`)
@@ -91,6 +149,81 @@ class plasticNeuralNetwork:
         numrecordJ_ei : Number of recorded EI synaptic weights.
         numrecordJ_ii : Number of recorded II synaptic weights.
         """
+        # Test types
+        if type(Jm) not in [np.ndarray]:
+            err = TypeError("ERROR: Jm is not np.array.")
+            logging.exception(err)
+            raise err
+        if type(Jxm) not in [np.ndarray]:
+            err = TypeError("ERROR: Jm is not np.array.")
+            logging.exception(err)
+            raise err
+        if type(P) not in [np.ndarray]:
+            err = TypeError("ERROR: P is not np.array.")
+            logging.exception(err)
+            raise err
+        if type(Px) not in [np.ndarray]:
+            err = TypeError("ERROR: Px is not np.array.")
+            logging.exception(err)
+            raise err
+        if type(nJrecord0) not in [int]:
+            err = TypeError("ERROR: nJrecord0 is not int.")
+            logging.exception(err)
+            raise err
+        # Value tests.
+        if Jm[0,0] <= 0:
+            err = ValueError("ERROR: Jm[0,0], EE syn strength, has to be positive.")
+            logging.exception(err)
+            raise err
+        if Jm[1,0] <= 0:
+            err = ValueError("ERROR: Jm[1,0], IE syn strength, has to be positive.")
+            logging.exception(err)
+            raise err
+        if Jm[0,1] >= 0:
+            err = ValueError("ERROR: Jm[0,1], EI syn strength, has to be negative.")
+            logging.exception(err)
+            raise err
+        if Jm[1,1] >= 0:
+            err = ValueError("ERROR: Jm[1,1], II syn strength, has to be negative.")
+            logging.exception(err)
+            raise err
+        if Jxm[0,0] <= 0:
+            err = ValueError("ERROR: Jxm[0,0], EX syn strength, has to be positive.")
+            logging.exception(err)
+            raise err
+        if Jxm[1,0] <= 0:
+            err = ValueError("ERROR: Jxm[1,0], IX syn strength, has to be positive.")
+            logging.exception(err)
+            raise err
+        if (P[0,0] > 1) | (P[0,0] < 0):
+            err = ValueError("ERROR: P[0,0], EE Prob of connection, has to be between 0 and 1.")
+            logging.exception(err)
+            raise err
+        if (P[1,0] > 1) | (P[1,0] < 0):
+            err = ValueError("ERROR: P[1,0], IE Prob of connection, has to be between 0 and 1.")
+            logging.exception(err)
+            raise err
+        if (P[0,1] > 1) | (P[0,1] < 0):
+            err = ValueError("ERROR: P[0,1], EI Prob of connection, has to be between 0 and 1.")
+            logging.exception(err)
+            raise err
+        if (P[1,1] > 1) | (P[1,1] < 0):
+            err = ValueError("ERROR: P[1,1], II Prob of connection, has to be between 0 and 1.")
+            logging.exception(err)
+            raise err
+        if (Px[0,0] > 1) | (Px[0,0] < 0):
+            err = ValueError("ERROR: Px[0,0], EX Prob of connection, has to be between 0 and 1.")
+            logging.exception(err)
+            raise err
+        if (Px[1,0] > 1) | (Px[1,0] < 0):
+            err = ValueError("ERROR: P[0,0], IX Prob of connection, has to be between 0 and 1.")
+            logging.exception(err)
+            raise err
+        if nJrecord0 <= 0:
+            err = ValueError("ERROR: nJrecord0, number of syn weights recorded, has to be positive.")
+            logging.exception(err)
+            raise err
+
         # Define connectivity
         self.J = np.vstack(
             (
@@ -211,6 +344,41 @@ class plasticNeuralNetwork:
         sx : Feedforward, Poisson spike trains recorded as spike time and neuron index.
         nspikeX : Total number of spikes in sx.
         """
+        # Type errors
+        if type(cx) not in [int, float]:
+            err = TypeError("ERROR: cx is not int nor float.")
+            logging.exception(err)
+            raise err
+        if type(rx) not in [int, float]:
+            err = TypeError("ERROR: rx is not int nor float.")
+            logging.exception(err)
+            raise err
+        if type(taujitter) not in [int, float]:
+            err = TypeError("ERROR: taujitter is not int nor float.")
+            logging.exception(err)
+            raise err
+        if type(T) not in [int]:
+            err = TypeError("ERROR: T is not int")
+            logging.exception(err)
+            raise err
+        # Value tests.
+        if (cx > 1) | (cx <= 0):
+            err = ValueError("ERROR: cx, input corrs, have to be between 0 and 1.")
+            logging.exception(err)
+            raise err
+        if rx <= 0:
+            err = ValueError("ERROR: rx, input rate, has to be greater than 0.")
+            logging.exception(err)
+            raise err
+        if taujitter <= 0:
+            err = ValueError("ERROR: taujitter has to be greater than 0.")
+            logging.exception(err)
+            raise err
+        if T < 1:
+            err = ValueError("ERROR: T has to be greater than 0.")
+            logging.exception(err)
+            raise err
+
         if cx < 1e-5:  # If uncorrelated
             self.nspikeX = np.random.poisson(self.Nx * rx * T)
             st = np.random.uniform(0, 1, (1, self.nspikeX)) * T
@@ -288,7 +456,7 @@ class plasticNeuralNetwork:
         VT : Threshold in EIF neuron.
         Vre : Reset voltage.
         Vth : Hard threshold that determines when a spike happened.
-        EL : 
+        EL : Resting potential.
         DeltaT : EIF neuron parameter. Determines the shape of the rise to spike.
         taue : Timescale of excitatory neurons in milliseconds.
         taui : Timescale of inhibitory neurons in milliseconds.
@@ -323,6 +491,213 @@ class plasticNeuralNetwork:
         VRec : Matrix of neurons (rows) by time bins (cols) for recurrent network voltages.
         timeRecord : Discretized, recorded time domain.
         """
+        # Type errors.
+        if type(Cm) not in [int,float]:
+            err = TypeError("ERROR: Cm is not int nor float.")
+            logging.exception(err)
+            raise err
+        if type(gL) not in [int,float]:
+            err = TypeError("ERROR: gL is not int nor float.")
+            logging.exception(err)
+            raise err
+        if type(VT) not in [int,float]:
+            err = TypeError("ERROR: VT is not int nor float.")
+            logging.exception(err)
+            raise err
+        if type(Vre) not in [int,float]:
+            err = TypeError("ERROR: Vre is not int nor float.")
+            logging.exception(err)
+            raise err
+        if type(Vth) not in [int,float]:
+            err = TypeError("ERROR: Vth is not int nor float.")
+            logging.exception(err)
+            raise err
+        if type(EL) not in [int,float]:
+            err = TypeError("ERROR: EL is not int nor float.")
+            logging.exception(err)
+            raise err
+        if type(DeltaT) not in [int,float]:
+            err = TypeError("ERROR: DeltaT is not int nor float.")
+            logging.exception(err)
+            raise err
+        if type(taue) not in [int,float]:
+            err = TypeError("ERROR: taue is not int nor float.")
+            logging.exception(err)
+            raise err
+        if type(taui) not in [int,float]:
+            err = TypeError("ERROR: taui is not int nor float.")
+            logging.exception(err)
+            raise err
+        if type(taux) not in [int,float]:
+            err = TypeError("ERROR: taux is not int nor float.")
+            logging.exception(err)
+            raise err
+        if type(tauSTDP) not in [int,float]:
+            err = TypeError("ERROR: tauSTDP is not int nor float.")
+            logging.exception(err)
+            raise err
+        if type(eta_ee_hebb) not in [int,float]:
+            err = TypeError("ERROR: eta_ee_hebb is not int,float.")
+            logging.exception(err)
+            raise err
+        if type(Jmax_ee) not in [int,float]:
+            err = TypeError("ERROR: Jmax_ee is not int,float.")
+            logging.exception(err)
+            raise err
+        if type(eta_ee_koh) not in [int,float]:
+            err = TypeError("ERROR: eta_ee_koh is not int,float.")
+            logging.exception(err)
+            raise err
+        if type(beta) not in [int,float]:
+            err = TypeError("ERROR: beta is not int,float.")
+            logging.exception(err)
+            raise err
+        if type(eta_ie_homeo) not in [int,float]:
+            err = TypeError("ERROR: eta_ie_homeo is not int,float.")
+            logging.exception(err)
+            raise err
+        if type(alpha_ie) not in [int,float]:
+            err = TypeError("ERROR: alpha_ie is not int,float.")
+            logging.exception(err)
+            raise err
+        if type(eta_ie_hebb) not in [int,float]:
+            err = TypeError("ERROR: eta_ie_hebb is not int,float.")
+            logging.exception(err)
+            raise err
+        if type(Jmax_ie_hebb) not in [int,float]:
+            err = TypeError("ERROR: Jmax_ie_hebb is not int,float.")
+            logging.exception(err)
+            raise err
+        if type(eta_ei) not in [int,float]:
+            err = TypeError("ERROR: eta_ei is not int,float.")
+            logging.exception(err)
+            raise err
+        if type(alpha_ei) not in [int,float]:
+            err = TypeError("ERROR: alpha_ei is not int,float.")
+            logging.exception(err)
+            raise err
+        if type(eta_ii) not in [int,float]:
+            err = TypeError("ERROR: eta_ii is not int,float.")
+            logging.exception(err)
+            raise err
+        if type(alpha_ii) not in [int,float]:
+            err = TypeError("ERROR: alpha_ii is not int,float.")
+            logging.exception(err)
+            raise err
+        if type(dt) not in [int,float]:
+            err = TypeError("ERROR: dt is not int,float.")
+            logging.exception(err)
+            raise err
+        if type(nBinsRecord) not in [int]:
+            err = TypeError("ERROR: nBinsRecord is not int.")
+            logging.exception(err)
+            raise err
+        # Value tests.
+        if Cm <= 0:
+            err = ValueError("ERROR: Cm has to be greater than zero.")
+            logging.exception(err)
+            raise err
+        if gL <= 0:
+            err = ValueError("ERROR: gL has to be greater than zero.")
+            logging.exception(err)
+            raise err
+        if VT > 0:
+            err = ValueError("ERROR: VT has to be less than zero.")
+            logging.exception(err)
+            raise err
+        if Vre > 0:
+            err = ValueError("ERROR: Vre has to be less than zero.")
+            logging.exception(err)
+            raise err
+        if Vth > 0:
+            err = ValueError("ERROR: Vth has to be less than zero.")
+            logging.exception(err)
+            raise err
+        if EL > 0:
+            err = ValueError("ERROR: EL has to be less than zero.")
+            logging.exception(err)
+            raise err
+        if DeltaT <= 0:
+            err = ValueError("ERROR: DeltaT has to be greater than zero.")
+            logging.exception(err)
+            raise err
+        if taue <= 0:
+            err = ValueError("ERROR: taue has to be greater than zero.")
+            logging.exception(err)
+            raise err
+        if taui <= 0:
+            err = ValueError("ERROR: taui has to be greater than zero.")
+            logging.exception(err)
+            raise err
+        if taux <= 0:
+            err = ValueError("ERROR: taux has to be greater than zero.")
+            logging.exception(err)
+            raise err
+        if tauSTDP <= 0:
+            err = ValueError("ERROR: tauSTDP has to be greater than zero.")
+            logging.exception(err)
+            raise err
+        if numrecord <= 0:
+            err = ValueError("ERROR: numrecord has to be greater than zero.")
+            logging.exception(err)
+            raise err
+        if eta_ee_hebb < 0:
+            err = ValueError("ERROR: eta_ee_hebb has to be greater than or equal to zero.")
+            logging.exception(err)
+            raise err
+        if Jmax_ee < 0:
+            err = ValueError("ERROR: Jmax_ee has to be greater than or equal to zero.")
+            logging.exception(err)
+            raise err
+        if eta_ee_koh < 0:
+            err = ValueError("ERROR: eta_ee_koh has to be greater than or equal to zero.")
+            logging.exception(err)
+            raise err
+        if beta < 0:
+            err = ValueError("ERROR: beta has to be greater than or equal to zero.")
+            logging.exception(err)
+            raise err
+        if eta_ie_homeo < 0:
+            err = ValueError("ERROR: eta_ie_homeo has to be greater than or equal to zero.")
+            logging.exception(err)
+            raise err
+        if alpha_ie < 0:
+            err = ValueError("ERROR: alpha_ie has to be greater than or equal to zero.")
+            logging.exception(err)
+            raise err
+        if eta_ie_hebb < 0:
+            err = ValueError("ERROR: eta_ie_hebb has to be greater than or equal to zero.")
+            logging.exception(err)
+            raise err
+        if Jmax_ie_hebb < 0:
+            err = ValueError("ERROR: Jmax_ie_hebb has to be greater than or equal to zero.")
+            logging.exception(err)
+            raise err
+        if eta_ei > 0:
+            err = ValueError("ERROR: eta_ei has to be greater than or equal to zero.")
+            logging.exception(err)
+            raise err
+        if alpha_ei <= 0:
+            err = ValueError("ERROR: alpha_ei has to be greater than or equal to zero.")
+            logging.exception(err)
+            raise err
+        if eta_ii > 0:
+            err = ValueError("ERROR: eta_ii has to be greater than or equal to zero.")
+            logging.exception(err)
+            raise err
+        if alpha_ii <= 0:
+            err = ValueError("ERROR: alpha_ii has to be greater than or equal to zero.")
+            logging.exception(err)
+            raise err
+        if  dt <= 0:
+            err = ValueError("ERROR: dt has to be greater than zero.")
+            logging.exception(err)
+            raise err
+        if nBinsRecord <= 0:
+            err = ValueError("ERROR: nBinsRecord has to be greater than zero.")
+            logging.exception(err)
+            raise err
+
         # Initialize some variables
         # Random initial voltages
         V0 = np.random.uniform(0, 1, (1, self.N)) * (VT - Vre) + Vre

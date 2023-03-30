@@ -55,6 +55,7 @@ DATA_FILE_PATH = f"{DATA_DIR}/pbn_data_{datadatetime}.npz"
 log_format = (
     "%(asctime)s - %(levelname)-8s - %(name)s - %(funcName)s:%(lineno)d - %(message)s"
 )
+# Use loglevel to filter out undesired logs.
 loglevel = "INFO"
 loglevel = str(loglevel).replace('"', "")
 levels = {
@@ -76,7 +77,6 @@ logging.basicConfig(
     level=level,
 )
 
-logging.info("Start simulation of plastic balanced network.")
 logging.info(f"Project root: {PROJECTROOT}.")
 logging.info(f"Data directory: {DATA_DIR}.")
 logging.info(f"Logs directory: {LOG_DIR}.")
@@ -84,6 +84,7 @@ logging.info(f"Logs directory: {LOG_DIR}.")
 
 #%%
 # Define all input variables for the network simulation.
+logging.info("Define input variables for plastic balanced network simulation.")
 
 # Total number of neurons.
 N = int(5000)
@@ -123,7 +124,7 @@ dt = 0.1
 # FFwd spike train rate (in kHz).
 rx = 10 / 1000
 # Correlation of ffwd spike trains.
-cx = 0
+cx = 0.1
 # Timescale of correlation in ms. Jitter spike trains in external layer by taujitter.
 taujitter = 5
 

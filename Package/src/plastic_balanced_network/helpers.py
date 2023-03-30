@@ -150,6 +150,12 @@ class plasticNeuralNetwork:
         self.timeRecord = np.arange(dtRecord, T + dtRecord, dtRecord)
         self.Ntrec = len(self.timeRecord)
 
+        logging.info(f"Simulating a network of {self.N} neurons.")
+        logging.info(f"{self.Ne} neurons are excitatory.")
+        logging.info(f"{self.Ni} neurons are inhibitory.")
+        logging.info(f"The external layer, X, provides input from {self.Nx} excitatory neurons.")
+        logging.info(f"The network will be simulated for {T/1000} seconds.")
+
         elapsed_time = time.time() - start_time
         logging.info(f"Time for initializing the class: {round(elapsed_time/60,2)} minutes.")
 
@@ -449,7 +455,7 @@ class plasticNeuralNetwork:
             self.sx[1, :] = np.random.randint(
                 1, self.Nx, (1, len(st[0]))
             )  # neuron index that spiked
-            logging.info(f"Uncorrelated ffwd spike trains (cx={cx} and rate={rx}) were generated successfully.")
+            logging.info(f"Uncorrelated ffwd spike trains (cx={cx} and rate={rx} kHz) were generated successfully.")
         else:  # If correlated
             rm = rx / cx  # Firing rate of mother process
             nstm = np.random.poisson(rm * T)  # Number of mother spikes
@@ -481,7 +487,7 @@ class plasticNeuralNetwork:
             self.sx = sx[:, I]
             self.nspikeX = len(sx[0, :])
             
-            logging.info(f"Correlated ffwd spike trains (cx={cx} and rate={rx}) were generated successfully.")
+            logging.info(f"Correlated ffwd spike trains (cx={cx} and rate={rx} kHz) were generated successfully.")
 
         elapsed_time = time.time() - start_time
         logging.info(f"Time for generating feedforward Poisson spike trains: {round(elapsed_time/60,2)} minutes.")
@@ -863,7 +869,7 @@ class plasticNeuralNetwork:
         nspike = 0
         TooManySpikes = 0
 
-        logging.info(f"We will record currents and membrane potential from {numrecord} neurons.")
+        logging.info(f"We will record currents and membrane potential from {numrecord} E and {numrecord} I neurons.")
 
         # If there is EE Hebbian plasticity
         if eta_ee_hebb != 0:

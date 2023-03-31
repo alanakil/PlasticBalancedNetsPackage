@@ -23,6 +23,16 @@ Documentation:
 
 This codebase was developed by Robert Rosenbaum and Alan Akil and is currently maintained by Alan Akil. 
 
+`python -m build`
+
+`sphinx-quickstart docs`
+
+`make html -C docs/`
+
+`python setup.py sdist bdist_wheel`
+
+`twine upload dist/*`
+
 ## Original Simulations
 Here we provide code for a series of simulations of plastic balanced networks. The results were reported in Akil et al. 2021 ("Balanced networks under spike-timing dependent plasticity"). Link to paper: https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008958
 

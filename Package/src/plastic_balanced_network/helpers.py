@@ -35,22 +35,22 @@ class plasticNeuralNetwork:
         Initializing function.
 
         Inputs
-        N : int
-            Total number of neurons in recurrent neural network.
-        frac_exc : float or int 
-            Fraction of excitatory neurons. Typically 0.8.
-        frac_ext : float or int 
-            Fraction of excitatory neurons in external layer. Typically 0.2.
-        T : int
-            Total time of simulation in milliseconds.
-        dt : float or int 
-            Time bin size for time discretization.
-        jestim : float or int 
-            Added constant current to excitatory neurons.
-        jistim : float or int 
-            Added constant current to inhibitory neurons.
-        nBinsRecord : int
-            Number of bins to record average and record over.
+        :param N: Total number of neurons in recurrent neural network.
+        :type N: int
+        :param frac_exc: Fraction of excitatory neurons. Typically 0.8.
+        :type frac_exc: float or int 
+        :param frac_ext: Fraction of excitatory neurons in external layer. Typically 0.2.
+        :type frac_ext: float or int 
+        :param T: Total time of simulation in milliseconds.
+        :type T: int
+        :param dt: Time bin size for time discretization.
+        :type dt: float or int 
+        :param jestim: Added constant current to excitatory neurons.
+        :type jestim: float or int 
+        :param jistim: Added constant current to inhibitory neurons.
+        :type jistim: float or int 
+        :param nBinsRecord: Number of bins to record average and record over.
+        :type nBinsRecord: int
 
         Returns
         Ne : int
@@ -164,16 +164,16 @@ class plasticNeuralNetwork:
         Create connectivity matrix and arrays to record individual weights of all four connections.
         
         Inputs
-        Jm : np.ndarray
-            Mean field matrix J for recurrent connections. It contains avg value of connection for recurrent connections.
-        Jxm : np.ndarray
-            Mean field matrix Jx for feedforward connections. It contains avg value of connection for feedforward connections.
-        P : np.ndarray
-            Matrix containing probability of connection for each pair of populations.
-        Px : np.ndarray
-            Matrix containing probability of connection for each pair of populations from external to recurrent.
-        nJrecord0 : int
-            Count of synaptic weights recorded. Relevant when network is plastic.
+        :param Jm: Mean field matrix J for recurrent connections. It contains avg value of connection for recurrent connections.
+        :type Jm: np.ndarray
+        :param Jxm: Mean field matrix Jx for feedforward connections. It contains avg value of connection for feedforward connections.
+        :type Jxm: np.ndarray
+        :param P: Matrix containing probability of connection for each pair of populations.
+        :type P: np.ndarray
+        :param Px: Matrix containing probability of connection for each pair of populations from external to recurrent.
+        :type Px: np.ndarray
+        :param nJrecord0: Count of synaptic weights recorded. Relevant when network is plastic.
+        :type nJrecord0: int
 
         Returns (as part of `self`)
         J : np.ndarray
@@ -387,22 +387,20 @@ class plasticNeuralNetwork:
         logging.info(f"Time for building connectivity matrix: {round(elapsed_time/60,2)} minutes.")
         
 
-        return None
-
     def ffwd_spikes(self, cx, rx, taujitter, T):
         """
         Create all spike trains of the Poisson feedforward, external layer.
 
         Inputs
-        cx : float or int
-            Value of mean correlation between feedforward Poisson spike trains.
-        rx : float or int
-            Rate of feedforward Poisson neurons in Hz.
-        taujitter : float or int
-            Spike trains are jittered by taujitter milliseconds to avoid perfect synchrony.
-        T : int
-            Total time of simulation.
-        
+        :param cx: Value of mean correlation between feedforward Poisson spike trains.
+        :type cx: float or int
+        :param rx: Rate of feedforward Poisson neurons in Hz.
+        :type rx: float or int
+        :param taujitter: Spike trains are jittered by taujitter milliseconds to avoid perfect synchrony.
+        :type taujitter: float or int
+        :param T: Total time of simulation.
+        :type T: int
+            
         Returns (as part of `self`)
         sx : np.ndarray
             Feedforward, Poisson spike trains recorded as spike time and neuron index.
@@ -492,7 +490,6 @@ class plasticNeuralNetwork:
         elapsed_time = time.time() - start_time
         logging.info(f"Time for generating feedforward Poisson spike trains: {round(elapsed_time/60,2)} minutes.")
 
-        return None
 
     def simulate(
         self,
@@ -527,82 +524,66 @@ class plasticNeuralNetwork:
         Execute Network simulation.
 
         Inputs
-        Cm : float or int
-            Membrane capacitance.
-        gL : float or int
-            Leak conductance.
-        VT : float or int
-            Threshold in EIF neuron.
-        Vre : float or int
-            Reset voltage.
-        Vth : float or int
-            Hard threshold that determines when a spike happened.
-        EL : float or int
-            Resting potential.
-        DeltaT : float or int
-            EIF neuron parameter. Determines the shape of the rise to spike.
-        taue : float or int
-            Timescale of excitatory neurons in milliseconds.
-        taui : float or int
-            Timescale of inhibitory neurons in milliseconds.
-        taux  : float or int
-            Timescale of external neurons in milliseconds.
-        tauSTDP :  float or int
-            Timescale of eligibility trace used for STDP.
-        numrecord : int 
-            Number of neurons to record currents and voltage from.
-        eta_ee_hebb : float or int
-            Learning rate of EE Hebbian STDP.
-        Jmax_ee : float or int
-            Hard constraint on EE Hebbian STDP.
-        eta_ee_koh : float or int
-            Learning rate of Kohonen STDP.
-        beta : float or int
-            Parameter for Kohonen STDP.
-        eta_ie_homeo : float or int
-            Learning rate of iSTDP.
-        alpha_ie : float or int
-            Parameter that determines target rate in iSTDP.
-        eta_ie_hebb : float or int
-            Learning rate of IE Hebbian STDP.
-        Jmax_ie_hebb : float or int
-            Hard constraint on IE Hebbian STDP.
-        eta_ei : float or int
-            Learning rate of iSTDP.
-        alpha_ei : float or int
-            Parameter that determines target rate in iSTDP.
-        eta_ii : float or int
-            Learning rate of iSTDP.
-        alpha_ii : float or int
-            Parameter that determines target rate in iSTDP.
-        dt : float or int
-            Time bin size in ms.
-        nBinsRecord : int 
-            Number of bins to record average and record over.
+        :param Cm: Membrane capacitance.
+        :type Cm: float or int
+        :param gL: Leak conductance.
+        :type gL: float or int
+        :param VT: Threshold in EIF neuron.
+        :type VT: float or int
+        :param Vre: Reset voltage.
+        :type Vre: float or int
+        :param Vth: Hard threshold that determines when a spike happened.
+        :type Vth: float or int
+        :param EL: Resting potential.
+        :type EL: float or int
+        :param DeltaT: EIF neuron parameter. Determines the shape of the rise to spike.
+        :type DeltaT: float or int
+        :param taue: Timescale of excitatory neurons in milliseconds.
+        :type taue: float or int
+        :param taui: Timescale of inhibitory neurons in milliseconds.
+        :type taui: float or int
+        :param taux: Timescale of external neurons in milliseconds.
+        :type taux: float or int
+        :param tauSTDP: Timescale of eligibility trace used for STDP.
+        :type tauSTDP: float or int
+        :param numrecord: Number of neurons to record currents and voltage from.
+        :type numrecord: int 
+        :param eta_ee_hebb: Learning rate of EE Hebbian STDP.
+        :type eta_ee_hebb: float or int
+        :param Jmax_ee: Hard constraint on EE Hebbian STDP.
+        :type Jmax_ee: float or int
+        :param eta_ee_koh: Learning rate of Kohonen STDP.
+        :type eta_ee_koh: float or int
+        :param beta: Parameter for Kohonen STDP.
+        :type beta: float or int
+        :param eta_ie_homeo: Learning rate of iSTDP.
+        :type eta_ie_homeo: float or int
+        :param alpha_ie: Parameter that determines target rate in iSTDP.
+        :type alpha_ie: float or int
+        :param eta_ie_hebb: Learning rate of IE Hebbian STDP.
+        :type eta_ie_hebb: float or int
+        :param Jmax_ie_hebb: Hard constraint on IE Hebbian STDP.
+        :type Jmax_ie_hebb: float or int
+        :param eta_ei: Learning rate of iSTDP.
+        :type eta_ei: float or int
+        :param alpha_ei: Parameter that determines target rate in iSTDP.
+        :type alpha_ei: float or int
+        :param eta_ii: Learning rate of iSTDP.
+        :type eta_ii: float or int
+        :param alpha_ii: Parameter that determines target rate in iSTDP.
+        :type alpha_ii: float or int
+        :param dt: Time bin size in ms.
+        :type dt: float or int
+        :param nBinsRecord: Number of bins to record average and record over.
+        :type nBinsRecord: int 
 
         Returns
-        s : np.ndarray
-            Spike trains of all neurons in recurrent network, recorded by neuron index and spike time.
-        sx : np.ndarray
-            Same as sx coming from `ffwd_spikes()`.
-        JRec_ee : np.ndarray
-            Matrix of neurons (rows) by time bins (cols) for EE recorded weights.
-        JRec_ie : np.ndarray
-            Matrix of neurons (rows) by time bins (cols) for IE recorded weights.
-        JRec_ei : np.ndarray
-            Matrix of neurons (rows) by time bins (cols) for EI recorded weights.
-        JRec_ii : np.ndarray
-            Matrix of neurons (rows) by time bins (cols) for II recorded weights.
-        IeRec : np.ndarray
-            Matrix of neurons (rows) by time bins (cols) for E input currents.
-        IiRec : np.ndarray
-            Matrix of neurons (rows) by time bins (cols) for I input currents.
-        IxRec : np.ndarray
-            Matrix of neurons (rows) by time bins (cols) for X input currents.
-        VRec : np.ndarray
-            Matrix of neurons (rows) by time bins (cols) for recurrent network voltages.
-        timeRecord : np.ndarray
-            Discretized, recorded time domain.
+        :return: A tuple containing spike train of all neurons in recurrent neural network (s); spike train of all feedforward neurons (sx), 
+        matrices of neurons (rows) by time bins (cols) for EE, EI, IE, and II recorded weights (JRec_ee, JRec_ie, JRec_ei, JRec_ii); 
+        matrices of neurons (rows) by time bins (cols) for E, I, and X input currents (IeRec, IiRec, IxRec);
+        matrix of neurons (rows) by time bins (cols) for recurrent network voltages (VRec); and discretized recorded time domain (timeRecord).
+        :rtype: (np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray)
+            
         """
         # Type errors.
         if not isinstance(Cm, (float, np.floating, int, np.integer)):

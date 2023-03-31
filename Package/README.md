@@ -31,10 +31,7 @@ This codebase was developed by Robert Rosenbaum and Alan Akil and is currently m
 
 `python setup.py sdist bdist_wheel`
 
-
 `twine upload dist/*`
-
-`git rm -r --cached docs/_build`
 
 ## Original Simulations
 Here we provide code for a series of simulations of plastic balanced networks. The results were reported in Akil et al. 2021 ("Balanced networks under spike-timing dependent plasticity"). Link to paper: https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008958

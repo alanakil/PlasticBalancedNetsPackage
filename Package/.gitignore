@@ -4,6 +4,7 @@
 .eggs/
 build/**
 data/processed/**
+docs/**
 dist/**
 logs/**
 pbn/**

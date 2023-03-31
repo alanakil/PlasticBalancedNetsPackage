@@ -3,14 +3,13 @@ from glob import glob
 import os
 from pathlib import Path
 
-from setuptools import Extension, find_packages, setup
-from setuptools.command.build_ext import build_ext
+from setuptools import find_packages, setup
 
 
 ####### Metadata ########
 NAME = "plastic_balanced_network"
 DESCRIPTION = "Plastic Balanced Network Package (Akil et al., 2021)"
-LDESCRIPTION = "This is a package with functions to simulate a plastic balanced network as defined in Akil et al., 2021."
+LDESCRIPTION = open('README.md').read()
 # URL = text/markdown
 MAINTAINER = "Alan Akil"
 EMAIL = "alan.akil@yahoo.com"
@@ -54,13 +53,13 @@ setup(
         "Operating System :: Unix",
         "Operating System :: POSIX",
         "Operating System :: Microsoft :: Windows",
-        "Operating System :: Python",
-        "Operating System :: Python :: 3",
-        "Operating System :: Python :: 3.8",
-        "Operating System :: Python :: 3.9",
-        "Operating System :: Python :: 3.10",
-        "Operating System :: Python :: Implementation :: CPython",
-        "Operating System :: Python :: Implementation :: PyPy",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: Implementation :: CPython",
+        "Programming Language :: Python :: Implementation :: PyPy",
     ],
     platforms=["Windows", "Linux", "Mac OS-X", "UNIX"],
     python_requires = REQUIRES_PYTHON,

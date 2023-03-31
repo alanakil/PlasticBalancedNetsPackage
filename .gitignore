@@ -1,0 +1,21 @@
+# Ignore these.
+**.egg
+.eggs/**
+.eggs/
+build/**
+data/processed/**
+docs/**
+dist/**
+logs/**
+original_simulations/.ipynb_checkpoints/
+original_simulations/plotting_code/.ipynb_checkpoints/
+pbn/**
+src/plastic_balanced_network.egg-info/
+src/plastic_balanced_network/__pycache__/
+tests/__pycache__
+# But keep
+# !dist/.gitkeep
+# !docs/_build/
+# !docs/_build/html/
+# !docs/_build/html/**
+# !docs/_build/.gitkeep

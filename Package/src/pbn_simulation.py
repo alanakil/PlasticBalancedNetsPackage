@@ -1,10 +1,22 @@
 """
-This code simulates a plastic balanced network as defined in Akil et al, 2021. 
-We build this as a Python package and allow for a great deal of flexibility constructing
-the simulation. One may change (1) Synaptic weights, (2) Type of plasticity, 
-(3) Connectivity, (4) Level of induced correlations, ...
+This code is a sample simulation of a plastic balanced network as defined in Akil et al, 2021. 
+The purpose of this code is to demonstrate how the `plastic_balanced_network` package can be used.
+
+We allow for a great deal of flexibility constructing the simulation/s. 
+One may easily change the following parameters: 
+(1) Total number of neurons.
+(2) Fraction of E-I neurons.
+(3) Probability of connection.
+(4) Synaptic strengths.
+(5) Total time of simulation.
+(6) Input rate and correlations.
+(7) Extra injected current.
+(8) EIF neuron parameters.
+(9) Plasticity parameters on any connection type.
+
 Output data is saved in the `data/processed` folder. 
-Please refer to the README.md under `Package` for detailed instructions on how to run this code.
+Logs are saved in `logs` folder.
+Please refer to the README.md for detailed instructions on how to run this code.
 """
 __author__ = "Alan Akil (alan.akil@yahoo.com)"
 __date__ = "MARCH 2023"
@@ -25,10 +37,12 @@ from pathlib import Path
 from plastic_balanced_network.helpers import plasticNeuralNetwork
 
 #%%
+# Construct a str containing the datetime when the simulation is run.
 todaysdate = dtm.today()
 datetime_format = "%Y%b%d-%H%M"
 datadatetime = todaysdate.strftime(datetime_format).upper()
 
+# Define paths: project root, data directory, and logs directory.
 PROJECTROOT = Path(__file__).parent.parent
 DATA_DIR = os.path.join(PROJECTROOT, "data", "processed")
 LOG_DIR = os.path.join(PROJECTROOT, "logs")
@@ -37,13 +51,11 @@ os.makedirs(LOG_DIR, exist_ok=True)
 DATA_FILE_PATH = f"{DATA_DIR}/pbn_data_{datadatetime}.npz"
 
 #%%
-
-
-start_time = time.time()
-
+# Set up logging.
 log_format = (
     "%(asctime)s - %(levelname)-8s - %(name)s - %(funcName)s:%(lineno)d - %(message)s"
 )
+# Use loglevel to filter out undesired logs.
 loglevel = "INFO"
 loglevel = str(loglevel).replace('"', "")
 levels = {
@@ -65,30 +77,35 @@ logging.basicConfig(
     level=level,
 )
 
-logging.info("Start simulation of plastic balanced network.")
-
 logging.info(f"Project root: {PROJECTROOT}.")
+logging.info(f"Data directory: {DATA_DIR}.")
+logging.info(f"Logs directory: {LOG_DIR}.")
 
 
 #%%
-# Number of neurons in each population
+# Define all input variables for the network simulation.
+logging.info("Define input variables for plastic balanced network simulation.")
+
+# Total number of neurons.
 N = int(5000)
+# Fraction of excitatory neurons.
 frac_exc = 0.8
+# Extra fraction of neurons (external).
 frac_ext = 0.2
 
-# Define individual connection probabilities
+# Define individual connection probabilities.
 p_ee = 0.1
 p_ei = 0.1
 p_ie = 0.1
 p_ii = 0.1
 p_ex = 0.1
 p_ix = 0.1
-# Recurrent net connection probabilities
+# Recurrent net connection probabilities.
 P = np.array([[p_ee, p_ei], [p_ie, p_ii]])
-# Ffwd connection probs
+# Ffwd connection probs.
 Px = np.array([[p_ex], [p_ix]])
 
-# Mean connection strengths between each cell type pair
+# Mean connection strengths between each cell type pair.
 jee = 25
 jei = -150
 jie = 112.5
@@ -98,32 +115,32 @@ jix = 135
 Jm = np.array([[jee, jei], [jie, jii]]) / np.sqrt(N)
 Jxm = np.array([[jex], [jix]]) / np.sqrt(N)
 
-# Total_time (in ms) for sim
+# Total time (in ms) for simulation.
 T = 5000
 
-# Total_time discretization
+# Step size for discretization.
 dt = 0.1
 
-# FFwd spike train rate (in kHz)
+# FFwd spike train rate (in kHz).
 rx = 10 / 1000
 # Correlation of ffwd spike trains.
-cx = 0
+cx = 0.1
 # Timescale of correlation in ms. Jitter spike trains in external layer by taujitter.
 taujitter = 5
 
 # Extra stimulus: Istim is a Total_time-dependent stimulus
-# it is delivered to all neurons with weights given by JIstim.
+# it is delivered to all neurons with weights given by Jstim.
 # Specifically, the stimulus to neuron j at Total_time index i is:
-# Istim(i)*JIstim(j)
+# Istim(i)*Jstim(j)
 jestim = 0
 jistim = 0
 
-# Synaptic timescales in ms
+# Synaptic timescales in ms.
 taux = 10
 taue = 8
 taui = 4
 
-# Neuron parameters
+# Neuron parameters.
 Cm = 1
 gL = 1 / 15
 EL = -72
@@ -132,49 +149,52 @@ Vre = -75
 DeltaT = 1
 VT = -55
 
-# Plasticity parameters
+# Plasticity parameters.
 tauSTDP = 200  # ms
 
 # EE hebb
 Jmax_ee = 30 / np.sqrt(N)
-eta_ee_hebb = 0 / 10**3  # Learning rate
+eta_ee_hebb = 0 / 10**3  # Learning rate, if zero then no plasticity.
 
 # EE kohonen
 beta = 2 / np.sqrt(N)
-eta_ee_koh = 0 / 10**2  # Learning rate
+eta_ee_koh = 0 / 10**2  # Learning rate, if zero then no plasticity.
 
 # IE hebb
 Jmax_ie_hebb = 125 / np.sqrt(N)
-eta_ie_hebb = 0 / 10**3  # Learning rate
+eta_ie_hebb = 0 / 10**3  # Learning rate, if zero then no plasticity.
 
-# IE homeo
+# IE homeostatic
 Jnorm_ie = 200 / np.sqrt(N)
-eta_ie_homeo = 0 / 10**3 / Jnorm_ie  # Learning rate
+eta_ie_homeo = 0 / 10**3 / Jnorm_ie  # Learning rate, if zero then no plasticity.
 rho_ie = 0.020  # Target rate 20Hz
 alpha_ie = 2 * rho_ie * tauSTDP
 
-# EI homeo
+# EI homeostatic
 Jnorm_ei = -200 / np.sqrt(N)
-eta_ei = 0.015 / 10**3 / Jnorm_ei  # Learning rate
+eta_ei = 0.015 / 10**3 / Jnorm_ei  # Learning rate, if zero then no plasticity.
 rho_ei = 0.010  # Target rate 10Hz
 alpha_ei = 2 * rho_ei * tauSTDP
 
-# II
+# II homeostatic
 Jnorm_ii = -300 / np.sqrt(N)
-eta_ii = 0.015 / 10**3 / Jnorm_ii  # Learning rate
+eta_ii = 0.015 / 10**3 / Jnorm_ii  # Learning rate, if zero then no plasticity.
 rho_ii = 0.020  # Target rate 20Hz
 alpha_ii = 2 * rho_ii * tauSTDP
 
-# Indices of neurons to record currents, voltages
-numrecord = int(100)  # Number to record from each population
-# Number of time bins to average over when recording
+# Number of neurons to record from each population.
+numrecord = int(100)  
+# Number of time bins to average over when recording currents and voltages.
 nBinsRecord = 10
-# Number of synapses to be sampled
+# Number of synapses to be sampled per cell type pair that is plastic.
 nJrecord0 = 1000
+
+# Set the random seed.
+np.random.seed(31415)
 
 #%%
 # Define the model.
-nn = plasticNeuralNetwork(
+pnn = plasticNeuralNetwork(
     N,
     frac_exc,
     frac_ext,
@@ -186,15 +206,18 @@ nn = plasticNeuralNetwork(
 )
 
 #%%
-# Initialize the connectivity
-nn.connectivity(Jm, Jxm, P, Px, nJrecord0)
+# Initialize the connectivity.
+pnn.connectivity(Jm, Jxm, P, Px, nJrecord0)
 
 #%%
-# Generate Poisson ffwd spike trains
-nn.ffwd_spikes(cx, rx, taujitter, T)
+# Generate Poisson ffwd spike trains.
+pnn.ffwd_spikes(cx, rx, taujitter, T)
 
 #%%
-# Simulate plastic network
+# Simulate plastic network.
+# Note that spike trains are recorded in s as follows:
+# s(0,:) are the spike times
+# s(1,:) are the associated neuron indices
 (
     s,
     sx,
@@ -207,7 +230,7 @@ nn.ffwd_spikes(cx, rx, taujitter, T)
     IxRec,
     VRec,
     timeRecord,
-) = nn.simulate(
+) = pnn.simulate(
     Cm,
     gL,
     VT,
@@ -297,9 +320,7 @@ for key, value in data.items():
 # Raster plot of neurons firing.
 
 #%%
-# s(0,:) are the spike times
-# s(1,:) are the associated neuron indices
-
+# Raster plot.
 fig = plt.figure(figsize=(8, 5))
 ax = plt.subplot(111)
 
@@ -310,6 +331,7 @@ sns.set_style("ticks")
 sns.set_context("talk", font_scale=1.9, rc={"lines.linewidth": 2.3})
 
 plt.scatter(s[0, :] / 1000, s[1, :], s=0.02, color="black")
+
 plt.xlabel("time (s)")
 plt.ylabel("Neuron index")
 plt.ylim((0, N))
@@ -322,12 +344,9 @@ plt.show()
 # Balance of mean currents.
 
 # %%
-# Start the figure.
+# Plot input currents.
 fig = plt.figure(figsize=(8, 5))
 ax = plt.subplot(111)
-# ax.spines['left'].set_color('black')
-# ax.spines['left'].set_linewidth(3)
-
 sns.set()
 sns.set_style("whitegrid")
 sns.set_style("white")
@@ -350,21 +369,19 @@ plt.plot(
 
 plt.xlabel("Time (s)")
 plt.ylabel("Input")
-
 plt.xlim((0, T / 1000))
 
 leg = plt.legend(loc="upper left", fontsize=18, frameon="none", markerscale=1)
 leg.get_frame().set_linewidth(0.0)
 
 sns.despine()
-
 plt.show()
 
 # %% [markdown]
 # Time course of mean synaptic weight.
 
 # %%
-# Start the figure.
+# Time course of mean synaptic weight.
 fig = plt.figure(figsize=(8, 5))
 ax = plt.subplot(111)
 
@@ -402,16 +419,14 @@ plt.show()
 # Distribution synaptic weight over connections.
 
 # %%
-# Start the figure.
+# Distribution synaptic weight over connections.
 fig = plt.figure(figsize=(8, 5))
 ax = plt.subplot(111)
-
 sns.set()
 sns.set_style("whitegrid")
 sns.set_style("white")
 sns.set_style("ticks")
 sns.set_context("talk", font_scale=1.9, rc={"lines.linewidth": 3.3})
-
 
 if eta_ee_hebb != 0:
     sns.histplot(
@@ -470,7 +485,6 @@ if eta_ii != 0:
 
 plt.xlabel("Syn. weight")
 plt.ylabel("Count")
-plt.yticks(())
 
 sns.despine()
 plt.show()
@@ -479,6 +493,8 @@ plt.show()
 # Time course of firing rates.
 
 #%%
+# Time course of firing rates.
+
 # Compute histogram of rates (over time)
 dtRate = 100  # ms
 timeVector = np.arange(dtRate, T + dtRate, dtRate) / 1000
@@ -500,7 +516,6 @@ for i in range(Num_points):
 # Start the figure.
 fig = plt.figure(figsize=(8, 5))
 ax = plt.subplot(111)
-
 sns.set()
 sns.set_style("whitegrid")
 sns.set_style("white")
@@ -597,9 +612,6 @@ def cov2corr(cov):
 # Apply functions above to compute covariances and correlations.
 
 #%%
-
-## All the code below computes spike count covariances and correlations
-
 # Compute spike count covariances over windows of size
 # winsize starting at time T1 and ending at time T2.
 winsize = 250  # ms
@@ -639,13 +651,12 @@ if ComputeSpikeCountCorrs:
     print("mR =", mR)
 
 # %% [markdown]
-# Plot distributions of EE, EI, II correlations.
+# Plot distributions of EE, EI, IE, II correlations.
 
 # %%
-# Start the figure.
+# Plot distributions of EE, EI, IE, II correlations.
 fig = plt.figure(figsize=(8, 5))
 ax = plt.subplot(111)
-
 sns.set()
 sns.set_style("whitegrid")
 sns.set_style("white")

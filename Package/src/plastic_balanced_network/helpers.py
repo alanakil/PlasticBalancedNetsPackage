@@ -1,5 +1,5 @@
 """
-Helper functions for main code.
+Functions to build and simulate a plastic balanced network.
 """
 __author__ = "Alan Akil (alan.akil@yahoo.com)"
 __date__ = "MARCH 2023"
@@ -12,8 +12,14 @@ import time
 import logging
 
 #%%
-#%%
 class plasticNeuralNetwork:
+    """
+    plasticNeuralNetwork is a class that builds a neural network with
+    correlated or uncorrelated firing as well as with plastic or static
+    synaptic weights on any connection.
+    It contains functions to define the connectivity, simulate feedforward external
+    spike trains, and to simulate the recurrent network's firing.
+    """
     def __init__(
         self,
         N,
@@ -26,63 +32,76 @@ class plasticNeuralNetwork:
         nBinsRecord,
     ):
         """
-        plasticNeuralNetwork is a class that builds a neural network with
-        correlated or uncorrelated firing as well as with plastic or static
-        synaptic weights on any connection.
-        It contains functions to define the connectivity, simulate feedforward external
-        spike trains, and to simulate the recurrent network's firing.
+        Initializing function.
 
         Inputs
-        N : Total number of neurons in recurrent neural network.
-        frac_exc : Fraction of excitatory neurons. Typically 0.8.
-        frac_ext : Fraction of excitatory neurons in external layer. Typically 0.2.
-        T : Total time of simulation in milliseconds.
-        dt : Time bin size for time discretization.
-        jestim : Added constant current to excitatory neurons.
-        jistim : Added constant current to inhibitory neurons.
-        nBinsRecord : Number of bins to record average and record over.
+        N : int
+            Total number of neurons in recurrent neural network.
+        frac_exc : float or int 
+            Fraction of excitatory neurons. Typically 0.8.
+        frac_ext : float or int 
+            Fraction of excitatory neurons in external layer. Typically 0.2.
+        T : int
+            Total time of simulation in milliseconds.
+        dt : float or int 
+            Time bin size for time discretization.
+        jestim : float or int 
+            Added constant current to excitatory neurons.
+        jistim : float or int 
+            Added constant current to inhibitory neurons.
+        nBinsRecord : int
+            Number of bins to record average and record over.
 
         Returns
-        Ne : Number of excitatory neurons.
-        Ni : Number of inhibitory neurons.
-        Nx : Number of external neurons.
-        Nt : Total number of discretized time points.
-        Istim : Time vector of added constant stimulation.
-        Jstim : Weight coupling for Istim.
-        maxns : Maximum number of spikes to terminate pathologic behavior.
-        timeRecord : Discretized recorded time domain.
-        Ntrec : Number of points in discretized recorded time domain.
+        Ne : int
+            Number of excitatory neurons.
+        Ni : int
+            Number of inhibitory neurons.
+        Nx : int
+            Number of external neurons.
+        Nt : int
+            Total number of discretized time points.
+        Istim : np.ndarray
+            Time vector of added constant stimulation.
+        Jstim : np.ndarray
+            Weight coupling for Istim.
+        maxns : float or int
+            Maximum number of spikes to terminate pathologic behavior.
+        timeRecord : np.ndarray
+            Discretized recorded time domain.
+        Ntrec : int
+            Number of points in discretized recorded time domain.
         """
         # Type tests.
-        if type(N) not in [int]:
+        if not isinstance(N, (int, np.integer)):
             err = TypeError("ERROR: N is not int")
             logging.exception(err)
             raise err
-        if type(frac_exc) not in [int, float]:
+        if not isinstance(frac_exc, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: frac_exc is not one of these - int, float")
             logging.exception(err)
             raise err
-        if type(frac_ext) not in [int, float]:
-            err = TypeError("ERROR: frac_exc is not one of these - int, float")
+        if not isinstance(frac_ext, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: frac_ext is not one of these - int, float")
             logging.exception(err)
             raise err
-        if type(T) not in [int]:
+        if not isinstance(T, (int, np.integer)):
             err = TypeError("ERROR: T is not int")
             logging.exception(err)
             raise err
-        if type(dt) not in [int, float]:
+        if not isinstance(dt, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: dt is not one of these - int, float")
             logging.exception(err)
             raise err
-        if type(jestim) not in [int, float]:
+        if not isinstance(jestim, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: jestim is not one of these - int, float")
             logging.exception(err)
             raise err
-        if type(jistim) not in [int, float]:
+        if not isinstance(jistim, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: jistim is not one of these - int, float")
             logging.exception(err)
             raise err
-        if type(nBinsRecord) not in [int]:
+        if not isinstance(nBinsRecord, (int, np.integer)):
             err = TypeError("ERROR: nBinsRecord is not int")
             logging.exception(err)
             raise err
@@ -112,6 +131,9 @@ class plasticNeuralNetwork:
             logging.exception(err)
             raise err
 
+        # Start the simulation.
+        start_time = time.time()
+        
         self.N = N
         self.Ne = int(round(frac_exc * N))
         self.Ni = int(round((1 - frac_exc) * N))
@@ -128,26 +150,52 @@ class plasticNeuralNetwork:
         self.timeRecord = np.arange(dtRecord, T + dtRecord, dtRecord)
         self.Ntrec = len(self.timeRecord)
 
+        logging.info(f"Simulating a network of {self.N} neurons.")
+        logging.info(f"{self.Ne} neurons are excitatory.")
+        logging.info(f"{self.Ni} neurons are inhibitory.")
+        logging.info(f"The external layer, X, provides input from {self.Nx} excitatory neurons.")
+        logging.info(f"The network will be simulated for {T/1000} seconds.")
+
+        elapsed_time = time.time() - start_time
+        logging.info(f"Time for initializing the class: {round(elapsed_time/60,2)} minutes.")
+
     def connectivity(self, Jm, Jxm, P, Px, nJrecord0):
         """
         Create connectivity matrix and arrays to record individual weights of all four connections.
-        Jm : Mean field matrix J for recurrent connections. It contains avg value of connection for recurrent connections.
-        Jxm : Mean field matrix Jx for feedforward connections. It contains avg value of connection for feedforward connections.
-        P : Matrix containing probability of connection for each pair of populations.
-        Px : Matrix containing probability of connection for each pair of populations from external to recurrent.
-        nJrecord0 : Count of synaptic weights recorded. Relevant when network is plastic.
+        
+        Inputs
+        Jm : np.ndarray
+            Mean field matrix J for recurrent connections. It contains avg value of connection for recurrent connections.
+        Jxm : np.ndarray
+            Mean field matrix Jx for feedforward connections. It contains avg value of connection for feedforward connections.
+        P : np.ndarray
+            Matrix containing probability of connection for each pair of populations.
+        Px : np.ndarray
+            Matrix containing probability of connection for each pair of populations from external to recurrent.
+        nJrecord0 : int
+            Count of synaptic weights recorded. Relevant when network is plastic.
 
         Returns (as part of `self`)
-        J : Recurrent connectivity matrix.
-        Jx : External feedforward connectivity matrix.
-        Jrecord_ee : Indices of recorded EE synaptic weights.
-        Jrecord_ie : Indices of recorded IE synaptic weights.
-        Jrecord_ei : Indices of recorded EI synaptic weights.
-        Jrecord_ii : Indices of recorded II synaptic weights.
-        numrecordJ_ee : Number of recorded EE synaptic weights.
-        numrecordJ_ie : Number of recorded IE synaptic weights.
-        numrecordJ_ei : Number of recorded EI synaptic weights.
-        numrecordJ_ii : Number of recorded II synaptic weights.
+        J : np.ndarray
+            Recurrent connectivity matrix.
+        Jx : np.ndarray
+            External feedforward connectivity matrix.
+        Jrecord_ee : np.ndarray
+            Indices of recorded EE synaptic weights.
+        Jrecord_ie : np.ndarray
+            Indices of recorded IE synaptic weights.
+        Jrecord_ei : np.ndarray
+            Indices of recorded EI synaptic weights.
+        Jrecord_ii : np.ndarray
+            Indices of recorded II synaptic weights.
+        numrecordJ_ee : int
+            Number of recorded EE synaptic weights.
+        numrecordJ_ie : int
+            Number of recorded IE synaptic weights.
+        numrecordJ_ei : int
+            Number of recorded EI synaptic weights.
+        numrecordJ_ii : int
+            Number of recorded II synaptic weights.
         """
         # Test types
         if type(Jm) not in [np.ndarray]:
@@ -166,7 +214,7 @@ class plasticNeuralNetwork:
             err = TypeError("ERROR: Px is not np.array.")
             logging.exception(err)
             raise err
-        if type(nJrecord0) not in [int]:
+        if not isinstance(nJrecord0, (int, np.integer)):
             err = TypeError("ERROR: nJrecord0 is not int.")
             logging.exception(err)
             raise err
@@ -224,6 +272,9 @@ class plasticNeuralNetwork:
             logging.exception(err)
             raise err
 
+        # Start the simulation.
+        start_time = time.time()
+
         # Define connectivity
         self.J = np.vstack(
             (
@@ -264,6 +315,8 @@ class plasticNeuralNetwork:
                 ),
             )
         )
+
+        logging.info(f"Connectivity matrices J and Jx were built successfully.")
 
         # Define variables to record changes in weights.
         # Synaptic weights EE to record.
@@ -330,39 +383,51 @@ class plasticNeuralNetwork:
         self.Jrecord_ii = np.array([II + self.Ne, JJ + self.Ne])  # Record these
         self.numrecordJ_ii = len(JJ)
 
+        elapsed_time = time.time() - start_time
+        logging.info(f"Time for building connectivity matrix: {round(elapsed_time/60,2)} minutes.")
+        
+
         return None
 
     def ffwd_spikes(self, cx, rx, taujitter, T):
         """
         Create all spike trains of the Poisson feedforward, external layer.
-        cx : Value of mean correlation between feedforward Poisson spike trains.
-        rx : Rate of feedforward Poisson neurons in Hz.
-        taujitter : Spike trains are jittered by taujitter milliseconds to avoid perfect synchrony.
-        T : Total time of simulation.
+
+        Inputs
+        cx : float or int
+            Value of mean correlation between feedforward Poisson spike trains.
+        rx : float or int
+            Rate of feedforward Poisson neurons in Hz.
+        taujitter : float or int
+            Spike trains are jittered by taujitter milliseconds to avoid perfect synchrony.
+        T : int
+            Total time of simulation.
         
         Returns (as part of `self`)
-        sx : Feedforward, Poisson spike trains recorded as spike time and neuron index.
-        nspikeX : Total number of spikes in sx.
+        sx : np.ndarray
+            Feedforward, Poisson spike trains recorded as spike time and neuron index.
+        nspikeX : int
+            Total number of spikes in sx.
         """
         # Type errors
-        if type(cx) not in [int, float]:
+        if not isinstance(cx, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: cx is not int nor float.")
             logging.exception(err)
             raise err
-        if type(rx) not in [int, float]:
+        if not isinstance(rx, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: rx is not int nor float.")
             logging.exception(err)
             raise err
-        if type(taujitter) not in [int, float]:
+        if not isinstance(taujitter, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: taujitter is not int nor float.")
             logging.exception(err)
             raise err
-        if type(T) not in [int]:
+        if not isinstance(T, (int, np.integer)):
             err = TypeError("ERROR: T is not int")
             logging.exception(err)
             raise err
         # Value tests.
-        if (cx > 1) | (cx <= 0):
+        if (cx > 1) | (cx < 0):
             err = ValueError("ERROR: cx, input corrs, have to be between 0 and 1.")
             logging.exception(err)
             raise err
@@ -378,6 +443,9 @@ class plasticNeuralNetwork:
             err = ValueError("ERROR: T has to be greater than 0.")
             logging.exception(err)
             raise err
+        
+        # Start the simulation.
+        start_time = time.time()
 
         if cx < 1e-5:  # If uncorrelated
             self.nspikeX = np.random.poisson(self.Nx * rx * T)
@@ -387,6 +455,7 @@ class plasticNeuralNetwork:
             self.sx[1, :] = np.random.randint(
                 1, self.Nx, (1, len(st[0]))
             )  # neuron index that spiked
+            logging.info(f"Uncorrelated ffwd spike trains (cx={cx} and rate={rx} kHz) were generated successfully.")
         else:  # If correlated
             rm = rx / cx  # Firing rate of mother process
             nstm = np.random.poisson(rm * T)  # Number of mother spikes
@@ -417,6 +486,11 @@ class plasticNeuralNetwork:
             I = np.argsort(sx[0, :])
             self.sx = sx[:, I]
             self.nspikeX = len(sx[0, :])
+            
+            logging.info(f"Correlated ffwd spike trains (cx={cx} and rate={rx} kHz) were generated successfully.")
+
+        elapsed_time = time.time() - start_time
+        logging.info(f"Time for generating feedforward Poisson spike trains: {round(elapsed_time/60,2)} minutes.")
 
         return None
 
@@ -451,144 +525,183 @@ class plasticNeuralNetwork:
     ):
         """
         Execute Network simulation.
-        Cm : Membrane capacitance.
-        gL : Leak conductance.
-        VT : Threshold in EIF neuron.
-        Vre : Reset voltage.
-        Vth : Hard threshold that determines when a spike happened.
-        EL : Resting potential.
-        DeltaT : EIF neuron parameter. Determines the shape of the rise to spike.
-        taue : Timescale of excitatory neurons in milliseconds.
-        taui : Timescale of inhibitory neurons in milliseconds.
-        taux  : Timescale of external neurons in milliseconds.
-        tauSTDP :  Timescale of eligibility trace used for STDP.
-        numrecord : Number of neurons to record currents and voltage from.
-        eta_ee_hebb : Learning rate of EE Hebbian STDP.
-        Jmax_ee : Hard constraint on EE Hebbian STDP.
-        eta_ee_koh : Learning rate of Kohonen STDP.
-        beta : Parameter for Kohonen STDP.
-        eta_ie_homeo : Learning rate of iSTDP.
-        alpha_ie : Parameter that determines target rate in iSTDP.
-        eta_ie_hebb : Learning rate of IE Hebbian STDP.
-        Jmax_ie_hebb : Hard constraint on IE Hebbian STDP.
-        eta_ei : Learning rate of iSTDP.
-        alpha_ei : Parameter that determines target rate in iSTDP.
-        eta_ii : Learning rate of iSTDP.
-        alpha_ii : Parameter that determines target rate in iSTDP.
-        dt : Time bin size in ms.
-        nBinsRecord : Number of bins to record average and record over.
+
+        Inputs
+        Cm : float or int
+            Membrane capacitance.
+        gL : float or int
+            Leak conductance.
+        VT : float or int
+            Threshold in EIF neuron.
+        Vre : float or int
+            Reset voltage.
+        Vth : float or int
+            Hard threshold that determines when a spike happened.
+        EL : float or int
+            Resting potential.
+        DeltaT : float or int
+            EIF neuron parameter. Determines the shape of the rise to spike.
+        taue : float or int
+            Timescale of excitatory neurons in milliseconds.
+        taui : float or int
+            Timescale of inhibitory neurons in milliseconds.
+        taux  : float or int
+            Timescale of external neurons in milliseconds.
+        tauSTDP :  float or int
+            Timescale of eligibility trace used for STDP.
+        numrecord : int 
+            Number of neurons to record currents and voltage from.
+        eta_ee_hebb : float or int
+            Learning rate of EE Hebbian STDP.
+        Jmax_ee : float or int
+            Hard constraint on EE Hebbian STDP.
+        eta_ee_koh : float or int
+            Learning rate of Kohonen STDP.
+        beta : float or int
+            Parameter for Kohonen STDP.
+        eta_ie_homeo : float or int
+            Learning rate of iSTDP.
+        alpha_ie : float or int
+            Parameter that determines target rate in iSTDP.
+        eta_ie_hebb : float or int
+            Learning rate of IE Hebbian STDP.
+        Jmax_ie_hebb : float or int
+            Hard constraint on IE Hebbian STDP.
+        eta_ei : float or int
+            Learning rate of iSTDP.
+        alpha_ei : float or int
+            Parameter that determines target rate in iSTDP.
+        eta_ii : float or int
+            Learning rate of iSTDP.
+        alpha_ii : float or int
+            Parameter that determines target rate in iSTDP.
+        dt : float or int
+            Time bin size in ms.
+        nBinsRecord : int 
+            Number of bins to record average and record over.
 
         Returns
-        s : Spike trains of all neurons in recurrent network, recorded by neuron index and spike time.
-        sx : Same as sx coming from `ffwd_spikes()`.
-        JRec_ee : Matrix of neurons (rows) by time bins (cols) for EE recorded weights.
-        JRec_ie : Matrix of neurons (rows) by time bins (cols) for IE recorded weights.
-        JRec_ei : Matrix of neurons (rows) by time bins (cols) for EI recorded weights.
-        JRec_ii : Matrix of neurons (rows) by time bins (cols) for II recorded weights.
-        IeRec : Matrix of neurons (rows) by time bins (cols) for E input currents.
-        IiRec : Matrix of neurons (rows) by time bins (cols) for I input currents.
-        IxRec : Matrix of neurons (rows) by time bins (cols) for X input currents.
-        VRec : Matrix of neurons (rows) by time bins (cols) for recurrent network voltages.
-        timeRecord : Discretized, recorded time domain.
+        s : np.ndarray
+            Spike trains of all neurons in recurrent network, recorded by neuron index and spike time.
+        sx : np.ndarray
+            Same as sx coming from `ffwd_spikes()`.
+        JRec_ee : np.ndarray
+            Matrix of neurons (rows) by time bins (cols) for EE recorded weights.
+        JRec_ie : np.ndarray
+            Matrix of neurons (rows) by time bins (cols) for IE recorded weights.
+        JRec_ei : np.ndarray
+            Matrix of neurons (rows) by time bins (cols) for EI recorded weights.
+        JRec_ii : np.ndarray
+            Matrix of neurons (rows) by time bins (cols) for II recorded weights.
+        IeRec : np.ndarray
+            Matrix of neurons (rows) by time bins (cols) for E input currents.
+        IiRec : np.ndarray
+            Matrix of neurons (rows) by time bins (cols) for I input currents.
+        IxRec : np.ndarray
+            Matrix of neurons (rows) by time bins (cols) for X input currents.
+        VRec : np.ndarray
+            Matrix of neurons (rows) by time bins (cols) for recurrent network voltages.
+        timeRecord : np.ndarray
+            Discretized, recorded time domain.
         """
         # Type errors.
-        if type(Cm) not in [int,float]:
+        if not isinstance(Cm, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: Cm is not int nor float.")
             logging.exception(err)
             raise err
-        if type(gL) not in [int,float]:
+        if not isinstance(gL, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: gL is not int nor float.")
             logging.exception(err)
             raise err
-        if type(VT) not in [int,float]:
+        if not isinstance(VT, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: VT is not int nor float.")
             logging.exception(err)
             raise err
-        if type(Vre) not in [int,float]:
+        if not isinstance(Vre, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: Vre is not int nor float.")
             logging.exception(err)
             raise err
-        if type(Vth) not in [int,float]:
+        if not isinstance(Vth, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: Vth is not int nor float.")
             logging.exception(err)
             raise err
-        if type(EL) not in [int,float]:
+        if not isinstance(EL, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: EL is not int nor float.")
             logging.exception(err)
             raise err
-        if type(DeltaT) not in [int,float]:
+        if not isinstance(DeltaT, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: DeltaT is not int nor float.")
             logging.exception(err)
             raise err
-        if type(taue) not in [int,float]:
+        if not isinstance(taue, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: taue is not int nor float.")
             logging.exception(err)
             raise err
-        if type(taui) not in [int,float]:
+        if not isinstance(taui, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: taui is not int nor float.")
             logging.exception(err)
             raise err
-        if type(taux) not in [int,float]:
+        if not isinstance(taux, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: taux is not int nor float.")
             logging.exception(err)
             raise err
-        if type(tauSTDP) not in [int,float]:
+        if not isinstance(tauSTDP, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: tauSTDP is not int nor float.")
             logging.exception(err)
             raise err
-        if type(eta_ee_hebb) not in [int,float]:
+        if not isinstance(eta_ee_hebb, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: eta_ee_hebb is not int,float.")
             logging.exception(err)
             raise err
-        if type(Jmax_ee) not in [int,float]:
+        if not isinstance(Jmax_ee, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: Jmax_ee is not int,float.")
             logging.exception(err)
             raise err
-        if type(eta_ee_koh) not in [int,float]:
+        if not isinstance(eta_ee_koh, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: eta_ee_koh is not int,float.")
             logging.exception(err)
             raise err
-        if type(beta) not in [int,float]:
+        if not isinstance(beta, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: beta is not int,float.")
             logging.exception(err)
             raise err
-        if type(eta_ie_homeo) not in [int,float]:
+        if not isinstance(eta_ie_homeo, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: eta_ie_homeo is not int,float.")
             logging.exception(err)
             raise err
-        if type(alpha_ie) not in [int,float]:
+        if not isinstance(alpha_ie, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: alpha_ie is not int,float.")
             logging.exception(err)
             raise err
-        if type(eta_ie_hebb) not in [int,float]:
+        if not isinstance(eta_ie_hebb, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: eta_ie_hebb is not int,float.")
             logging.exception(err)
             raise err
-        if type(Jmax_ie_hebb) not in [int,float]:
+        if not isinstance(Jmax_ie_hebb, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: Jmax_ie_hebb is not int,float.")
             logging.exception(err)
             raise err
-        if type(eta_ei) not in [int,float]:
+        if not isinstance(eta_ei, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: eta_ei is not int,float.")
             logging.exception(err)
             raise err
-        if type(alpha_ei) not in [int,float]:
+        if not isinstance(alpha_ei, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: alpha_ei is not int,float.")
             logging.exception(err)
             raise err
-        if type(eta_ii) not in [int,float]:
+        if not isinstance(eta_ii, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: eta_ii is not int,float.")
             logging.exception(err)
             raise err
-        if type(alpha_ii) not in [int,float]:
+        if not isinstance(alpha_ii, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: alpha_ii is not int,float.")
             logging.exception(err)
             raise err
-        if type(dt) not in [int,float]:
+        if not isinstance(dt, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: dt is not int,float.")
             logging.exception(err)
             raise err
-        if type(nBinsRecord) not in [int]:
+        if not isinstance(nBinsRecord, (int, np.integer)):
             err = TypeError("ERROR: nBinsRecord is not int.")
             logging.exception(err)
             raise err
@@ -750,9 +863,38 @@ class plasticNeuralNetwork:
         JRec_ii = np.zeros((self.numrecordJ_ii, self.Ntrec))
         # Initial spike related variables.
         iFspike = 0
+        # s(0,:) are the spike times
+        # s(1,:) are the associated neuron indices
         s = np.zeros((2, self.maxns))
         nspike = 0
         TooManySpikes = 0
+
+        logging.info(f"We will record currents and membrane potential from {numrecord} E and {numrecord} I neurons.")
+
+        # If there is EE Hebbian plasticity
+        if eta_ee_hebb != 0:
+            logging.info("EE connections will evolve according to Hebbian STDP.")
+            logging.info(f"We will record {self.numrecordJ_ee} plastic EE weights.")
+        # If there is EE Kohonen plasticity
+        if eta_ee_koh != 0:
+            logging.info("EE connections will evolve according to Kohonen's rule.")
+            logging.info(f"We will record {self.numrecordJ_ee} plastic EE weights.")
+        # If there is IE *Homeo* plasticity
+        if eta_ie_homeo != 0:
+            logging.info("IE connections will evolve according to homeostatic STDP.")
+            logging.info(f"We will record {self.numrecordJ_ie} plastic IE weights.")
+        # If there is IE *Hebbian* plasticity
+        if eta_ie_hebb != 0:
+            logging.info("IE connections will evolve according to Hebbian STDP.")
+            logging.info(f"We will record {self.numrecordJ_ie} plastic IE weights.")
+        # If there is EI plasticity
+        if eta_ei != 0:
+            logging.info("EI connections will evolve according to homeosatic iSTDP.")
+            logging.info(f"We will record {self.numrecordJ_ei} plastic EI weights.")
+        # If there is II plasticity
+        if eta_ii != 0:
+            logging.info("II connections will evolve according to homeostatic iSTDP.")
+            logging.info(f"We will record {self.numrecordJ_ii} plastic II weights.")
 
         # Start the simulation.
         start_time = time.time()
@@ -931,9 +1073,6 @@ class plasticNeuralNetwork:
             # Reset mem pot.
             V[0, Ispike] = Vre
 
-        elapsed_time = time.time() - start_time
-        logging.info(f"Time for simulation: {round(elapsed_time/60,2)} minutes.")
-
         IeRec = IeRec / nBinsRecord  # Normalize recorded variables by # bins
         IiRec = IiRec / nBinsRecord
         IxRec = IxRec / nBinsRecord
@@ -944,6 +1083,11 @@ class plasticNeuralNetwork:
         JRec_ii = JRec_ii * np.sqrt(self.N) / nBinsRecord
 
         s = s[:, 0:nspike]  # Get rid of padding in s
+
+        logging.info(f"The plastic balanced network has been simulated successfully.")
+
+        elapsed_time = time.time() - start_time
+        logging.info(f"Time for simulation: {round(elapsed_time/60,2)} minutes.")
 
         return (
             s,

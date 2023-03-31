@@ -1,12 +1,33 @@
 # PlasticBalancedNetsPackage
 
-Here we provide code for a series of simulations of plastic balanced networks. The results were reported in Akil et al. 2021 ("Balanced Networks Under Spike-Timing Dependent Plasticity"). Link to preprint: https://www.biorxiv.org/content/10.1101/2020.04.26.061515v1
+## Package for Simulating a Plastic Balanced Network
 
-The code used here to simulate a balanced network is almost the same as in https://github.com/alanakil/BalancedNetworkPackage. Please refer to that Package for more details on how simulations were run along with details about the neuron model, initial connectivity, etc.
+The package `plastic_balanced_network` can be used to simulate spiking neural networks in the balance regime and undergoing synaptic plasticity on any cell type pair. 
 
-We provide code to simulate balanced networks undergoing a number of STDP rules: Kohonen, Oja, classical Hebbian, and inhibitory STDP (as in Vogels et al 2011). 
+There is a great deal of flexibility to simulate a network with any combination of the following parameters:
+(1) Total number of neurons.
+(2) Fraction of E-I neurons.
+(3) Probability of connection.
+(4) Synaptic strengths.
+(5) Total time of simulation.
+(6) Input rate and correlations.
+(7) Extra injected current.
+(8) EIF neuron parameters.
+(9) Plasticity parameters on any connection type and plasticity type(Hebbian, Kohonen, homeostatic inhibitory plasticities).
 
-In addition to that, we provide code where we run several realizations of plastic balanced networks with varying: 
+To install this package, run `pip install plastic_balanced_network` in the terminal. 
+Alternatively, clone the repo and run `pip install -e .` in the `Package` directory.
+Import the package using: `import plastic_balanced_network`
+
+Documentation: 
+
+This codebase was developed by Robert Rosenbaum and Alan Akil and is currently maintained by Alan Akil. 
+
+## Original Simulations
+Here we provide code for a series of simulations of plastic balanced networks. The results were reported in Akil et al. 2021 ("Balanced networks under spike-timing dependent plasticity"). Link to paper: https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008958
+
+We provide the MATLAB and Python code that was used for all simulations in Akil et al., 2021 in the folder named `original_simulations`.
+In this code, we run several realizations of plastic balanced networks with varying: 
 
 - Network size. To compare with theoretical predictions of rates, covariances, and synaptic weights.
 
@@ -14,6 +35,4 @@ In addition to that, we provide code where we run several realizations of plasti
 
 - Initial connectivity. To show the emergence of a manifold of fixed points in weight space when only I->E synapses are plastic.
 
-Lastly, we also provided code that simulates optogenetic activation of subset of E neurons in a plastic balanced network.
-
-In this repository, there are several files that simulate balanced networks under different STDP rules and under different conditions. For people interested in simulating themselves a plastic balanced network, please refer to the file named "BN_all_STDPs.ipynb".
+Please see more details in the paper Akil et al., 2021

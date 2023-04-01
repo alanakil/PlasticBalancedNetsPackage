@@ -13,12 +13,36 @@ import logging
 
 #%%
 class plasticNeuralNetwork:
-    """
-    plasticNeuralNetwork is a class that builds a neural network with
+    """plasticNeuralNetwork is a class that builds a neural network with
     correlated or uncorrelated firing as well as with plastic or static
     synaptic weights on any connection.
     It contains functions to define the connectivity, simulate feedforward external
     spike trains, and to simulate the recurrent network's firing.
+
+    Inputs
+    :param N: Total number of neurons in recurrent neural network.
+    :type N: int
+    :param frac_exc: Fraction of excitatory neurons. Typically 0.8.
+    :type frac_exc: float or int 
+    :param frac_ext: Fraction of excitatory neurons in external layer. Typically 0.2.
+    :type frac_ext: float or int 
+    :param T: Total time of simulation in milliseconds.
+    :type T: int
+    :param dt: Time bin size for time discretization.
+    :type dt: float or int 
+    :param jestim: Added constant current to excitatory neurons.
+    :type jestim: float or int 
+    :param jistim: Added constant current to inhibitory neurons.
+    :type jistim: float or int 
+    :param nBinsRecord: Number of bins to record average and record over.
+    :type nBinsRecord: int
+
+    Returns as part of self.
+    :return: Number of excitatory neurons (Ne); Number of inhibitory neurons (Ni); Number of external neurons (Nx);
+    Total number of discretized time points (Nt); Time vector of added constant stimulatiom (Istim);
+    Weight coupling for Istim (Jstim); Maximum number of spikes to terminate pathologic behavior (maxns);
+    Discretized recorded time domain (timeRecord); Number of points in discretized recorded time domain (Ntrec).
+    :rtype: tuple(int, int, int, int, np.ndarray, np.ndarray, float or int, np.ndarray, int)
     """
     def __init__(
         self,
@@ -31,47 +55,6 @@ class plasticNeuralNetwork:
         jistim,
         nBinsRecord,
     ):
-        """
-        Initializing function.
-
-        Inputs
-        :param N: Total number of neurons in recurrent neural network.
-        :type N: int
-        :param frac_exc: Fraction of excitatory neurons. Typically 0.8.
-        :type frac_exc: float or int 
-        :param frac_ext: Fraction of excitatory neurons in external layer. Typically 0.2.
-        :type frac_ext: float or int 
-        :param T: Total time of simulation in milliseconds.
-        :type T: int
-        :param dt: Time bin size for time discretization.
-        :type dt: float or int 
-        :param jestim: Added constant current to excitatory neurons.
-        :type jestim: float or int 
-        :param jistim: Added constant current to inhibitory neurons.
-        :type jistim: float or int 
-        :param nBinsRecord: Number of bins to record average and record over.
-        :type nBinsRecord: int
-
-        Returns
-        Ne : int
-            Number of excitatory neurons.
-        Ni : int
-            Number of inhibitory neurons.
-        Nx : int
-            Number of external neurons.
-        Nt : int
-            Total number of discretized time points.
-        Istim : np.ndarray
-            Time vector of added constant stimulation.
-        Jstim : np.ndarray
-            Weight coupling for Istim.
-        maxns : float or int
-            Maximum number of spikes to terminate pathologic behavior.
-        timeRecord : np.ndarray
-            Discretized recorded time domain.
-        Ntrec : int
-            Number of points in discretized recorded time domain.
-        """
         # Type tests.
         if not isinstance(N, (int, np.integer)):
             err = TypeError("ERROR: N is not int")
@@ -175,27 +158,13 @@ class plasticNeuralNetwork:
         :param nJrecord0: Count of synaptic weights recorded. Relevant when network is plastic.
         :type nJrecord0: int
 
-        Returns (as part of `self`)
-        J : np.ndarray
-            Recurrent connectivity matrix.
-        Jx : np.ndarray
-            External feedforward connectivity matrix.
-        Jrecord_ee : np.ndarray
-            Indices of recorded EE synaptic weights.
-        Jrecord_ie : np.ndarray
-            Indices of recorded IE synaptic weights.
-        Jrecord_ei : np.ndarray
-            Indices of recorded EI synaptic weights.
-        Jrecord_ii : np.ndarray
-            Indices of recorded II synaptic weights.
-        numrecordJ_ee : int
-            Number of recorded EE synaptic weights.
-        numrecordJ_ie : int
-            Number of recorded IE synaptic weights.
-        numrecordJ_ei : int
-            Number of recorded EI synaptic weights.
-        numrecordJ_ii : int
-            Number of recorded II synaptic weights.
+        Returns as part of self.
+        :return: Recurrent connectivity matrix (J); External feedforward connectivity matrix (Jx); Indices of recorded EE synaptic weights (Jrecord_ee);
+        Indices of recorded IE synaptic weights (Jrecord_ie); Indices of recorded EI synaptic weights (Jrecord_ei);
+        Indices of recorded II synaptic weights (Jrecord_ii); Number of recorded EE synaptic weights (numrecordJ_ee);
+        Number of recorded IE synaptic weights (numrecordJ_ie); Number of recorded EI synaptic weights (numrecordJ_ei);
+        Number of recorded II synaptic weights (numrecordJ_ii).
+        :rtype: tuple(np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray,  int, int, int, int)
         """
         # Test types
         if type(Jm) not in [np.ndarray]:
@@ -402,10 +371,9 @@ class plasticNeuralNetwork:
         :type T: int
             
         Returns (as part of `self`)
-        sx : np.ndarray
-            Feedforward, Poisson spike trains recorded as spike time and neuron index.
-        nspikeX : int
-            Total number of spikes in sx.
+        :return: Feedforward, Poisson spike trains recorded as spike time and neuron index (sx);
+        Total number of spikes in sx (nspikeX).
+        :rtype: tuple(np.ndarray, int)
         """
         # Type errors
         if not isinstance(cx, (float, np.floating, int, np.integer)):
@@ -582,7 +550,7 @@ class plasticNeuralNetwork:
         matrices of neurons (rows) by time bins (cols) for EE, EI, IE, and II recorded weights (JRec_ee, JRec_ie, JRec_ei, JRec_ii); 
         matrices of neurons (rows) by time bins (cols) for E, I, and X input currents (IeRec, IiRec, IxRec);
         matrix of neurons (rows) by time bins (cols) for recurrent network voltages (VRec); and discretized recorded time domain (timeRecord).
-        :rtype: (np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray)
+        :rtype: tuple(np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray)
             
         """
         # Type errors.

@@ -1,7 +1,5 @@
 # PlasticBalancedNetsPackage
 
-## Package for Simulating a Plastic Balanced Network
-
 The package `plastic_balanced_network` can be used to simulate spiking neural networks in the balance regime and undergoing synaptic plasticity on any cell type pair. 
 
 There is a great deal of flexibility to simulate a network with any combination of the following parameters:
@@ -19,22 +17,9 @@ To install this package, run `pip install plastic_balanced_network` in the termi
 Alternatively, clone the repo and run `pip install -e .` in the `Package` directory.
 Import the package using: `import plastic_balanced_network`
 
-Documentation: 
+Documentation: https://alanakil.github.io/PlasticBalancedNetsPackage/
 
-This codebase was developed by Robert Rosenbaum and Alan Akil and is currently maintained by Alan Akil. 
-
-`python -m build`
-
-`sphinx-quickstart docs`
-
-`make html -C docs/`
-
-`python setup.py sdist bdist_wheel`
-
-
-`twine upload dist/*`
-
-`git rm -r --cached docs/_build`
+Paper: https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008958
 
 ## Original Simulations
 Here we provide code for a series of simulations of plastic balanced networks. The results were reported in Akil et al. 2021 ("Balanced networks under spike-timing dependent plasticity"). Link to paper: https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008958
@@ -49,3 +34,5 @@ In this code, we run several realizations of plastic balanced networks with vary
 - Initial connectivity. To show the emergence of a manifold of fixed points in weight space when only I->E synapses are plastic.
 
 Please see more details in the paper Akil et al., 2021
+
+This codebase was developed by Robert Rosenbaum and Alan Akil and is currently maintained by Alan Akil. 

@@ -3,19 +3,29 @@
 The package `plastic_balanced_network` can be used to simulate spiking neural networks in the balance regime and undergoing synaptic plasticity on any cell type pair. 
 
 There is a great deal of flexibility to simulate a network with any combination of the following parameters:
-(1) Total number of neurons.
-(2) Fraction of E-I neurons.
-(3) Probability of connection.
-(4) Synaptic strengths.
-(5) Total time of simulation.
-(6) Input rate and correlations.
-(7) Extra injected current.
-(8) EIF neuron parameters.
-(9) Plasticity parameters on any connection type and plasticity type(Hebbian, Kohonen, homeostatic inhibitory plasticities).
 
-To install this package, run `pip install plastic_balanced_network` in the terminal. 
-Alternatively, clone the repo and run `pip install -e .` in the `Package` directory.
-Import the package using: `import plastic_balanced_network`
+(1) Total number of neurons.
+
+(2) Fraction of E-I neurons.
+
+(3) Probability of connection.
+
+(4) Synaptic strengths.
+
+(5) Total time of simulation.
+
+(6) Input rate and correlations.
+
+(7) Extra injected current.
+
+(8) EIF neuron parameters.
+
+(9) Plasticity parameters on any connection type and plasticity type (Hebbian, Kohonen, homeostatic inhibitory plasticities).
+
+Installation: Run `pip install plastic_balanced_network` in the terminal. 
+Alternatively, clone the repo and run `pip install -e .`
+
+Import: `from plastic_balanced_network.helpers import plasticNeuralNetwork`
 
 Documentation: https://alanakil.github.io/PlasticBalancedNetsPackage/
 

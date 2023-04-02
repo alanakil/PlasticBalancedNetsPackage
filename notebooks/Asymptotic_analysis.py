@@ -162,12 +162,15 @@ nJrecord0 = 10
 winsize = 250  # ms
 T1 = T / 2  # ms
 T2 = T  # ms
+
+dtRate = 100  # ms
+timeVector = np.arange(dtRate, T + dtRate, dtRate) / 1000
+
 # Set the random seed.
 np.random.seed(31415)
 
 #%% 
 # Loop over N. Compute relevant variables and only save those.
-# We will want to save the value of N, frac_exc, eRate, iRate, mC, mR, mean weights (if plastic).
 
 results_df = pd.DataFrame(
     np.nan,
@@ -280,14 +283,12 @@ for N in N_vector:
     )
 
     # Compute relevant variables and save.
-    # Compute histogram of rates (over time)
-    dtRate = 100  # ms
-    timeVector = np.arange(dtRate, T + dtRate, dtRate) / 1000
+
+    # Compute rates
     hist, bin_edges = np.histogram(s[0, s[1, :] < frac_exc * N], bins=len(timeVector))
     eRateT = hist / (dtRate * frac_exc * N) * 1000
     hist, bin_edges = np.histogram(s[0, s[1, :] >= frac_exc * N], bins=len(timeVector))
     iRateT = hist / (dtRate * (1 - frac_exc) * N) * 1000
-
     eRate = np.mean(eRateT[len(eRateT)//2:])
     iRate = np.mean(iRateT[len(iRateT)//2:])
 
@@ -303,7 +304,6 @@ for N in N_vector:
     results_df.loc[N, "mCee"] = mC[0][0]
     results_df.loc[N, "mCei"] = mC[0][1]
     results_df.loc[N, "mCii"] = mC[1][1]
-
     results_df.loc[N, "mRee"] = mR[0][0]
     results_df.loc[N, "mRei"] = mR[0][1]
     results_df.loc[N, "mRii"] = mR[1][1]

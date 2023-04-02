@@ -1051,3 +1051,90 @@ class plasticNeuralNetwork:
             VRec,
             self.timeRecord,
         )
+
+
+#%%
+
+# %%
+
+
+
+def SpikeCountCov(s, N, T1, T2, winsize):
+    """
+    Compute spike count covariance matrix.
+    s is a 2x(ns) matrix where ns is the number of spikes
+    s(0,:) lists spike times
+    and s(1,:) lists corresponding neuron indices
+    Neuron indices are assumed to go from 0 to N-1
+
+    Spikes are counts starting at time T1 and ending at
+    time T2.
+
+    winsize is the window size over which spikes are counted,
+    so winsize is assumed to be much smaller than T2-T1
+
+    Covariances are only computed between neurons whose
+    indices are listed in the vector Inds. If Inds is not
+    passed in then all NxN covariances are computed.
+    """
+
+    Inds = np.arange(0, N)
+
+    #   Count only spikes between T1, T2
+    s1 = s[:, (s[0, :] <= T2) & (s[1, :] >= T1)]
+
+    #   Count only for neurons between 0, N
+    s1 = s[:, (s[1, :] < N) & (s[1, :] >= 0)]
+
+    #   Edges for histogram
+    edgest = np.arange(T1, T2, winsize)
+    edgesi = np.arange(0, N + 1)
+
+    #   Get 2D histogram of spike indices and times
+    counts, xedges, yedges = np.histogram2d(s1[0, :], s1[1, :], bins=(edgest, edgesi))
+
+    #   Compute and return covariance N x N matrix
+    return np.array(np.cov(counts.transpose()))
+
+
+def cov2corr(cov):
+    """convert covariance matrix to correlation matrix
+
+    Parameters
+    ----------
+    cov : array_like, 2d
+        covariance matrix, see Notes
+
+    Returns
+    -------
+    corr : ndarray (subclass)
+        correlation matrix
+    return_std : bool
+        If this is true then the standard deviation is also returned.
+        By default only the correlation matrix is returned.
+
+    Notes
+    -----
+    This function does not convert subclasses of ndarrays. This requires
+    that division is defined elementwise. np.ma.array and np.matrix are allowed.
+
+    """
+    cov = np.asanyarray(cov)
+    std_ = np.sqrt(np.diag(cov))
+    corr = cov / np.outer(std_, std_)
+    return corr
+
+def average_cov_corr_over_subpops(C, N, frac_exc):
+    """
+    Average covariances or correlations over subpopulations.
+    """
+    # Get mean spike count covariances over each sub-pop
+    II, JJ = np.meshgrid(np.arange(0, N), np.arange(0, N))
+    mCee = np.nanmean(C[(II < frac_exc * N) & (JJ < II)])
+    mCei = np.nanmean(C[(II < frac_exc * N) & (JJ >= frac_exc * N)])
+    mCii = np.nanmean(C[(II > frac_exc * N) & (JJ > II)])
+
+    # Mean-field spike count cov matrix
+    # Compare this to the theoretical prediction
+    mC = [[mCee, mCei], [mCei, mCii]]
+    return mC

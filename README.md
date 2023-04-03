@@ -1,6 +1,6 @@
 <!-- ![Build Status](https://travis-ci.com/alanakil/PlasticBalancedNetsPackage.svg?branch=main) -->
 <!-- ![codecov](https://codecov.io/gh/alanakil/PlasticBalancedNetsPackage/branch/main/graph/badge.svg) -->
-![PyPI version](https://badge.fury.io/py/plastic-balanced-networks.svg)
+[![PyPI version](https://badge.fury.io/py/plastic-balanced-network.svg)](https://badge.fury.io/py/plastic-balanced-network)
 ![Python version](https://img.shields.io/badge/python-3.7%20|%203.8%20|%203.9-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/alanakil/PlasticBalancedNetsPackage)

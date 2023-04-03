@@ -1,3 +1,14 @@
+![Build Status](https://travis-ci.com/alanakil/PlasticBalancedNetsPackage.svg?branch=main)
+![codecov](https://codecov.io/gh/alanakil/PlasticBalancedNetsPackage/branch/main/graph/badge.svg)
+![PyPI version](https://badge.fury.io/py/PlasticBalancedNetsPackage.svg)
+![Python version](https://img.shields.io/badge/python-3.7%20|%203.8%20|%203.9-blue)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/alanakil/PlasticBalancedNetsPackage)
+![Downloads](https://pepy.tech/badge/PlasticBalancedNetsPackage)
+![Conda Version](https://img.shields.io/conda/vn/conda-forge/PlasticBalancedNetsPackage)
+![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/PlasticBalancedNetsPackage.svg)
+[![Docs Status](https://github.com/alanakil/PlasticBalancedNetsPackage/workflows/Docs/badge.svg)](https://github.com/alanakil/PlasticBalancedNetsPackage/actions?query=workflow%3ADocs)
+
 # PlasticBalancedNetsPackage
 
 The package `plastic_balanced_network` can be used to simulate spiking neural networks in the balance regime and undergoing synaptic plasticity on any cell type pair. 

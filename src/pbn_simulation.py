@@ -19,12 +19,11 @@ Logs are saved in `logs` folder.
 Please refer to the README.md for detailed instructions on how to run this code.
 """
 __author__ = "Alan Akil (alan.akil@yahoo.com)"
-__date__ = "MARCH 2023"
+__date__ = "APRIL 2023"
 
 #%%
 # Load python packages.
 import numpy as np
-import random2
 import matplotlib.pyplot as plt
 import seaborn as sns
 import time
@@ -34,7 +33,7 @@ import datetime as dt
 import os
 from pathlib import Path
 
-from plastic_balanced_network.helpers import plasticNeuralNetwork
+from plastic_balanced_network.helpers import plasticNeuralNetwork, spike_count_cov, cov2corr, average_cov_corr_over_subpops
 
 #%%
 # Construct a str containing the datetime when the simulation is run.
@@ -88,106 +87,30 @@ logging.info("Define input variables for plastic balanced network simulation.")
 
 # Total number of neurons.
 N = int(5000)
-# Fraction of excitatory neurons.
-frac_exc = 0.8
-# Extra fraction of neurons (external).
-frac_ext = 0.2
-
-# Define individual connection probabilities.
-p_ee = 0.1
-p_ei = 0.1
-p_ie = 0.1
-p_ii = 0.1
-p_ex = 0.1
-p_ix = 0.1
-# Recurrent net connection probabilities.
-P = np.array([[p_ee, p_ei], [p_ie, p_ii]])
-# Ffwd connection probs.
-Px = np.array([[p_ex], [p_ix]])
-
-# Mean connection strengths between each cell type pair.
-jee = 25
-jei = -150
-jie = 112.5
-jii = -250
-jex = 180
-jix = 135
-Jm = np.array([[jee, jei], [jie, jii]]) / np.sqrt(N)
-Jxm = np.array([[jex], [jix]]) / np.sqrt(N)
-
 # Total time (in ms) for simulation.
 T = 5000
-
-# Step size for discretization.
-dt = 0.1
 
 # FFwd spike train rate (in kHz).
 rx = 10 / 1000
 # Correlation of ffwd spike trains.
 cx = 0.1
-# Timescale of correlation in ms. Jitter spike trains in external layer by taujitter.
-taujitter = 5
-
-# Extra stimulus: Istim is a Total_time-dependent stimulus
-# it is delivered to all neurons with weights given by Jstim.
-# Specifically, the stimulus to neuron j at Total_time index i is:
-# Istim(i)*Jstim(j)
-jestim = 0
-jistim = 0
-
-# Synaptic timescales in ms.
-taux = 10
-taue = 8
-taui = 4
-
-# Neuron parameters.
-Cm = 1
-gL = 1 / 15
-EL = -72
-Vth = -50
-Vre = -75
-DeltaT = 1
-VT = -55
-
-# Plasticity parameters.
-tauSTDP = 200  # ms
 
 # EE hebb
-Jmax_ee = 30 / np.sqrt(N)
 eta_ee_hebb = 0 / 10**3  # Learning rate, if zero then no plasticity.
-
 # EE kohonen
-beta = 2 / np.sqrt(N)
 eta_ee_koh = 0 / 10**2  # Learning rate, if zero then no plasticity.
-
+beta = 2
 # IE hebb
-Jmax_ie_hebb = 125 / np.sqrt(N)
 eta_ie_hebb = 0 / 10**3  # Learning rate, if zero then no plasticity.
-
 # IE homeostatic
-Jnorm_ie = 200 / np.sqrt(N)
-eta_ie_homeo = 0 / 10**3 / Jnorm_ie  # Learning rate, if zero then no plasticity.
+eta_ie_homeo = 0 / 10**3  # Learning rate, if zero then no plasticity.
 rho_ie = 0.020  # Target rate 20Hz
-alpha_ie = 2 * rho_ie * tauSTDP
-
 # EI homeostatic
-Jnorm_ei = -200 / np.sqrt(N)
-eta_ei = 0.015 / 10**3 / Jnorm_ei  # Learning rate, if zero then no plasticity.
+eta_ei = 0.015 / 10**3  # Learning rate, if zero then no plasticity.
 rho_ei = 0.010  # Target rate 10Hz
-alpha_ei = 2 * rho_ei * tauSTDP
-
 # II homeostatic
-Jnorm_ii = -300 / np.sqrt(N)
-eta_ii = 0.015 / 10**3 / Jnorm_ii  # Learning rate, if zero then no plasticity.
+eta_ii = 0.015 / 10**3  # Learning rate, if zero then no plasticity.
 rho_ii = 0.020  # Target rate 20Hz
-alpha_ii = 2 * rho_ii * tauSTDP
-
-# Number of neurons to record from each population.
-numrecord = int(100)  
-# Number of time bins to average over when recording currents and voltages.
-nBinsRecord = 10
-# Number of synapses to be sampled per cell type pair that is plastic.
-nJrecord0 = 1000
 
 # Set the random seed.
 np.random.seed(31415)
@@ -196,22 +119,16 @@ np.random.seed(31415)
 # Define the model.
 pnn = plasticNeuralNetwork(
     N,
-    frac_exc,
-    frac_ext,
     T,
-    dt,
-    jestim,
-    jistim,
-    nBinsRecord,
 )
 
 #%%
 # Initialize the connectivity.
-pnn.connectivity(Jm, Jxm, P, Px, nJrecord0)
+pnn.connectivity()
 
 #%%
 # Generate Poisson ffwd spike trains.
-pnn.ffwd_spikes(cx, rx, taujitter, T)
+pnn.ffwd_spikes(T, cx, rx)
 
 #%%
 # Simulate plastic network.
@@ -231,33 +148,35 @@ pnn.ffwd_spikes(cx, rx, taujitter, T)
     VRec,
     timeRecord,
 ) = pnn.simulate(
-    Cm,
-    gL,
-    VT,
-    Vre,
-    Vth,
-    EL,
-    DeltaT,
-    taue,
-    taui,
-    taux,
-    tauSTDP,
-    numrecord,
-    eta_ee_hebb,
-    Jmax_ee,
-    eta_ee_koh,
-    beta,
-    eta_ie_homeo,
-    alpha_ie,
-    eta_ie_hebb,
-    Jmax_ie_hebb,
-    eta_ei,
-    alpha_ei,
-    eta_ii,
-    alpha_ii,
-    dt,
-    nBinsRecord,
+    eta_ee_hebb=eta_ee_hebb,
+    eta_ee_koh=eta_ee_koh,
+    eta_ie_homeo=eta_ie_homeo,
+    eta_ie_hebb=eta_ie_hebb,
+    eta_ei=eta_ei,
+    eta_ii=eta_ii,
 )
+
+#%%
+# If one uses default parameters from the pnn class, we can easily access them like this:
+frac_exc = pnn.frac_exc
+frac_ext = pnn.frac_ext
+jee = pnn.jee
+jie = pnn.jie
+jei = pnn.jei
+jii = pnn.jii
+jex = pnn.jex
+jix = pnn.jix
+p_ee = pnn.p_ee
+p_ie = pnn.p_ie
+p_ei = pnn.p_ei
+p_ii = pnn.p_ii
+p_ex = pnn.p_ex
+p_ix = pnn.p_ix
+tauSTDP = pnn.tauSTDP
+beta = pnn.beta
+jmax_ee = pnn.jmax_ee
+jmax_ie_hebb = pnn.jmax_ie_hebb
+dt = pnn.dt
 
 #%% [markdown]
 ## Save and load relevant data variables for analysis and plotting.
@@ -280,28 +199,33 @@ np.savez(
     N=N,
     frac_exc=frac_exc,
     frac_ext=frac_ext,
-    P=P,
-    Px=Px,
-    Jm=Jm,
-    Jxm=Jxm,
+    p_ee=p_ee,
+    p_ie=p_ie,
+    p_ei=p_ei,
+    p_ii=p_ii,
+    p_ex=p_ex,
+    p_ix=p_ix,
+    jee=jee,
+    jie=jie,
+    jei=jei,
+    jii=jii,
+    jex=jex,
+    jix=jix,
     T=T,
     dt=dt,
     cx=cx,
     rx=rx,
     tauSTDP=tauSTDP,
-    Jmax_ee=Jmax_ee,
+    jmax_ee=jmax_ee,
     eta_ee_hebb=eta_ee_hebb,
     beta=beta,
     eta_ee_koh=eta_ee_koh,
-    Jmax_ie_hebb=Jmax_ie_hebb,
+    jmax_ie_hebb=jmax_ie_hebb,
     eta_ie_hebb=eta_ie_hebb,
-    Jnorm_ie=Jnorm_ie,
     eta_ie_homeo=eta_ie_homeo,
     rho_ie=rho_ie,
-    Jnorm_ei=Jnorm_ei,
     eta_ei=eta_ei,
     rho_ei=rho_ei,
-    Jnorm_ii=Jnorm_ii,
     eta_ii=eta_ii,
     rho_ii=rho_ii
     )
@@ -538,78 +462,7 @@ sns.despine()
 plt.show()
 
 # %% [markdown]
-# Define functions to compute empirical spike train covariances and correlations.
-
-# %%
-
-#  Compute spike count covariance matrix.
-#  s is a 2x(ns) matrix where ns is the number of spikes
-#  s(0,:) lists spike times
-#  and s(1,:) lists corresponding neuron indices
-#  Neuron indices are assumed to go from 1 to N
-
-#  Spikes are counts starting at time T1 and ending at
-#  time T2.
-
-#  winsize is the window size over which spikes are counted,
-#  so winsize is assumed to be much smaller than T2-T1
-
-#  Covariances are only computed between neurons whose
-#  indices are listed in the vector Inds. If Inds is not
-#  passed in then all NxN covariances are computed.
-
-
-def SpikeCountCov(s, N, T1, T2, winsize):
-
-    Inds = np.arange(0, N)
-
-    #   Count only spikes between T1, T2
-    s1 = s[:, (s[0, :] <= T2) & (s[1, :] >= T1)]
-
-    #   Count only for neurons between 0, N
-    s1 = s[:, (s[1, :] < N) & (s[1, :] >= 0)]
-
-    #   Edges for histogram
-    edgest = np.arange(T1, T2, winsize)
-    edgesi = np.arange(0, N + 1)
-
-    #   Get 2D histogram of spike indices and times
-    counts, xedges, yedges = np.histogram2d(s1[0, :], s1[1, :], bins=(edgest, edgesi))
-
-    #   Compute and return covariance matrix
-    return np.array(np.cov(counts.transpose()))
-
-
-def cov2corr(cov):
-    """convert covariance matrix to correlation matrix
-
-    Parameters
-    ----------
-    cov : array_like, 2d
-        covariance matrix, see Notes
-
-    Returns
-    -------
-    corr : ndarray (subclass)
-        correlation matrix
-    return_std : bool
-        If this is true then the standard deviation is also returned.
-        By default only the correlation matrix is returned.
-
-    Notes
-    -----
-    This function does not convert subclasses of ndarrays. This requires
-    that division is defined elementwise. np.ma.array and np.matrix are allowed.
-
-    """
-    cov = np.asanyarray(cov)
-    std_ = np.sqrt(np.diag(cov))
-    corr = cov / np.outer(std_, std_)
-    return corr
-
-
-# %% [markdown]
-# Apply functions above to compute covariances and correlations.
+# Compute empirical spike train covariances and correlations.
 
 #%%
 # Compute spike count covariances over windows of size
@@ -618,37 +471,19 @@ winsize = 250  # ms
 T1 = T / 2  # ms
 T2 = T  # ms
 # Do computation
-C = SpikeCountCov(s, N, T1, T2, winsize)
+C = spike_count_cov(s, N, T1, T2, winsize)
 
-
-# Get mean spike count covariances over each sub-pop
-II, JJ = np.meshgrid(np.arange(0, N), np.arange(0, N))
-mCee = np.nanmean(C[(II < frac_exc * N) & (JJ < II)])
-mCei = np.nanmean(C[(II < frac_exc * N) & (JJ >= frac_exc * N)])
-mCii = np.nanmean(C[(II > frac_exc * N) & (JJ > II)])
-
-# Mean-field spike count cov matrix
-# Compare this to the theoretical prediction
-mC = [[mCee, mCei], [mCei, mCii]]
+mC = average_cov_corr_over_subpops(C, N, frac_exc)
 
 # Compute spike count correlations
-# This takes a while, so make it optional
-ComputeSpikeCountCorrs = 1
-if ComputeSpikeCountCorrs:
+# Get correlation matrix from cov matrix
+start_time = time.time()
+R = cov2corr(C)
+elapsed_time = time.time() - start_time
+print(elapsed_time / 60, "minutes")
 
-    #    Get correlation matrix from cov matrix
-    start_time = time.time()
-    R = cov2corr(C)
-    elapsed_time = time.time() - start_time
-    print(elapsed_time / 60, "minutes")
-
-    mRee = np.nanmean(R[(II < frac_exc * N) & (JJ < II)])
-    mRei = np.nanmean(R[(II < frac_exc * N) & (JJ >= frac_exc * N)])
-    mRii = np.nanmean(R[(II > frac_exc * N) & (JJ > II)])
-
-    # Mean-field spike count correlation matrix
-    mR = [[mRee, mRei], [mRei, mRii]]
-    print("mR =", mR)
+mR = average_cov_corr_over_subpops(R, N, frac_exc)
+print("mR =", mR)
 
 # %% [markdown]
 # Plot distributions of EE, EI, IE, II correlations.
@@ -662,6 +497,8 @@ sns.set_style("whitegrid")
 sns.set_style("white")
 sns.set_style("ticks")
 sns.set_context("talk", font_scale=1.9, rc={"lines.linewidth": 3.3})
+
+II, JJ = np.meshgrid(np.arange(0, N), np.arange(0, N))
 
 sns.histplot(
     R[(II < frac_exc * N) & (JJ < II)],

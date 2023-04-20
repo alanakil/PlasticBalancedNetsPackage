@@ -33,7 +33,13 @@ import datetime as dt
 import os
 from pathlib import Path
 
-from plastic_balanced_network.helpers import plasticNeuralNetwork, compute_firing_rate, spike_count_cov, cov2corr, average_cov_corr_over_subpops
+from plastic_balanced_network.helpers import (
+    plasticNeuralNetwork,
+    compute_firing_rate,
+    spike_count_cov,
+    cov2corr,
+    average_cov_corr_over_subpops,
+)
 
 #%%
 # Construct a str containing the datetime when the simulation is run.
@@ -227,8 +233,8 @@ np.savez(
     eta_ei=eta_ei,
     rho_ei=rho_ei,
     eta_ii=eta_ii,
-    rho_ii=rho_ii
-    )
+    rho_ii=rho_ii,
+)
 
 #%%
 # Load data from previous runs.
@@ -418,7 +424,9 @@ plt.show()
 
 #%%
 # Compute smoothed histogram of rates (over time)
-eRateT, iRateT, timeVector = compute_firing_rate(s, T, N, frac_exc=0.8, dtRate=10, window_size=10)
+eRateT, iRateT, timeVector = compute_firing_rate(
+    s, T, N, frac_exc=0.8, dtRate=10, window_size=10
+)
 
 # Start the figure.
 fig = plt.figure(figsize=(8, 5))

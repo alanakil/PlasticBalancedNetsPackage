@@ -23,7 +23,13 @@ from datetime import datetime as dtm
 import os
 from pathlib import Path
 
-from plastic_balanced_network.helpers import plasticNeuralNetwork, compute_firing_rate, spike_count_cov, cov2corr, average_cov_corr_over_subpops
+from plastic_balanced_network.helpers import (
+    plasticNeuralNetwork,
+    compute_firing_rate,
+    spike_count_cov,
+    cov2corr,
+    average_cov_corr_over_subpops,
+)
 
 #%%
 # Construct a str containing the datetime when the simulation is run.
@@ -113,19 +119,45 @@ T2 = T  # ms
 # Set the random seed.
 np.random.seed(31415)
 
-#%% 
+#%%
 # Loop over N. Compute relevant variables and only save those.
 
 results_df = pd.DataFrame(
     np.nan,
     index=range(len(N_vector)),
-    columns=["N", "frac_exc", "frac_ext", "T", "cx", "rx",
-             "eta_ee_hebb", "jmax_ee", "eta_ee_koh", "beta", "eta_ie_homeo",
-             "rho_ie", "eta_ie_hebb", "jmax_ie_hebb", "eta_ei", "rho_ei",
-             "eta_ii", "rho_ii",
-             "eRate", "iRate", "mCee", "mCei", "mCii", "mRee", "mRei", "mRii",
-             "mJee", "mJie", "mJei", "mJii"]
-    )
+    columns=[
+        "N",
+        "frac_exc",
+        "frac_ext",
+        "T",
+        "cx",
+        "rx",
+        "eta_ee_hebb",
+        "jmax_ee",
+        "eta_ee_koh",
+        "beta",
+        "eta_ie_homeo",
+        "rho_ie",
+        "eta_ie_hebb",
+        "jmax_ie_hebb",
+        "eta_ei",
+        "rho_ei",
+        "eta_ii",
+        "rho_ii",
+        "eRate",
+        "iRate",
+        "mCee",
+        "mCei",
+        "mCii",
+        "mRee",
+        "mRei",
+        "mRii",
+        "mJee",
+        "mJie",
+        "mJei",
+        "mJii",
+    ],
+)
 
 results_df["N"] = N_vector
 results_df["frac_exc"] = frac_exc
@@ -149,10 +181,7 @@ results_df = results_df.set_index("N")
 
 for N in N_vector:
 
-    pnn = plasticNeuralNetwork(
-        N,
-        T
-    )
+    pnn = plasticNeuralNetwork(N, T)
     pnn.connectivity()
     pnn.ffwd_spikes(T, cx, rx)
 
@@ -179,14 +208,14 @@ for N in N_vector:
         eta_ii=eta_ii,
         rho_ie=rho_ie,
         rho_ei=rho_ei,
-        rho_ii=rho_ii
+        rho_ii=rho_ii,
     )
 
     # Compute relevant variables and save.
     eRateT, iRateT, timeVector = compute_firing_rate(s, T, N)
     # Average rates over the second half of the simulation (when at steady state).
-    results_df.loc[N, "eRate"] = np.mean(eRateT[len(eRateT)//2:])
-    results_df.loc[N, "iRate"] = np.mean(iRateT[len(iRateT)//2:])
+    results_df.loc[N, "eRate"] = np.mean(eRateT[len(eRateT) // 2 :])
+    results_df.loc[N, "iRate"] = np.mean(iRateT[len(iRateT) // 2 :])
 
     # Covs and Corrs
     C = spike_count_cov(s, N, T1, T2)
@@ -206,10 +235,10 @@ for N in N_vector:
     JRec_ie = np.mean(JRec_ie, 0)
     JRec_ei = np.mean(JRec_ei, 0)
     JRec_ii = np.mean(JRec_ii, 0)
-    results_df.loc[N, "mJee"] = np.mean(JRec_ee[len(JRec_ee)//2:])
-    results_df.loc[N, "mJie"] = np.mean(JRec_ie[len(JRec_ie)//2:])
-    results_df.loc[N, "mJei"] = np.mean(JRec_ei[len(JRec_ei)//2:])
-    results_df.loc[N, "mJii"] = np.mean(JRec_ii[len(JRec_ii)//2:])
+    results_df.loc[N, "mJee"] = np.mean(JRec_ee[len(JRec_ee) // 2 :])
+    results_df.loc[N, "mJie"] = np.mean(JRec_ie[len(JRec_ie) // 2 :])
+    results_df.loc[N, "mJei"] = np.mean(JRec_ei[len(JRec_ei) // 2 :])
+    results_df.loc[N, "mJii"] = np.mean(JRec_ii[len(JRec_ii) // 2 :])
 
 
 #%% [markdown]
@@ -332,4 +361,3 @@ sns.despine()
 plt.show()
 
 # %%
-

@@ -25,15 +25,15 @@ class plasticNeuralNetwork:
     :param T: Total time of simulation in milliseconds.
     :type T: int
     :param frac_exc: Fraction of excitatory neurons. Defaults to 0.8.
-    :type frac_exc: float or int 
+    :type frac_exc: float or int
     :param frac_ext: Fraction of excitatory neurons in external layer. Defaults to 0.2.
-    :type frac_ext: float or int 
+    :type frac_ext: float or int
     :param dt: Time bin size in milliseconds for time discretization. Defaults to 0.1 ms.
-    :type dt: float or int 
+    :type dt: float or int
     :param jestim: Added constant current to excitatory neurons. Defaults to 0.
-    :type jestim: float or int 
+    :type jestim: float or int
     :param jistim: Added constant current to inhibitory neurons. Defaults to 0.
-    :type jistim: float or int 
+    :type jistim: float or int
     :param nBinsRecord: Number of bins to record average and record over. Defaults to 10.
     :type nBinsRecord: int
 
@@ -44,6 +44,7 @@ class plasticNeuralNetwork:
     Discretized recorded time domain (timeRecord); Number of points in discretized recorded time domain (Ntrec).
     :rtype: tuple(int, int, int, int, np.ndarray, np.ndarray, float or int, np.ndarray, int)
     """
+
     def __init__(
         self,
         N,
@@ -57,11 +58,15 @@ class plasticNeuralNetwork:
     ):
         # None error.
         if N is None:
-            err = ValueError("ERROR: N cannot be None. Pick an integer number of total neurons. A number in the order of 10^3 is a good place to start.")
+            err = ValueError(
+                "ERROR: N cannot be None. Pick an integer number of total neurons. A number in the order of 10^3 is a good place to start."
+            )
             logging.exception(err)
             raise err
         if T is None:
-            err = ValueError("ERROR: T cannot be None. Pick an integer number of total simulation time. A number in the order of 10^3 is a good place to start for a quick simulation.")
+            err = ValueError(
+                "ERROR: T cannot be None. Pick an integer number of total simulation time. A number in the order of 10^3 is a good place to start for a quick simulation."
+            )
             logging.exception(err)
             raise err
         # Type tests.
@@ -125,7 +130,7 @@ class plasticNeuralNetwork:
 
         # Start the simulation.
         start_time = time.time()
-        
+
         self.N = N
         self.frac_exc = frac_exc
         self.frac_ext = frac_ext
@@ -149,16 +154,35 @@ class plasticNeuralNetwork:
         logging.info(f"Simulating a network of {self.N} neurons.")
         logging.info(f"{self.Ne} neurons are excitatory.")
         logging.info(f"{self.Ni} neurons are inhibitory.")
-        logging.info(f"The external layer, X, provides input from {self.Nx} excitatory neurons.")
+        logging.info(
+            f"The external layer, X, provides input from {self.Nx} excitatory neurons."
+        )
         logging.info(f"The network will be simulated for {T/1000} seconds.")
 
         elapsed_time = time.time() - start_time
-        logging.info(f"Time for initializing the class: {round(elapsed_time/60,2)} minutes.")
+        logging.info(
+            f"Time for initializing the class: {round(elapsed_time/60,2)} minutes."
+        )
 
-    def connectivity(self, jee=25, jie=112.5, jei=-150, jii=-250, jex=180, jix=135, p_ee=0.1, p_ie=0.1, p_ei=0.1, p_ii=0.1, p_ex=0.1, p_ix=0.1, nJrecord0=100):
+    def connectivity(
+        self,
+        jee=25,
+        jie=112.5,
+        jei=-150,
+        jii=-250,
+        jex=180,
+        jix=135,
+        p_ee=0.1,
+        p_ie=0.1,
+        p_ei=0.1,
+        p_ii=0.1,
+        p_ex=0.1,
+        p_ix=0.1,
+        nJrecord0=100,
+    ):
         """
         Create connectivity matrix and arrays to record individual weights of all four connections.
-        
+
         Inputs
         :param jee: Unscaled coupling strength from E to E neurons. Defaults to 25.
         :type jee: float
@@ -274,34 +298,48 @@ class plasticNeuralNetwork:
             logging.exception(err)
             raise err
         if (p_ee > 1) | (p_ee < 0):
-            err = ValueError("ERROR: p_ee, EE Prob of connection, has to be between 0 and 1.")
+            err = ValueError(
+                "ERROR: p_ee, EE Prob of connection, has to be between 0 and 1."
+            )
             logging.exception(err)
             raise err
         if (p_ie > 1) | (p_ie < 0):
-            err = ValueError("ERROR: p_ie, IE Prob of connection, has to be between 0 and 1.")
+            err = ValueError(
+                "ERROR: p_ie, IE Prob of connection, has to be between 0 and 1."
+            )
             logging.exception(err)
             raise err
         if (p_ei > 1) | (p_ei < 0):
-            err = ValueError("ERROR: p_ei, EI Prob of connection, has to be between 0 and 1.")
+            err = ValueError(
+                "ERROR: p_ei, EI Prob of connection, has to be between 0 and 1."
+            )
             logging.exception(err)
             raise err
         if (p_ii > 1) | (p_ii < 0):
-            err = ValueError("ERROR: p_ii, II Prob of connection, has to be between 0 and 1.")
+            err = ValueError(
+                "ERROR: p_ii, II Prob of connection, has to be between 0 and 1."
+            )
             logging.exception(err)
             raise err
         if (p_ex > 1) | (p_ex < 0):
-            err = ValueError("ERROR: p_ex, EX Prob of connection, has to be between 0 and 1.")
+            err = ValueError(
+                "ERROR: p_ex, EX Prob of connection, has to be between 0 and 1."
+            )
             logging.exception(err)
             raise err
         if (p_ix > 1) | (p_ix < 0):
-            err = ValueError("ERROR: p_ix, IX Prob of connection, has to be between 0 and 1.")
+            err = ValueError(
+                "ERROR: p_ix, IX Prob of connection, has to be between 0 and 1."
+            )
             logging.exception(err)
             raise err
         if nJrecord0 <= 0:
-            err = ValueError("ERROR: nJrecord0, number of syn weights recorded, has to be positive.")
+            err = ValueError(
+                "ERROR: nJrecord0, number of syn weights recorded, has to be positive."
+            )
             logging.exception(err)
             raise err
-        
+
         # Make defaults accessible.
         self.jee = jee
         self.jie = jie
@@ -314,7 +352,7 @@ class plasticNeuralNetwork:
         self.p_ei = p_ei
         self.p_ii = p_ii
         self.p_ex = p_ex
-        self.p_ix = p_ix       
+        self.p_ix = p_ix
 
         # Start the simulation.
         start_time = time.time()
@@ -436,10 +474,11 @@ class plasticNeuralNetwork:
         self.numrecordJ_ii = len(JJ)
 
         elapsed_time = time.time() - start_time
-        logging.info(f"Time for building connectivity matrix: {round(elapsed_time/60,2)} minutes.")
-        
+        logging.info(
+            f"Time for building connectivity matrix: {round(elapsed_time/60,2)} minutes."
+        )
 
-    def ffwd_spikes(self, T, cx=0.1, rx=10/1000, taujitter=5):
+    def ffwd_spikes(self, T, cx=0.1, rx=10 / 1000, taujitter=5):
         """
         Create all spike trains of the Poisson feedforward, external layer.
 
@@ -452,7 +491,7 @@ class plasticNeuralNetwork:
         :type rx: float or int
         :param taujitter: Spike trains are jittered by taujitter milliseconds to avoid perfect synchrony. Defaults to 5 ms.
         :type taujitter: float or int
-            
+
         Returns (as part of `self`)
         :return: Feedforward, Poisson spike trains recorded as spike time and neuron index (sx);
         Total number of spikes in sx (nspikeX).
@@ -460,7 +499,9 @@ class plasticNeuralNetwork:
         """
         # None errors.
         if T is None:
-            err = ValueError("ERROR: T cannot be None. Pick an integer number of total simulation time. A number in the order of 10^3 is a good place to start for a quick simulation.")
+            err = ValueError(
+                "ERROR: T cannot be None. Pick an integer number of total simulation time. A number in the order of 10^3 is a good place to start for a quick simulation."
+            )
             logging.exception(err)
             raise err
         # Type errors
@@ -497,7 +538,7 @@ class plasticNeuralNetwork:
             err = ValueError("ERROR: taujitter has to be greater than 0.")
             logging.exception(err)
             raise err
-        
+
         # Start the simulation.
         start_time = time.time()
 
@@ -509,7 +550,9 @@ class plasticNeuralNetwork:
             self.sx[1, :] = np.random.randint(
                 1, self.Nx, (1, len(st[0]))
             )  # neuron index that spiked
-            logging.info(f"Uncorrelated ffwd spike trains (cx={cx} and rate={rx} kHz) were generated successfully.")
+            logging.info(
+                f"Uncorrelated ffwd spike trains (cx={cx} and rate={rx} kHz) were generated successfully."
+            )
         else:  # If correlated
             rm = rx / cx  # Firing rate of mother process
             nstm = np.random.poisson(rm * T)  # Number of mother spikes
@@ -540,17 +583,20 @@ class plasticNeuralNetwork:
             I = np.argsort(sx[0, :])
             self.sx = sx[:, I]
             self.nspikeX = len(sx[0, :])
-            
-            logging.info(f"Correlated ffwd spike trains (cx={cx} and rate={rx} kHz) were generated successfully.")
+
+            logging.info(
+                f"Correlated ffwd spike trains (cx={cx} and rate={rx} kHz) were generated successfully."
+            )
 
         elapsed_time = time.time() - start_time
-        logging.info(f"Time for generating feedforward Poisson spike trains: {round(elapsed_time/60,2)} minutes.")
-
+        logging.info(
+            f"Time for generating feedforward Poisson spike trains: {round(elapsed_time/60,2)} minutes."
+        )
 
     def simulate(
         self,
         Cm=1,
-        gL=1/15,
+        gL=1 / 15,
         VT=-55,
         Vre=-75,
         Vth=-50,
@@ -572,7 +618,7 @@ class plasticNeuralNetwork:
         eta_ei=0,
         rho_ei=0.010,
         eta_ii=0,
-        rho_ii=0.020
+        rho_ii=0.020,
     ):
         """
         Execute Network simulation.
@@ -601,7 +647,7 @@ class plasticNeuralNetwork:
         :param tauSTDP: Timescale of eligibility trace used for STDP. Defaults to 200 ms.
         :type tauSTDP: float or int
         :param numrecord: Number of neurons to record currents and voltage from. Defaults to 100.
-        :type numrecord: int 
+        :type numrecord: int
         :param eta_ee_hebb: Learning rate of EE Hebbian STDP. Defaults to 0. Pick a value in the approximate order of 10^-3 or lower as a start point.
         :type eta_ee_hebb: float or int
         :param Jmax_ee: Hard constraint on EE Hebbian STDP. Defaults to 30/np.sqrt(N).
@@ -628,12 +674,12 @@ class plasticNeuralNetwork:
         :type rho_ii: float or int
 
         Returns
-        :return: A tuple containing spike train of all neurons in recurrent neural network (s); spike train of all feedforward neurons (sx), 
-        matrices of neurons (rows) by time bins (cols) for EE, EI, IE, and II recorded weights (JRec_ee, JRec_ie, JRec_ei, JRec_ii); 
+        :return: A tuple containing spike train of all neurons in recurrent neural network (s); spike train of all feedforward neurons (sx),
+        matrices of neurons (rows) by time bins (cols) for EE, EI, IE, and II recorded weights (JRec_ee, JRec_ie, JRec_ei, JRec_ii);
         matrices of neurons (rows) by time bins (cols) for E, I, and X input currents (IeRec, IiRec, IxRec);
         matrix of neurons (rows) by time bins (cols) for recurrent network voltages (VRec); and discretized recorded time domain (timeRecord).
         :rtype: tuple(np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray)
-            
+
         """
         # Type errors.
         if not isinstance(Cm, (float, np.floating, int, np.integer)):
@@ -778,7 +824,9 @@ class plasticNeuralNetwork:
             logging.exception(err)
             raise err
         if eta_ee_hebb < 0:
-            err = ValueError("ERROR: eta_ee_hebb has to be greater than or equal to zero.")
+            err = ValueError(
+                "ERROR: eta_ee_hebb has to be greater than or equal to zero."
+            )
             logging.exception(err)
             raise err
         if jmax_ee <= 0:
@@ -786,7 +834,9 @@ class plasticNeuralNetwork:
             logging.exception(err)
             raise err
         if eta_ee_koh < 0:
-            err = ValueError("ERROR: eta_ee_koh has to be greater than or equal to zero.")
+            err = ValueError(
+                "ERROR: eta_ee_koh has to be greater than or equal to zero."
+            )
             logging.exception(err)
             raise err
         if beta <= 0:
@@ -794,7 +844,9 @@ class plasticNeuralNetwork:
             logging.exception(err)
             raise err
         if eta_ie_homeo < 0:
-            err = ValueError("ERROR: eta_ie_homeo has to be greater than or equal to zero.")
+            err = ValueError(
+                "ERROR: eta_ie_homeo has to be greater than or equal to zero."
+            )
             logging.exception(err)
             raise err
         if rho_ie <= 0:
@@ -802,7 +854,9 @@ class plasticNeuralNetwork:
             logging.exception(err)
             raise err
         if eta_ie_hebb < 0:
-            err = ValueError("ERROR: eta_ie_hebb has to be greater than or equal to zero.")
+            err = ValueError(
+                "ERROR: eta_ie_hebb has to be greater than or equal to zero."
+            )
             logging.exception(err)
             raise err
         if jmax_ie_hebb <= 0:
@@ -827,11 +881,15 @@ class plasticNeuralNetwork:
             raise err
         # We cannot allow for two plasticity rules to act on the same synapse type at the same time.
         if (eta_ee_hebb != 0) & (eta_ee_koh != 0):
-            err = ValueError("ERROR: You cannot have both Kohonen and Hebb STDP's at the same time on EE connections!")
+            err = ValueError(
+                "ERROR: You cannot have both Kohonen and Hebb STDP's at the same time on EE connections!"
+            )
             logging.exception(err)
             raise err
         if (eta_ie_hebb != 0) & (eta_ie_homeo != 0):
-            err = ValueError("ERROR: You cannot have both Homeostatic and Hebb STDP's at the same time on IE connections!")
+            err = ValueError(
+                "ERROR: You cannot have both Homeostatic and Hebb STDP's at the same time on IE connections!"
+            )
             logging.exception(err)
             raise err
 
@@ -870,9 +928,9 @@ class plasticNeuralNetwork:
         )
         Ierecord = np.sort(Irecord[0, 0]).astype(int)
         Iirecord = np.sort(Irecord[0, 1]).astype(int)
-        Ixrecord = np.sort(random2.sample(list(np.arange(0, self.Ne)), numrecord)).astype(
-            int
-        )
+        Ixrecord = np.sort(
+            random2.sample(list(np.arange(0, self.Ne)), numrecord)
+        ).astype(int)
         Vrecord = (
             np.sort(
                 [
@@ -907,7 +965,9 @@ class plasticNeuralNetwork:
         nspike = 0
         TooManySpikes = 0
 
-        logging.info(f"We will record currents and membrane potential from {numrecord} E and {numrecord} I neurons.")
+        logging.info(
+            f"We will record currents and membrane potential from {numrecord} E and {numrecord} I neurons."
+        )
 
         # If there is EE Hebbian plasticity
         if eta_ee_hebb != 0:
@@ -1144,6 +1204,7 @@ class plasticNeuralNetwork:
 
 # %%
 
+
 def compute_firing_rate(s, T, N, frac_exc=0.8, dtRate=10, window_size=10):
     """
     Calculate the mean firing rate of E and I populations as a function of time.
@@ -1171,14 +1232,16 @@ def compute_firing_rate(s, T, N, frac_exc=0.8, dtRate=10, window_size=10):
     eRateT = hist / (dtRate * frac_exc * N) * 1000
     hist, bin_edges = np.histogram(s[0, s[1, :] >= frac_exc * N], bins=len(timeVector))
     iRateT = hist / (dtRate * (1 - frac_exc) * N) * 1000
-    
+
     # Smooth rates. We multiplied by 1000 to get them in units of Hz.
-    eRateT = np.convolve(eRateT, np.ones(window_size)/window_size, mode='same')
-    iRateT = np.convolve(iRateT, np.ones(window_size)/window_size, mode='same')
+    eRateT = np.convolve(eRateT, np.ones(window_size) / window_size, mode="same")
+    iRateT = np.convolve(iRateT, np.ones(window_size) / window_size, mode="same")
 
     return eRateT, iRateT, timeVector
 
+
 #%%
+
 
 def spike_count_cov(s, N, T1, T2, winsize=250):
     """
@@ -1205,7 +1268,7 @@ def spike_count_cov(s, N, T1, T2, winsize=250):
     :type T2: float or int
     :param winsize: Time window over which spikes are counted. Defaults to 250 ms.
     :type winsize: int
-        
+
     Returns (as part of `self`)
     :return C: Full spike count covariance matrix.
     :rtype C: np.ndarray
@@ -1233,7 +1296,7 @@ def cov2corr(cov):
     Inputs
     :param cov: Covariance matrix.
     :type cov: np.ndarray
-        
+
     Returns (as part of `self`)
     :return corr: Full spike count correlation matrix.
     :rtype corr: np.ndarray
@@ -1242,6 +1305,7 @@ def cov2corr(cov):
     std_ = np.sqrt(np.diag(cov))
     corr = cov / np.outer(std_, std_)
     return corr
+
 
 def average_cov_corr_over_subpops(C, N, frac_exc=0.8):
     """
@@ -1253,7 +1317,7 @@ def average_cov_corr_over_subpops(C, N, frac_exc=0.8):
     :type N: int
     :param frac_exc: Fraction of E neurons. Defaults to 0.8.
     :type frac_exc: float
-        
+
     Returns
     :return mC: Mean spike count covariance matrix.
     :rtype mC: np.ndarray

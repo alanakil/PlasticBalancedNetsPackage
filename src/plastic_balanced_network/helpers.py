@@ -22,19 +22,19 @@ class plasticNeuralNetwork:
     Inputs
     :param N: Total number of neurons in recurrent neural network.
     :type N: int
-    :param frac_exc: Fraction of excitatory neurons. Typically 0.8.
-    :type frac_exc: float or int 
-    :param frac_ext: Fraction of excitatory neurons in external layer. Typically 0.2.
-    :type frac_ext: float or int 
     :param T: Total time of simulation in milliseconds.
     :type T: int
-    :param dt: Time bin size for time discretization.
+    :param frac_exc: Fraction of excitatory neurons. Defaults to 0.8.
+    :type frac_exc: float or int 
+    :param frac_ext: Fraction of excitatory neurons in external layer. Defaults to 0.2.
+    :type frac_ext: float or int 
+    :param dt: Time bin size in milliseconds for time discretization. Defaults to 0.1 ms.
     :type dt: float or int 
-    :param jestim: Added constant current to excitatory neurons.
+    :param jestim: Added constant current to excitatory neurons. Defaults to 0.
     :type jestim: float or int 
-    :param jistim: Added constant current to inhibitory neurons.
+    :param jistim: Added constant current to inhibitory neurons. Defaults to 0.
     :type jistim: float or int 
-    :param nBinsRecord: Number of bins to record average and record over.
+    :param nBinsRecord: Number of bins to record average and record over. Defaults to 10.
     :type nBinsRecord: int
 
     Returns as part of self.
@@ -47,14 +47,23 @@ class plasticNeuralNetwork:
     def __init__(
         self,
         N,
-        frac_exc,
-        frac_ext,
         T,
-        dt,
-        jestim,
-        jistim,
-        nBinsRecord,
+        frac_exc=0.8,
+        frac_ext=0.2,
+        dt=0.1,
+        jestim=0,
+        jistim=0,
+        nBinsRecord=10,
     ):
+        # None error.
+        if N is None:
+            err = ValueError("ERROR: N cannot be None. Pick an integer number of total neurons. A number in the order of 10^3 is a good place to start.")
+            logging.exception(err)
+            raise err
+        if T is None:
+            err = ValueError("ERROR: T cannot be None. Pick an integer number of total simulation time. A number in the order of 10^3 is a good place to start for a quick simulation.")
+            logging.exception(err)
+            raise err
         # Type tests.
         if not isinstance(N, (int, np.integer)):
             err = TypeError("ERROR: N is not int")
@@ -132,6 +141,8 @@ class plasticNeuralNetwork:
         dtRecord = nBinsRecord * dt
         self.timeRecord = np.arange(dtRecord, T + dtRecord, dtRecord)
         self.Ntrec = len(self.timeRecord)
+        self.dt = dt
+        self.nBinsRecord = nBinsRecord
 
         logging.info(f"Simulating a network of {self.N} neurons.")
         logging.info(f"{self.Ne} neurons are excitatory.")
@@ -142,19 +153,35 @@ class plasticNeuralNetwork:
         elapsed_time = time.time() - start_time
         logging.info(f"Time for initializing the class: {round(elapsed_time/60,2)} minutes.")
 
-    def connectivity(self, Jm, Jxm, P, Px, nJrecord0):
+    def connectivity(self, jee=25, jie=112.5, jei=-150, jii=-250, jex=180, jix=135, p_ee=0.1, p_ie=0.1, p_ei=0.1, p_ii=0.1, p_ex=0.1, p_ix=0.1, nJrecord0=100):
         """
         Create connectivity matrix and arrays to record individual weights of all four connections.
         
         Inputs
-        :param Jm: Mean field matrix J for recurrent connections. It contains avg value of connection for recurrent connections.
-        :type Jm: np.ndarray
-        :param Jxm: Mean field matrix Jx for feedforward connections. It contains avg value of connection for feedforward connections.
-        :type Jxm: np.ndarray
-        :param P: Matrix containing probability of connection for each pair of populations.
-        :type P: np.ndarray
-        :param Px: Matrix containing probability of connection for each pair of populations from external to recurrent.
-        :type Px: np.ndarray
+        :param jee: Unscaled coupling strength from E to E neurons. Defaults to 25.
+        :type jee: float
+        :param jie: Unscaled coupling strength from E to I neurons. Defaults to 112.5.
+        :type jie: float
+        :param jei: Unscaled coupling strength from I to E neurons. Defaults to -150.
+        :type jei: float
+        :param jii: Unscaled coupling strength from I to I neurons. Defaults to -250.
+        :type jii: float
+        :param jex: Unscaled coupling strength from X to E neurons. Defaults to 180.
+        :type jex: float
+        :param jix: Unscaled coupling strength from X to I neurons. Defaults to 135.
+        :type jix: float
+        :param p_ee: Probability of connection from E to E neurons. Defaults to 0.1.
+        :type p_ee: float
+        :param p_ie: Probability of connection from E to I neurons. Defaults to 0.1.
+        :type p_ie: float
+        :param p_ei: Probability of connection from I to E neurons. Defaults to 0.1.
+        :type p_ei: float
+        :param p_ii: Probability of connection from I to I neurons. Defaults to 0.1.
+        :type p_ii: float
+        :param p_ex: Probability of connection from X to E neurons. Defaults to 0.1.
+        :type p_ex: float
+        :param p_ix: Probability of connection from X to I neurons. Defaults to 0.1.
+        :type p_ix: float
         :param nJrecord0: Count of synaptic weights recorded. Relevant when network is plastic.
         :type nJrecord0: int
 
@@ -167,20 +194,52 @@ class plasticNeuralNetwork:
         :rtype: tuple(np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray,  int, int, int, int)
         """
         # Test types
-        if type(Jm) not in [np.ndarray]:
-            err = TypeError("ERROR: Jm is not np.array.")
+        if not isinstance(jee, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: jee is not int nor float.")
             logging.exception(err)
             raise err
-        if type(Jxm) not in [np.ndarray]:
-            err = TypeError("ERROR: Jm is not np.array.")
+        if not isinstance(jie, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: jie is not int nor float.")
             logging.exception(err)
             raise err
-        if type(P) not in [np.ndarray]:
-            err = TypeError("ERROR: P is not np.array.")
+        if not isinstance(jei, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: jei is not int nor float.")
             logging.exception(err)
             raise err
-        if type(Px) not in [np.ndarray]:
-            err = TypeError("ERROR: Px is not np.array.")
+        if not isinstance(jii, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: jii is not int nor float.")
+            logging.exception(err)
+            raise err
+        if not isinstance(jex, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: jex is not int nor float.")
+            logging.exception(err)
+            raise err
+        if not isinstance(jix, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: jix is not int nor float.")
+            logging.exception(err)
+            raise err
+        if not isinstance(p_ee, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: p_ee is not int nor float.")
+            logging.exception(err)
+            raise err
+        if not isinstance(p_ie, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: p_ie is not int nor float.")
+            logging.exception(err)
+            raise err
+        if not isinstance(p_ei, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: p_ei is not int nor float.")
+            logging.exception(err)
+            raise err
+        if not isinstance(p_ii, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: p_ii is not int nor float.")
+            logging.exception(err)
+            raise err
+        if not isinstance(p_ex, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: p_ex is not int nor float.")
+            logging.exception(err)
+            raise err
+        if not isinstance(p_ix, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: p_ix is not int nor float.")
             logging.exception(err)
             raise err
         if not isinstance(nJrecord0, (int, np.integer)):
@@ -188,52 +247,52 @@ class plasticNeuralNetwork:
             logging.exception(err)
             raise err
         # Value tests.
-        if Jm[0,0] <= 0:
-            err = ValueError("ERROR: Jm[0,0], EE syn strength, has to be positive.")
+        if jee <= 0:
+            err = ValueError("ERROR: jee, EE syn strength, has to be positive.")
             logging.exception(err)
             raise err
-        if Jm[1,0] <= 0:
-            err = ValueError("ERROR: Jm[1,0], IE syn strength, has to be positive.")
+        if jie <= 0:
+            err = ValueError("ERROR: jie, IE syn strength, has to be positive.")
             logging.exception(err)
             raise err
-        if Jm[0,1] >= 0:
-            err = ValueError("ERROR: Jm[0,1], EI syn strength, has to be negative.")
+        if jei >= 0:
+            err = ValueError("ERROR: jei, EI syn strength, has to be negative.")
             logging.exception(err)
             raise err
-        if Jm[1,1] >= 0:
-            err = ValueError("ERROR: Jm[1,1], II syn strength, has to be negative.")
+        if jii >= 0:
+            err = ValueError("ERROR: jii, II syn strength, has to be negative.")
             logging.exception(err)
             raise err
-        if Jxm[0,0] <= 0:
-            err = ValueError("ERROR: Jxm[0,0], EX syn strength, has to be positive.")
+        if jex <= 0:
+            err = ValueError("ERROR: jex, EX syn strength, has to be positive.")
             logging.exception(err)
             raise err
-        if Jxm[1,0] <= 0:
-            err = ValueError("ERROR: Jxm[1,0], IX syn strength, has to be positive.")
+        if jix <= 0:
+            err = ValueError("ERROR: jix, IX syn strength, has to be positive.")
             logging.exception(err)
             raise err
-        if (P[0,0] > 1) | (P[0,0] < 0):
-            err = ValueError("ERROR: P[0,0], EE Prob of connection, has to be between 0 and 1.")
+        if (p_ee > 1) | (p_ee < 0):
+            err = ValueError("ERROR: p_ee, EE Prob of connection, has to be between 0 and 1.")
             logging.exception(err)
             raise err
-        if (P[1,0] > 1) | (P[1,0] < 0):
-            err = ValueError("ERROR: P[1,0], IE Prob of connection, has to be between 0 and 1.")
+        if (p_ie > 1) | (p_ie < 0):
+            err = ValueError("ERROR: p_ie, IE Prob of connection, has to be between 0 and 1.")
             logging.exception(err)
             raise err
-        if (P[0,1] > 1) | (P[0,1] < 0):
-            err = ValueError("ERROR: P[0,1], EI Prob of connection, has to be between 0 and 1.")
+        if (p_ei > 1) | (p_ei < 0):
+            err = ValueError("ERROR: p_ei, EI Prob of connection, has to be between 0 and 1.")
             logging.exception(err)
             raise err
-        if (P[1,1] > 1) | (P[1,1] < 0):
-            err = ValueError("ERROR: P[1,1], II Prob of connection, has to be between 0 and 1.")
+        if (p_ii > 1) | (p_ii < 0):
+            err = ValueError("ERROR: p_ii, II Prob of connection, has to be between 0 and 1.")
             logging.exception(err)
             raise err
-        if (Px[0,0] > 1) | (Px[0,0] < 0):
-            err = ValueError("ERROR: Px[0,0], EX Prob of connection, has to be between 0 and 1.")
+        if (p_ex > 1) | (p_ex < 0):
+            err = ValueError("ERROR: p_ex, EX Prob of connection, has to be between 0 and 1.")
             logging.exception(err)
             raise err
-        if (Px[1,0] > 1) | (Px[1,0] < 0):
-            err = ValueError("ERROR: P[0,0], IX Prob of connection, has to be between 0 and 1.")
+        if (p_ix > 1) | (p_ix < 0):
+            err = ValueError("ERROR: p_ix, IX Prob of connection, has to be between 0 and 1.")
             logging.exception(err)
             raise err
         if nJrecord0 <= 0:
@@ -243,6 +302,14 @@ class plasticNeuralNetwork:
 
         # Start the simulation.
         start_time = time.time()
+
+        # Recurrent net connection probabilities.
+        P = np.array([[p_ee, p_ei], [p_ie, p_ii]])
+        # Ffwd connection probs.
+        Px = np.array([[p_ex], [p_ix]])
+        # Define mean field matrices.
+        Jm = np.array([[jee, jei], [jie, jii]]) / np.sqrt(self.N)
+        Jxm = np.array([[jex], [jix]]) / np.sqrt(self.N)
 
         # Define connectivity
         self.J = np.vstack(
@@ -356,25 +423,30 @@ class plasticNeuralNetwork:
         logging.info(f"Time for building connectivity matrix: {round(elapsed_time/60,2)} minutes.")
         
 
-    def ffwd_spikes(self, cx, rx, taujitter, T):
+    def ffwd_spikes(self, T, cx=0.1, rx=10/1000, taujitter=5):
         """
         Create all spike trains of the Poisson feedforward, external layer.
 
         Inputs
-        :param cx: Value of mean correlation between feedforward Poisson spike trains.
-        :type cx: float or int
-        :param rx: Rate of feedforward Poisson neurons in Hz.
-        :type rx: float or int
-        :param taujitter: Spike trains are jittered by taujitter milliseconds to avoid perfect synchrony.
-        :type taujitter: float or int
         :param T: Total time of simulation.
         :type T: int
+        :param cx: Value of mean correlation between feedforward Poisson spike trains. Defaults to 0.1.
+        :type cx: float or int
+        :param rx: Rate of feedforward Poisson neurons in Hz. Defaults to 0.01 kHz.
+        :type rx: float or int
+        :param taujitter: Spike trains are jittered by taujitter milliseconds to avoid perfect synchrony. Defaults to 5 ms.
+        :type taujitter: float or int
             
         Returns (as part of `self`)
         :return: Feedforward, Poisson spike trains recorded as spike time and neuron index (sx);
         Total number of spikes in sx (nspikeX).
         :rtype: tuple(np.ndarray, int)
         """
+        # None errors.
+        if T is None:
+            err = ValueError("ERROR: T cannot be None. Pick an integer number of total simulation time. A number in the order of 10^3 is a good place to start for a quick simulation.")
+            logging.exception(err)
+            raise err
         # Type errors
         if not isinstance(cx, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: cx is not int nor float.")
@@ -393,6 +465,10 @@ class plasticNeuralNetwork:
             logging.exception(err)
             raise err
         # Value tests.
+        if T < 1:
+            err = ValueError("ERROR: T has to be greater than 1 ms.")
+            logging.exception(err)
+            raise err
         if (cx > 1) | (cx < 0):
             err = ValueError("ERROR: cx, input corrs, have to be between 0 and 1.")
             logging.exception(err)
@@ -403,10 +479,6 @@ class plasticNeuralNetwork:
             raise err
         if taujitter <= 0:
             err = ValueError("ERROR: taujitter has to be greater than 0.")
-            logging.exception(err)
-            raise err
-        if T < 1:
-            err = ValueError("ERROR: T has to be greater than 0.")
             logging.exception(err)
             raise err
         
@@ -461,89 +533,83 @@ class plasticNeuralNetwork:
 
     def simulate(
         self,
-        Cm,
-        gL,
-        VT,
-        Vre,
-        Vth,
-        EL,
-        DeltaT,
-        taue,
-        taui,
-        taux,
-        tauSTDP,
-        numrecord,
-        eta_ee_hebb,
-        Jmax_ee,
-        eta_ee_koh,
-        beta,
-        eta_ie_homeo,
-        alpha_ie,
-        eta_ie_hebb,
-        Jmax_ie_hebb,
-        eta_ei,
-        alpha_ei,
-        eta_ii,
-        alpha_ii,
-        dt,
-        nBinsRecord,
+        Cm=1,
+        gL=1/15,
+        VT=-55,
+        Vre=-75,
+        Vth=-50,
+        EL=-72,
+        DeltaT=1,
+        taue=8,
+        taui=4,
+        taux=10,
+        tauSTDP=200,
+        numrecord=100,
+        eta_ee_hebb=0,
+        jmax_ee=30,
+        eta_ee_koh=0,
+        beta=2,
+        eta_ie_homeo=0,
+        rho_ie=0.020,
+        eta_ie_hebb=0,
+        jmax_ie_hebb=125,
+        eta_ei=0,
+        rho_ei=0.010,
+        eta_ii=0,
+        rho_ii=0.020
     ):
         """
         Execute Network simulation.
 
         Inputs
-        :param Cm: Membrane capacitance.
+        :param Cm: Membrane capacitance. Defaults to 1.
         :type Cm: float or int
-        :param gL: Leak conductance.
+        :param gL: Leak conductance. Defaults to 1/15.
         :type gL: float or int
-        :param VT: Threshold in EIF neuron.
+        :param VT: Threshold in EIF neuron. Defaults to -55.
         :type VT: float or int
-        :param Vre: Reset voltage.
+        :param Vre: Reset voltage. Defaults to -75.
         :type Vre: float or int
-        :param Vth: Hard threshold that determines when a spike happened.
+        :param Vth: Hard threshold that determines when a spike happened. Defaults to -50.
         :type Vth: float or int
-        :param EL: Resting potential.
+        :param EL: Resting potential. Defaults to -72.
         :type EL: float or int
-        :param DeltaT: EIF neuron parameter. Determines the shape of the rise to spike.
+        :param DeltaT: EIF neuron parameter. Determines the shape of the rise to spike. Defaults to 1.
         :type DeltaT: float or int
-        :param taue: Timescale of excitatory neurons in milliseconds.
+        :param taue: Timescale of excitatory neurons in milliseconds. Defaults to 8 ms.
         :type taue: float or int
-        :param taui: Timescale of inhibitory neurons in milliseconds.
+        :param taui: Timescale of inhibitory neurons in milliseconds. Defaults to 4 ms.
         :type taui: float or int
-        :param taux: Timescale of external neurons in milliseconds.
+        :param taux: Timescale of external neurons in milliseconds. Defaults to 10 ms.
         :type taux: float or int
-        :param tauSTDP: Timescale of eligibility trace used for STDP.
+        :param tauSTDP: Timescale of eligibility trace used for STDP. Defaults to 200 ms.
         :type tauSTDP: float or int
-        :param numrecord: Number of neurons to record currents and voltage from.
+        :param numrecord: Number of neurons to record currents and voltage from. Defaults to 100.
         :type numrecord: int 
-        :param eta_ee_hebb: Learning rate of EE Hebbian STDP.
+        :param eta_ee_hebb: Learning rate of EE Hebbian STDP. Defaults to 0. Pick a value in the approximate order of 10^-3 or lower as a start point.
         :type eta_ee_hebb: float or int
-        :param Jmax_ee: Hard constraint on EE Hebbian STDP.
+        :param Jmax_ee: Hard constraint on EE Hebbian STDP. Defaults to 30/np.sqrt(N).
         :type Jmax_ee: float or int
-        :param eta_ee_koh: Learning rate of Kohonen STDP.
+        :param eta_ee_koh: Learning rate of Kohonen STDP. Defaults to 0. Pick a value in the approximate order of 10^-3 or lower as a start point.
         :type eta_ee_koh: float or int
-        :param beta: Parameter for Kohonen STDP.
+        :param beta: Parameter for Kohonen STDP. Defaults to 2/np.sqrt(N).
         :type beta: float or int
-        :param eta_ie_homeo: Learning rate of iSTDP.
+        :param eta_ie_homeo: Learning rate of iSTDP. Defaults to 0. Pick a value in the approximate order of 10^-3 or lower as a start point.
         :type eta_ie_homeo: float or int
-        :param alpha_ie: Parameter that determines target rate in iSTDP.
-        :type alpha_ie: float or int
-        :param eta_ie_hebb: Learning rate of IE Hebbian STDP.
+        :param rho_ie: Target rate of I neurons in iSTDP. Defaults to 0.020 kHz.
+        :type rho_ie: float or int
+        :param eta_ie_hebb: Learning rate of IE Hebbian STDP. Defaults to 0. Pick a value in the approximate order of 10^-3 as a start point.
         :type eta_ie_hebb: float or int
-        :param Jmax_ie_hebb: Hard constraint on IE Hebbian STDP.
+        :param Jmax_ie_hebb: Hard constraint on IE Hebbian STDP. Defaults to 125/np.sqrt(N).
         :type Jmax_ie_hebb: float or int
-        :param eta_ei: Learning rate of iSTDP.
+        :param eta_ei: Learning rate of iSTDP. Defaults to 0. Pick a value in the approximate order of 10^-3 or lower as a start point.
         :type eta_ei: float or int
-        :param alpha_ei: Parameter that determines target rate in iSTDP.
-        :type alpha_ei: float or int
-        :param eta_ii: Learning rate of iSTDP.
+        :param rho_ei: Parameter that determines target rate in iSTDP. Defaults to 0.010 kHz.
+        :type rho_ei: float or int
+        :param eta_ii: Learning rate of iSTDP. Defaults to 0. Pick a value in the approximate order of 10^-3 or lower as a start point.
         :type eta_ii: float or int
-        :param alpha_ii: Parameter that determines target rate in iSTDP.
-        :type alpha_ii: float or int
-        :param dt: Time bin size in ms.
-        :type dt: float or int
-        :param nBinsRecord: Number of bins to record average and record over.
-        :type nBinsRecord: int 
+        :param rho_ii: Parameter that determines target rate in iSTDP. Defaults to 0.020 kHz.
+        :type rho_ii: float or int
 
         Returns
         :return: A tuple containing spike train of all neurons in recurrent neural network (s); spike train of all feedforward neurons (sx), 
@@ -602,8 +668,8 @@ class plasticNeuralNetwork:
             err = TypeError("ERROR: eta_ee_hebb is not int,float.")
             logging.exception(err)
             raise err
-        if not isinstance(Jmax_ee, (float, np.floating, int, np.integer)):
-            err = TypeError("ERROR: Jmax_ee is not int,float.")
+        if not isinstance(jmax_ee, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: jmax_ee is not int,float.")
             logging.exception(err)
             raise err
         if not isinstance(eta_ee_koh, (float, np.floating, int, np.integer)):
@@ -618,40 +684,32 @@ class plasticNeuralNetwork:
             err = TypeError("ERROR: eta_ie_homeo is not int,float.")
             logging.exception(err)
             raise err
-        if not isinstance(alpha_ie, (float, np.floating, int, np.integer)):
-            err = TypeError("ERROR: alpha_ie is not int,float.")
+        if not isinstance(rho_ie, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: rho_ie is not int,float.")
             logging.exception(err)
             raise err
         if not isinstance(eta_ie_hebb, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: eta_ie_hebb is not int,float.")
             logging.exception(err)
             raise err
-        if not isinstance(Jmax_ie_hebb, (float, np.floating, int, np.integer)):
-            err = TypeError("ERROR: Jmax_ie_hebb is not int,float.")
+        if not isinstance(jmax_ie_hebb, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: jmax_ie_hebb is not int,float.")
             logging.exception(err)
             raise err
         if not isinstance(eta_ei, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: eta_ei is not int,float.")
             logging.exception(err)
             raise err
-        if not isinstance(alpha_ei, (float, np.floating, int, np.integer)):
-            err = TypeError("ERROR: alpha_ei is not int,float.")
+        if not isinstance(rho_ei, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: rho_ei is not int,float.")
             logging.exception(err)
             raise err
         if not isinstance(eta_ii, (float, np.floating, int, np.integer)):
             err = TypeError("ERROR: eta_ii is not int,float.")
             logging.exception(err)
             raise err
-        if not isinstance(alpha_ii, (float, np.floating, int, np.integer)):
-            err = TypeError("ERROR: alpha_ii is not int,float.")
-            logging.exception(err)
-            raise err
-        if not isinstance(dt, (float, np.floating, int, np.integer)):
-            err = TypeError("ERROR: dt is not int,float.")
-            logging.exception(err)
-            raise err
-        if not isinstance(nBinsRecord, (int, np.integer)):
-            err = TypeError("ERROR: nBinsRecord is not int.")
+        if not isinstance(rho_ii, (float, np.floating, int, np.integer)):
+            err = TypeError("ERROR: rho_ii is not int,float.")
             logging.exception(err)
             raise err
         # Value tests.
@@ -707,60 +765,61 @@ class plasticNeuralNetwork:
             err = ValueError("ERROR: eta_ee_hebb has to be greater than or equal to zero.")
             logging.exception(err)
             raise err
-        if Jmax_ee < 0:
-            err = ValueError("ERROR: Jmax_ee has to be greater than or equal to zero.")
+        if jmax_ee <= 0:
+            err = ValueError("ERROR: Jmax_ee has to be greater than zero.")
             logging.exception(err)
             raise err
         if eta_ee_koh < 0:
             err = ValueError("ERROR: eta_ee_koh has to be greater than or equal to zero.")
             logging.exception(err)
             raise err
-        if beta < 0:
-            err = ValueError("ERROR: beta has to be greater than or equal to zero.")
+        if beta <= 0:
+            err = ValueError("ERROR: beta has to be greater than zero.")
             logging.exception(err)
             raise err
         if eta_ie_homeo < 0:
             err = ValueError("ERROR: eta_ie_homeo has to be greater than or equal to zero.")
             logging.exception(err)
             raise err
-        if alpha_ie < 0:
-            err = ValueError("ERROR: alpha_ie has to be greater than or equal to zero.")
+        if rho_ie <= 0:
+            err = ValueError("ERROR: rho_ie has to be greater than zero.")
             logging.exception(err)
             raise err
         if eta_ie_hebb < 0:
             err = ValueError("ERROR: eta_ie_hebb has to be greater than or equal to zero.")
             logging.exception(err)
             raise err
-        if Jmax_ie_hebb < 0:
-            err = ValueError("ERROR: Jmax_ie_hebb has to be greater than or equal to zero.")
+        if jmax_ie_hebb <= 0:
+            err = ValueError("ERROR: jmax_ie_hebb has to be greater than zero.")
             logging.exception(err)
             raise err
-        if eta_ei > 0:
+        if eta_ei < 0:
             err = ValueError("ERROR: eta_ei has to be greater than or equal to zero.")
             logging.exception(err)
             raise err
-        if alpha_ei <= 0:
-            err = ValueError("ERROR: alpha_ei has to be greater than or equal to zero.")
+        if rho_ei <= 0:
+            err = ValueError("ERROR: rho_ei has to be greater than zero.")
             logging.exception(err)
             raise err
-        if eta_ii > 0:
+        if eta_ii < 0:
             err = ValueError("ERROR: eta_ii has to be greater than or equal to zero.")
             logging.exception(err)
             raise err
-        if alpha_ii <= 0:
-            err = ValueError("ERROR: alpha_ii has to be greater than or equal to zero.")
-            logging.exception(err)
-            raise err
-        if  dt <= 0:
-            err = ValueError("ERROR: dt has to be greater than zero.")
-            logging.exception(err)
-            raise err
-        if nBinsRecord <= 0:
-            err = ValueError("ERROR: nBinsRecord has to be greater than zero.")
+        if rho_ii <= 0:
+            err = ValueError("ERROR: rho_ii has to be greater than zero.")
             logging.exception(err)
             raise err
 
         # Initialize some variables
+        alpha_ie = 2 * rho_ie * tauSTDP
+        alpha_ei = 2 * rho_ei * tauSTDP
+        alpha_ii = 2 * rho_ii * tauSTDP
+        beta = beta / np.sqrt(self.N)
+        Jmax_ee = jmax_ee / np.sqrt(self.N)
+        Jmax_ie_hebb = jmax_ie_hebb / np.sqrt(self.N)
+        Jnorm_ie = 112.5 / np.sqrt(self.N)
+        Jnorm_ei = -150 / np.sqrt(self.N)
+        Jnorm_ii = -250 / np.sqrt(self.N)
         # Random initial voltages
         V0 = np.random.uniform(0, 1, (1, self.N)) * (VT - Vre) + Vre
         V = V0
@@ -859,7 +918,7 @@ class plasticNeuralNetwork:
 
             # Euler update to V
             V += (
-                dt
+                self.dt
                 / Cm
                 * (
                     self.Istim[i] * self.Jstim
@@ -927,14 +986,14 @@ class plasticNeuralNetwork:
                     # Update synaptic weights according to plasticity rules
                     # E to I after a pre spike
                     self.J[self.Ne : self.N, Ispike[Ispike <= self.Ne]] -= np.tile(
-                        eta_ie_homeo * (x[0, self.Ne : self.N] - alpha_ie),
+                        eta_ie_homeo / Jnorm_ie * (x[0, self.Ne : self.N] - alpha_ie),
                         (np.count_nonzero(Ispike <= self.Ne), 1),
                     ).transpose() * (
                         self.J[self.Ne : self.N, Ispike[Ispike <= self.Ne]]
                     )
                     # E to I after a post spike
                     self.J[Ispike[Ispike > self.Ne], 0 : self.Ne] -= np.tile(
-                        eta_ie_homeo * x[0, 0 : self.Ne].transpose(),
+                        eta_ie_homeo / Jnorm_ie * x[0, 0 : self.Ne].transpose(),
                         (np.count_nonzero(Ispike > self.Ne), 1),
                     ) * (self.J[Ispike[Ispike > self.Ne], 0 : self.Ne])
 
@@ -963,12 +1022,12 @@ class plasticNeuralNetwork:
                     # Update synaptic weights according to plasticity rules
                     # I to E after an I spike
                     self.J[0 : self.Ne, Ispike[Ispike >= self.Ne]] -= np.tile(
-                        eta_ei * (x[0, 0 : self.Ne] - alpha_ei),
+                        eta_ei / Jnorm_ei * (x[0, 0 : self.Ne] - alpha_ei),
                         (np.count_nonzero(Ispike >= self.Ne), 1),
                     ).transpose() * (self.J[0 : self.Ne, Ispike[Ispike >= self.Ne]])
                     # I to E after an E spike
                     self.J[Ispike[Ispike < self.Ne], self.Ne : self.N] -= np.tile(
-                        eta_ei * x[0, self.Ne : self.N].transpose(),
+                        eta_ei / Jnorm_ei * x[0, self.Ne : self.N].transpose(),
                         (np.count_nonzero(Ispike < self.Ne), 1),
                     ) * (self.J[Ispike[Ispike < self.Ne], self.Ne : self.N])
 
@@ -977,14 +1036,14 @@ class plasticNeuralNetwork:
                     # Update synaptic weights according to plasticity rules
                     # I to E after an I spike
                     self.J[self.Ne : self.N, Ispike[Ispike >= self.Ne]] -= np.tile(
-                        eta_ii * (x[0, self.Ne : self.N] - alpha_ii),
+                        eta_ii / Jnorm_ii * (x[0, self.Ne : self.N] - alpha_ii),
                         (np.count_nonzero(Ispike >= self.Ne), 1),
                     ).transpose() * (
                         self.J[self.Ne : self.N, Ispike[Ispike >= self.Ne]]
                     )
                     # I to E after an E spike
                     self.J[Ispike[Ispike > self.Ne], self.Ne : self.N] -= np.tile(
-                        eta_ii * x[0, self.Ne : self.N].transpose(),
+                        eta_ii / Jnorm_ii * x[0, self.Ne : self.N].transpose(),
                         (np.count_nonzero(Ispike > self.Ne), 1),
                     ) * (self.J[Ispike[Ispike > self.Ne], self.Ne : self.N])
 
@@ -995,13 +1054,13 @@ class plasticNeuralNetwork:
                 nspike += len(Ispike)
 
             # Euler update to synaptic currents
-            Ie -= dt * Ie / taue
-            Ii -= dt * Ii / taui
-            Ix -= dt * Ix / taux
+            Ie -= self.dt * Ie / taue
+            Ii -= self.dt * Ii / taui
+            Ix -= self.dt * Ix / taux
 
             # Update time-dependent firing rates for plasticity
-            x[0 : self.Ne] -= dt * x[0 : self.Ne] / tauSTDP
-            x[self.Ne : self.N] -= dt * x[self.Ne : self.N] / tauSTDP
+            x[0 : self.Ne] -= self.dt * x[0 : self.Ne] / tauSTDP
+            x[self.Ne : self.N] -= self.dt * x[self.Ne : self.N] / tauSTDP
 
             # This makes plots of V(t) look better.
             # All action potentials reach Vth exactly.
@@ -1009,7 +1068,7 @@ class plasticNeuralNetwork:
             V[0, Ispike] = Vth
 
             # Store recorded variables
-            ii = int(math.floor(i / nBinsRecord))
+            ii = int(math.floor(i / self.nBinsRecord))
             IeRec[:, ii] += Ie[0, Ierecord]
             IiRec[:, ii] += Ii[0, Iirecord]
             IxRec[:, ii] += Ix[0, Ixrecord]
@@ -1022,14 +1081,14 @@ class plasticNeuralNetwork:
             # Reset mem pot.
             V[0, Ispike] = Vre
 
-        IeRec = IeRec / nBinsRecord  # Normalize recorded variables by # bins
-        IiRec = IiRec / nBinsRecord
-        IxRec = IxRec / nBinsRecord
-        VRec = VRec / nBinsRecord
-        JRec_ee = JRec_ee * np.sqrt(self.N) / nBinsRecord
-        JRec_ie = JRec_ie * np.sqrt(self.N) / nBinsRecord
-        JRec_ei = JRec_ei * np.sqrt(self.N) / nBinsRecord
-        JRec_ii = JRec_ii * np.sqrt(self.N) / nBinsRecord
+        IeRec = IeRec / self.nBinsRecord  # Normalize recorded variables by # bins
+        IiRec = IiRec / self.nBinsRecord
+        IxRec = IxRec / self.nBinsRecord
+        VRec = VRec / self.nBinsRecord
+        JRec_ee = JRec_ee * np.sqrt(self.N) / self.nBinsRecord
+        JRec_ie = JRec_ie * np.sqrt(self.N) / self.nBinsRecord
+        JRec_ei = JRec_ei * np.sqrt(self.N) / self.nBinsRecord
+        JRec_ii = JRec_ii * np.sqrt(self.N) / self.nBinsRecord
 
         s = s[:, 0:nspike]  # Get rid of padding in s
 

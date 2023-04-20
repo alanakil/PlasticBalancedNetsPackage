@@ -79,7 +79,7 @@ logging.info(f"Logs directory: {LOG_DIR}.")
 logging.info("Define input variables for plastic balanced network simulation.")
 
 # Total number of neurons.
-N_vector = np.array([100, 500, 1000, 2000, 5000, 10000])
+N_vector = np.array([500, 1000, 2000, 5000, 10000])
 # Fraction of excitatory neurons.
 frac_exc = 0.8
 # Extra fraction of neurons (external).
@@ -106,7 +106,7 @@ jex = 180
 jix = 135
 
 # Total time (in ms) for simulation.
-T = 100000
+T = 1000000
 
 # Step size for discretization.
 dt = 0.1
@@ -114,7 +114,7 @@ dt = 0.1
 # FFwd spike train rate (in kHz).
 rx = 10 / 1000
 # Correlation of ffwd spike trains.
-cx = 0.1
+cx = 0
 # Timescale of correlation in ms. Jitter spike trains in external layer by taujitter.
 taujitter = 5
 
@@ -157,7 +157,7 @@ numrecord = int(10)
 # Number of time bins to average over when recording currents and voltages.
 nBinsRecord = 10
 # Number of synapses to be sampled per cell type pair that is plastic.
-nJrecord0 = 10
+nJrecord0 = 1000
 
 winsize = 250  # ms
 T1 = T / 2  # ms
@@ -219,11 +219,11 @@ for N in N_vector:
     results_df.loc[N, "eta_ie_homeo"] = eta_ie_homeo
     # EI homeostatic
     Jnorm_ei = -200 / np.sqrt(N)
-    eta_ei = 0 / 10**3 / Jnorm_ei  # Learning rate, if zero then no plasticity.
+    eta_ei = 1 / 10**3 / Jnorm_ei  # Learning rate, if zero then no plasticity.
     results_df.loc[N, "eta_ei"] = eta_ei
     # II homeostatic
     Jnorm_ii = -300 / np.sqrt(N)
-    eta_ii = 0 / 10**3 / Jnorm_ii  # Learning rate, if zero then no plasticity.
+    eta_ii = 1 / 10**3 / Jnorm_ii  # Learning rate, if zero then no plasticity.
     results_df.loc[N, "eta_ii"] = eta_ii
 
     pnn = plasticNeuralNetwork(

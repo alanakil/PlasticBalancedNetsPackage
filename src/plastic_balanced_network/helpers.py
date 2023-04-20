@@ -825,6 +825,15 @@ class plasticNeuralNetwork:
             err = ValueError("ERROR: rho_ii has to be greater than zero.")
             logging.exception(err)
             raise err
+        # We cannot allow for two plasticity rules to act on the same synapse type at the same time.
+        if (eta_ee_hebb != 0) & (eta_ee_koh != 0):
+            err = ValueError("ERROR: You cannot have both Kohonen and Hebb STDP's at the same time on EE connections!")
+            logging.exception(err)
+            raise err
+        if (eta_ie_hebb != 0) & (eta_ie_homeo != 0):
+            err = ValueError("ERROR: You cannot have both Homeostatic and Hebb STDP's at the same time on IE connections!")
+            logging.exception(err)
+            raise err
 
         # Make defaults accessible.
         self.tauSTDP = tauSTDP
@@ -1134,6 +1143,42 @@ class plasticNeuralNetwork:
 
 
 # %%
+
+def compute_firing_rate(s, T, N, frac_exc=0.8, dtRate=10, window_size=10):
+    """
+    Calculate the mean firing rate of E and I populations as a function of time.
+    Inputs
+    :param s: Matrix of covariances or correlations.
+    :type s: np.ndarray
+    :param T: Total time of simulation.
+    :type T: int
+    :param N: Total number of neurons.
+    :type N: int
+    :param frac_exc: Fraction of E neurons. Defaults to 0.8.
+    :type frac_exc: float
+    :param dtRate: Size of time bin to count spikes over. Defaults to 10 ms.
+    :type dtRate: int
+    :param windowsize: Size of window for moving average. Defaults to 10 bins.
+    :type windowsize: int
+
+    Returns
+    :return: Time varying firing rate of E and I neurons, respectively (eRateT, iRateT).
+    :rtype: tuple(np.ndarray,np.ndarray)
+    """
+    timeVector = np.arange(dtRate, T + dtRate, dtRate) / 1000
+
+    hist, bin_edges = np.histogram(s[0, s[1, :] < frac_exc * N], bins=len(timeVector))
+    eRateT = hist / (dtRate * frac_exc * N) * 1000
+    hist, bin_edges = np.histogram(s[0, s[1, :] >= frac_exc * N], bins=len(timeVector))
+    iRateT = hist / (dtRate * (1 - frac_exc) * N) * 1000
+    
+    # Smooth rates. We multiplied by 1000 to get them in units of Hz.
+    eRateT = np.convolve(eRateT, np.ones(window_size)/window_size, mode='same')
+    iRateT = np.convolve(iRateT, np.ones(window_size)/window_size, mode='same')
+
+    return eRateT, iRateT, timeVector
+
+#%%
 
 def spike_count_cov(s, N, T1, T2, winsize=250):
     """

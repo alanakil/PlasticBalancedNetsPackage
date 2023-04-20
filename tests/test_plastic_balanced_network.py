@@ -2289,6 +2289,64 @@ class Test_simulate(unittest.TestCase):
                 eta_ii=0,
                 rho_ii=-0.020
             ) 
+    def test_double_stdp_ee_value(self):
+        with pytest.raises(ValueError):
+            plasticNeuralNetwork.simulate(
+                self,
+                Cm=1,
+                gL=1/15,
+                VT=-55,
+                Vre=-75,
+                Vth=-50,
+                EL=-72,
+                DeltaT=1,
+                taue=8,
+                taui=4,
+                taux=10,
+                tauSTDP=200,
+                numrecord=100,
+                eta_ee_hebb=1,
+                jmax_ee=30,
+                eta_ee_koh=1,
+                beta=2,
+                eta_ie_homeo=0,
+                rho_ie=0.020,
+                eta_ie_hebb=0,
+                jmax_ie_hebb=125,
+                eta_ei=0,
+                rho_ei=0.010,
+                eta_ii=0,
+                rho_ii=-0.020
+            ) 
+    def test_double_stdp_ie_value(self):
+        with pytest.raises(ValueError):
+            plasticNeuralNetwork.simulate(
+                self,
+                Cm=1,
+                gL=1/15,
+                VT=-55,
+                Vre=-75,
+                Vth=-50,
+                EL=-72,
+                DeltaT=1,
+                taue=8,
+                taui=4,
+                taux=10,
+                tauSTDP=200,
+                numrecord=100,
+                eta_ee_hebb=0,
+                jmax_ee=30,
+                eta_ee_koh=0,
+                beta=2,
+                eta_ie_homeo=1,
+                rho_ie=0.020,
+                eta_ie_hebb=1,
+                jmax_ie_hebb=125,
+                eta_ei=0,
+                rho_ei=0.010,
+                eta_ii=0,
+                rho_ii=-0.020
+            ) 
     def test_simulate_outcomes(self):
         """
         Test network simulation of plasticNeuralNetwork object.

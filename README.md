@@ -5,9 +5,11 @@
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/alanakil/PlasticBalancedNetsPackage)
 [![Downloads](https://pepy.tech/badge/plastic-balanced-network)](https://pepy.tech/project/plastic-balanced-network)
+[![Downloads](https://static.pepy.tech/badge/plastic-balanced-network/month)](https://pepy.tech/project/plastic-balanced-network)
+[![Downloads](https://static.pepy.tech/badge/plastic-balanced-network/week)](https://pepy.tech/project/plastic-balanced-network)
 <!-- ![Conda Version](https://img.shields.io/conda/vn/conda-forge/PlasticBalancedNetsPackage) -->
 <!-- ![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/PlasticBalancedNetsPackage.svg) -->
-[![Docs Status](https://github.com/alanakil/PlasticBalancedNetsPackage/workflows/Docs/badge.svg)](https://github.com/alanakil/PlasticBalancedNetsPackage/actions?query=workflow%3ADocs)
+[![Docs Status](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/alanakil/PlasticBalancedNetsPackage/actions?query=workflow%3ADocs)
 
 # PlasticBalancedNetsPackage
 
@@ -38,12 +40,15 @@ Alternatively, clone the repo and run `pip install -e .`
 
 Import: `from plastic_balanced_network.helpers import plasticNeuralNetwork`
 
+You may also import other useful functions for analysis: `from plastic_balanced_network.helpers import compute_firing_rate, spike_count_cov, cov2corr, average_cov_corr_over_subpops`
+
 Documentation: https://alanakil.github.io/PlasticBalancedNetsPackage/
 
-Paper: https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008958
+Research Article: https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008958
 
 ## Original Simulations
-Here we provide code for a series of simulations of plastic balanced networks. The results were reported in Akil et al. 2021 ("Balanced networks under spike-timing dependent plasticity"). Link to paper: https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008958
+In addition to the packaged neural network, we also make available the original simulations of plastic balanced networks that were run in MATLAB. The results of these simulations were reported in Akil et al. 2021 ("Balanced networks under spike-timing dependent plasticity"). The exact same network is used in the MATLAB simulations and the Python package presented here.
+Link to paper: https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1008958
 
 We provide the MATLAB and Python code that was used for all simulations in Akil et al., 2021 in the folder named `original_simulations`.
 In this code, we run several realizations of plastic balanced networks with varying: 
@@ -54,6 +59,6 @@ In this code, we run several realizations of plastic balanced networks with vary
 
 - Initial connectivity. To show the emergence of a manifold of fixed points in weight space when only I->E synapses are plastic.
 
-Please see more details in the paper Akil et al., 2021
+Please see more details in the paper Akil et al., 2021.
 
 This codebase was developed by Robert Rosenbaum and Alan Akil and is currently maintained by Alan Akil. 

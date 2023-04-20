@@ -11,6 +11,7 @@
 <!-- ![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/PlasticBalancedNetsPackage.svg) -->
 [![Docs Status](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/alanakil/PlasticBalancedNetsPackage/actions?query=workflow%3ADocs)
 [![flake8](https://img.shields.io/badge/flake8-passing-brightgreen)](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/flake8.yml)
+[![Black Lint](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/black.yml)
 
 
 # PlasticBalancedNetsPackage

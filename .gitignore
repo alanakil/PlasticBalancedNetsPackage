@@ -2,6 +2,7 @@
 **.egg
 .eggs/**
 .eggs/
+.vscode/
 build/**
 data/processed/**
 docs/**

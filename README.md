@@ -10,6 +10,8 @@
 <!-- ![Conda Version](https://img.shields.io/conda/vn/conda-forge/PlasticBalancedNetsPackage) -->
 <!-- ![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/PlasticBalancedNetsPackage.svg) -->
 [![Docs Status](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/alanakil/PlasticBalancedNetsPackage/actions?query=workflow%3ADocs)
+[![flake8](https://img.shields.io/badge/flake8-passing-brightgreen)](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/flake8.yml)
+
 
 # PlasticBalancedNetsPackage
 
@@ -38,7 +40,7 @@ There is a great deal of flexibility to simulate a network with any combination 
 Installation: Run `pip install plastic_balanced_network` in the terminal. 
 Alternatively, clone the repo and run `pip install -e .`
 
-Import: `from plastic_balanced_network.helpers import plasticNeuralNetwork`
+Import: `from plastic_balanced_network.helpers import PlasticNeuralNetwork`
 
 You may also import other useful functions for analysis: `from plastic_balanced_network.helpers import compute_firing_rate, spike_count_cov, cov2corr, average_cov_corr_over_subpops`
 

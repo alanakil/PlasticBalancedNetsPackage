@@ -1,6 +1,7 @@
 [flake8]
 max-complexity = 18
 max-line-length = 119
+ignore = N803, N806, C901, E741, N816
 select = B,C,E,F,N,W,T4,B9,C4
 extend-ignore = E203, E265, E266, E501, W503, F401, F403, F405, F541
 extend-exclude = .eggs,.env,.git,.ipynb.checkpoints,.pytest_cache,build,dist,docs/conf.py,notebooks,ref,writeup,docs,packages

@@ -1,9 +1,10 @@
 """
-This code is a sample simulation of a plastic balanced network as defined in Akil et al., 2021. 
+This code is a sample simulation of a plastic balanced network as defined in Akil et al., 2021.
 The purpose of this code is to demonstrate how the `plastic_balanced_network` package can be used.
-In particular, we here show how to simulate a PBN as N gets large and compare that to the theoretical predictions derived in Akil et al., 2021.
+In particular, we here show how to simulate a PBN as N gets large
+and compare that to the theoretical predictions derived in Akil et al., 2021.
 
-Output data is saved in the `data/processed` folder. 
+Output data is saved in the `data/processed` folder.
 Logs are saved in `logs` folder.
 
 Before running, ensure that the package is installed in your virtual environment. See README.md for details.
@@ -24,7 +25,7 @@ import os
 from pathlib import Path
 
 from plastic_balanced_network.helpers import (
-    plasticNeuralNetwork,
+    PlasticNeuralNetwork,
     compute_firing_rate,
     spike_count_cov,
     cov2corr,
@@ -181,7 +182,7 @@ results_df = results_df.set_index("N")
 
 for N in N_vector:
 
-    pnn = plasticNeuralNetwork(N, T)
+    pnn = PlasticNeuralNetwork(N, T)
     pnn.connectivity()
     pnn.ffwd_spikes(T, cx, rx)
 

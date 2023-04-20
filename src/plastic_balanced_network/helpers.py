@@ -10,9 +10,11 @@ import random2
 import math
 import time
 import logging
+import sys
+
 
 #%%
-class plasticNeuralNetwork:
+class PlasticNeuralNetwork:
     """plasticNeuralNetwork is a class that builds a neural network with
     correlated or uncorrelated firing as well as with plastic or static
     synaptic weights on any connection.
@@ -59,13 +61,17 @@ class plasticNeuralNetwork:
         # None error.
         if N is None:
             err = ValueError(
-                "ERROR: N cannot be None. Pick an integer number of total neurons. A number in the order of 10^3 is a good place to start."
+                """ERROR: N cannot be None. Pick an integer number of total neurons.
+                A number in the order of 10^3 is a good place to start.
+                """
             )
             logging.exception(err)
             raise err
         if T is None:
             err = ValueError(
-                "ERROR: T cannot be None. Pick an integer number of total simulation time. A number in the order of 10^3 is a good place to start for a quick simulation."
+                """ERROR: T cannot be None. Pick an integer number of total simulation time.
+                A number in the order of 10^3 is a good place to start for a quick simulation.
+                """
             )
             logging.exception(err)
             raise err
@@ -212,7 +218,8 @@ class plasticNeuralNetwork:
         :type nJrecord0: int
 
         Returns as part of self.
-        :return: Recurrent connectivity matrix (J); External feedforward connectivity matrix (Jx); Indices of recorded EE synaptic weights (Jrecord_ee);
+        :return: Recurrent connectivity matrix (J); External feedforward connectivity matrix (Jx);
+        Indices of recorded EE synaptic weights (Jrecord_ee);
         Indices of recorded IE synaptic weights (Jrecord_ie); Indices of recorded EI synaptic weights (Jrecord_ei);
         Indices of recorded II synaptic weights (Jrecord_ii); Number of recorded EE synaptic weights (numrecordJ_ee);
         Number of recorded IE synaptic weights (numrecordJ_ie); Number of recorded EI synaptic weights (numrecordJ_ei);
@@ -500,7 +507,9 @@ class plasticNeuralNetwork:
         # None errors.
         if T is None:
             err = ValueError(
-                "ERROR: T cannot be None. Pick an integer number of total simulation time. A number in the order of 10^3 is a good place to start for a quick simulation."
+                """ERROR: T cannot be None. Pick an integer number of total simulation time.
+                A number in the order of 10^3 is a good place to start for a quick simulation.
+                """
             )
             logging.exception(err)
             raise err
@@ -648,37 +657,47 @@ class plasticNeuralNetwork:
         :type tauSTDP: float or int
         :param numrecord: Number of neurons to record currents and voltage from. Defaults to 100.
         :type numrecord: int
-        :param eta_ee_hebb: Learning rate of EE Hebbian STDP. Defaults to 0. Pick a value in the approximate order of 10^-3 or lower as a start point.
+        :param eta_ee_hebb: Learning rate of EE Hebbian STDP. Defaults to 0.
+        Pick a value in the approximate order of 10^-3 or lower as a start point.
         :type eta_ee_hebb: float or int
         :param Jmax_ee: Hard constraint on EE Hebbian STDP. Defaults to 30/np.sqrt(N).
         :type Jmax_ee: float or int
-        :param eta_ee_koh: Learning rate of Kohonen STDP. Defaults to 0. Pick a value in the approximate order of 10^-3 or lower as a start point.
+        :param eta_ee_koh: Learning rate of Kohonen STDP. Defaults to 0.
+        Pick a value in the approximate order of 10^-3 or lower as a start point.
         :type eta_ee_koh: float or int
         :param beta: Parameter for Kohonen STDP. Defaults to 2/np.sqrt(N).
         :type beta: float or int
-        :param eta_ie_homeo: Learning rate of iSTDP. Defaults to 0. Pick a value in the approximate order of 10^-3 or lower as a start point.
+        :param eta_ie_homeo: Learning rate of iSTDP. Defaults to 0.
+        Pick a value in the approximate order of 10^-3 or lower as a start point.
         :type eta_ie_homeo: float or int
         :param rho_ie: Target rate of I neurons in iSTDP. Defaults to 0.020 kHz.
         :type rho_ie: float or int
-        :param eta_ie_hebb: Learning rate of IE Hebbian STDP. Defaults to 0. Pick a value in the approximate order of 10^-3 as a start point.
+        :param eta_ie_hebb: Learning rate of IE Hebbian STDP. Defaults to 0.
+        Pick a value in the approximate order of 10^-3 as a start point.
         :type eta_ie_hebb: float or int
         :param Jmax_ie_hebb: Hard constraint on IE Hebbian STDP. Defaults to 125/np.sqrt(N).
         :type Jmax_ie_hebb: float or int
-        :param eta_ei: Learning rate of iSTDP. Defaults to 0. Pick a value in the approximate order of 10^-3 or lower as a start point.
+        :param eta_ei: Learning rate of iSTDP. Defaults to 0.
+        Pick a value in the approximate order of 10^-3 or lower as a start point.
         :type eta_ei: float or int
         :param rho_ei: Parameter that determines target rate in iSTDP. Defaults to 0.010 kHz.
         :type rho_ei: float or int
-        :param eta_ii: Learning rate of iSTDP. Defaults to 0. Pick a value in the approximate order of 10^-3 or lower as a start point.
+        :param eta_ii: Learning rate of iSTDP. Defaults to 0.
+        Pick a value in the approximate order of 10^-3 or lower as a start point.
         :type eta_ii: float or int
         :param rho_ii: Parameter that determines target rate in iSTDP. Defaults to 0.020 kHz.
         :type rho_ii: float or int
 
         Returns
-        :return: A tuple containing spike train of all neurons in recurrent neural network (s); spike train of all feedforward neurons (sx),
-        matrices of neurons (rows) by time bins (cols) for EE, EI, IE, and II recorded weights (JRec_ee, JRec_ie, JRec_ei, JRec_ii);
+        :return: A tuple containing spike train of all neurons in recurrent neural network (s);
+        spike train of all feedforward neurons (sx),
+        matrices of neurons (rows) by time bins (cols) for EE, EI, IE,
+        and II recorded weights (JRec_ee, JRec_ie, JRec_ei, JRec_ii);
         matrices of neurons (rows) by time bins (cols) for E, I, and X input currents (IeRec, IiRec, IxRec);
-        matrix of neurons (rows) by time bins (cols) for recurrent network voltages (VRec); and discretized recorded time domain (timeRecord).
-        :rtype: tuple(np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray)
+        matrix of neurons (rows) by time bins (cols) for recurrent network voltages (VRec);
+        and discretized recorded time domain (timeRecord).
+        :rtype: tuple(np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray,
+        np.ndarray, np.ndarray, np.ndarray, np.ndarray)
 
         """
         # Type errors.
@@ -963,7 +982,6 @@ class plasticNeuralNetwork:
         # s(1,:) are the associated neuron indices
         s = np.zeros((2, self.maxns))
         nspike = 0
-        TooManySpikes = 0
 
         logging.info(
             f"We will record currents and membrane potential from {numrecord} E and {numrecord} I neurons."
@@ -1031,8 +1049,8 @@ class plasticNeuralNetwork:
                     s[0, nspike + 1 : nspike + len(Ispike) + 1] = self.total_time[i]
                     s[1, nspike + 1 : nspike + len(Ispike) + 1] = Ispike
                 else:
-                    TooManySpikes = 1
-                    break
+                    logging.error("Stopped simulation. Too many spikes.")
+                    sys.exit(1)
 
                 # Update synaptic currents
                 Ie += np.sum(self.J[:, Ispike[Ispike <= self.Ne]], 1) / taue

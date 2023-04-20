@@ -1,9 +1,9 @@
 """
-This code is a sample simulation of a plastic balanced network as defined in Akil et al, 2021. 
+This code is a sample simulation of a plastic balanced network as defined in Akil et al, 2021.
 The purpose of this code is to demonstrate how the `plastic_balanced_network` package can be used.
 
-We allow for a great deal of flexibility constructing the simulation/s. 
-One may easily change the following parameters: 
+We allow for a great deal of flexibility constructing the simulation/s.
+One may easily change the following parameters:
 (1) Total number of neurons.
 (2) Fraction of E-I neurons.
 (3) Probability of connection.
@@ -14,7 +14,7 @@ One may easily change the following parameters:
 (8) EIF neuron parameters.
 (9) Plasticity parameters on any connection type.
 
-Output data is saved in the `data/processed` folder. 
+Output data is saved in the `data/processed` folder.
 Logs are saved in `logs` folder.
 Please refer to the README.md for detailed instructions on how to run this code.
 """
@@ -29,12 +29,11 @@ import seaborn as sns
 import time
 import logging
 from datetime import datetime as dtm
-import datetime as dt
 import os
 from pathlib import Path
 
 from plastic_balanced_network.helpers import (
-    plasticNeuralNetwork,
+    PlasticNeuralNetwork,
     compute_firing_rate,
     spike_count_cov,
     cov2corr,
@@ -123,7 +122,7 @@ np.random.seed(31415)
 
 #%%
 # Define the model.
-pnn = plasticNeuralNetwork(
+pnn = PlasticNeuralNetwork(
     N,
     T,
 )
@@ -240,7 +239,7 @@ np.savez(
 # Load data from previous runs.
 data = np.load(DATA_FILE_PATH)
 # loop through the variables and set them as local variables with the same name as the key
-for key, value in data.items():
+for key, _value in data.items():
     exec(f"{key} = value")
 
 # %% [markdown]

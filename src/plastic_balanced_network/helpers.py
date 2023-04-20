@@ -127,6 +127,8 @@ class plasticNeuralNetwork:
         start_time = time.time()
         
         self.N = N
+        self.frac_exc = frac_exc
+        self.frac_ext = frac_ext
         self.Ne = int(round(frac_exc * N))
         self.Ni = int(round((1 - frac_exc) * N))
         self.Nx = int(round(frac_ext * N))
@@ -299,6 +301,20 @@ class plasticNeuralNetwork:
             err = ValueError("ERROR: nJrecord0, number of syn weights recorded, has to be positive.")
             logging.exception(err)
             raise err
+        
+        # Make defaults accessible.
+        self.jee = jee
+        self.jie = jie
+        self.jei = jei
+        self.jii = jii
+        self.jex = jex
+        self.jix = jix
+        self.p_ee = p_ee
+        self.p_ie = p_ie
+        self.p_ei = p_ei
+        self.p_ii = p_ii
+        self.p_ex = p_ex
+        self.p_ix = p_ix       
 
         # Start the simulation.
         start_time = time.time()
@@ -810,6 +826,11 @@ class plasticNeuralNetwork:
             logging.exception(err)
             raise err
 
+        # Make defaults accessible.
+        self.tauSTDP = tauSTDP
+        self.beta = beta
+        self.jmax_ee = jmax_ee
+        self.jmax_ie_hebb = jmax_ie_hebb
         # Initialize some variables
         alpha_ie = 2 * rho_ie * tauSTDP
         alpha_ei = 2 * rho_ei * tauSTDP
@@ -1112,15 +1133,11 @@ class plasticNeuralNetwork:
         )
 
 
-#%%
-
 # %%
 
-
-
-def SpikeCountCov(s, N, T1, T2, winsize):
+def spike_count_cov(s, N, T1, T2, winsize=250):
     """
-    Compute spike count covariance matrix.
+    Compute NxN spike count covariance matrix.
     s is a 2x(ns) matrix where ns is the number of spikes
     s(0,:) lists spike times
     and s(1,:) lists corresponding neuron indices
@@ -1132,13 +1149,22 @@ def SpikeCountCov(s, N, T1, T2, winsize):
     winsize is the window size over which spikes are counted,
     so winsize is assumed to be much smaller than T2-T1
 
-    Covariances are only computed between neurons whose
-    indices are listed in the vector Inds. If Inds is not
-    passed in then all NxN covariances are computed.
+    Inputs
+    :param s: Spike trains of all neurons.
+    :type s: np.ndarray
+    :param N: Total number of neurons
+    :type N: int
+    :param T1: Start time to count spikes for covariance calculation.
+    :type T1: float or int
+    :param T2: End time to count spikes for covariance calculation.
+    :type T2: float or int
+    :param winsize: Time window over which spikes are counted. Defaults to 250 ms.
+    :type winsize: int
+        
+    Returns (as part of `self`)
+    :return C: Full spike count covariance matrix.
+    :rtype C: np.ndarray
     """
-
-    Inds = np.arange(0, N)
-
     #   Count only spikes between T1, T2
     s1 = s[:, (s[0, :] <= T2) & (s[1, :] >= T1)]
 
@@ -1159,33 +1185,33 @@ def SpikeCountCov(s, N, T1, T2, winsize):
 def cov2corr(cov):
     """convert covariance matrix to correlation matrix
 
-    Parameters
-    ----------
-    cov : array_like, 2d
-        covariance matrix, see Notes
-
-    Returns
-    -------
-    corr : ndarray (subclass)
-        correlation matrix
-    return_std : bool
-        If this is true then the standard deviation is also returned.
-        By default only the correlation matrix is returned.
-
-    Notes
-    -----
-    This function does not convert subclasses of ndarrays. This requires
-    that division is defined elementwise. np.ma.array and np.matrix are allowed.
-
+    Inputs
+    :param cov: Covariance matrix.
+    :type cov: np.ndarray
+        
+    Returns (as part of `self`)
+    :return corr: Full spike count correlation matrix.
+    :rtype corr: np.ndarray
     """
     cov = np.asanyarray(cov)
     std_ = np.sqrt(np.diag(cov))
     corr = cov / np.outer(std_, std_)
     return corr
 
-def average_cov_corr_over_subpops(C, N, frac_exc):
+def average_cov_corr_over_subpops(C, N, frac_exc=0.8):
     """
     Average covariances or correlations over subpopulations.
+    Inputs
+    :param C: Matrix of covariances or correlations.
+    :type C: np.ndarray
+    :param N: Total number of neurons.
+    :type N: int
+    :param frac_exc: Fraction of E neurons. Defaults to 0.8.
+    :type frac_exc: float
+        
+    Returns
+    :return mC: Mean spike count covariance matrix.
+    :rtype mC: np.ndarray
     """
     # Get mean spike count covariances over each sub-pop
     II, JJ = np.meshgrid(np.arange(0, N), np.arange(0, N))

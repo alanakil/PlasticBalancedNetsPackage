@@ -15,18 +15,15 @@ __date__ = "APRIL 2023"
 #%%
 # Load python packages.
 import numpy as np
-import random2
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import time
 import logging
 from datetime import datetime as dtm
-import datetime as dt
 import os
 from pathlib import Path
 
-from plastic_balanced_network.helpers import plasticNeuralNetwork, SpikeCountCov, cov2corr, average_cov_corr_over_subpops
+from plastic_balanced_network.helpers import plasticNeuralNetwork, compute_firing_rate, spike_count_cov, cov2corr, average_cov_corr_over_subpops
 
 #%%
 # Construct a str containing the datetime when the simulation is run.
@@ -79,92 +76,39 @@ logging.info(f"Logs directory: {LOG_DIR}.")
 logging.info("Define input variables for plastic balanced network simulation.")
 
 # Total number of neurons.
-N_vector = np.array([500, 1000, 2000, 5000, 10000])
-# Fraction of excitatory neurons.
-frac_exc = 0.8
-# Extra fraction of neurons (external).
-frac_ext = 0.2
-
-# Define individual connection probabilities.
-p_ee = 0.1
-p_ei = 0.1
-p_ie = 0.1
-p_ii = 0.1
-p_ex = 0.1
-p_ix = 0.1
-# Recurrent net connection probabilities.
-P = np.array([[p_ee, p_ei], [p_ie, p_ii]])
-# Ffwd connection probs.
-Px = np.array([[p_ex], [p_ix]])
-
-# Mean connection strengths between each cell type pair.
-jee = 25
-jei = -150
-jie = 112.5
-jii = -250
-jex = 180
-jix = 135
-
+N_vector = np.array([500, 1000, 2000, 5000])
 # Total time (in ms) for simulation.
-T = 1000000
-
-# Step size for discretization.
-dt = 0.1
-
+T = int(10000)
 # FFwd spike train rate (in kHz).
 rx = 10 / 1000
 # Correlation of ffwd spike trains.
 cx = 0
-# Timescale of correlation in ms. Jitter spike trains in external layer by taujitter.
-taujitter = 5
+# Fraction of E and X neurons.
+frac_exc = 0.8
+frac_ext = 0.2
 
-# Extra stimulus: Istim is a Total_time-dependent stimulus
-# it is delivered to all neurons with weights given by Jstim.
-# Specifically, the stimulus to neuron j at Total_time index i is:
-# Istim(i)*Jstim(j)
-jestim = 0
-jistim = 0
-
-# Synaptic timescales in ms.
-taux = 10
-taue = 8
-taui = 4
-
-# Neuron parameters.
-Cm = 1
-gL = 1 / 15
-EL = -72
-Vth = -50
-Vre = -75
-DeltaT = 1
-VT = -55
-
-# Plasticity parameters.
-tauSTDP = 200  # ms
-
+# EE hebb
 eta_ee_hebb = 0 / 10**3  # Learning rate, if zero then no plasticity.
+jmax_ee = 30
+# EE kohonen
 eta_ee_koh = 0 / 10**2  # Learning rate, if zero then no plasticity.
+beta = 2
+# IE hebb
 eta_ie_hebb = 0 / 10**3  # Learning rate, if zero then no plasticity.
+jmax_ie_hebb = 125
+# IE homeostatic
+eta_ie_homeo = 0 / 10**3  # Learning rate, if zero then no plasticity.
 rho_ie = 0.020  # Target rate 20Hz
-alpha_ie = 2 * rho_ie * tauSTDP
+# EI homeostatic
+eta_ei = 0 / 10**3  # Learning rate, if zero then no plasticity.
 rho_ei = 0.010  # Target rate 10Hz
-alpha_ei = 2 * rho_ei * tauSTDP
+# II homeostatic
+eta_ii = 0 / 10**3  # Learning rate, if zero then no plasticity.
 rho_ii = 0.020  # Target rate 20Hz
-alpha_ii = 2 * rho_ii * tauSTDP
 
-# Number of neurons to record from each population.
-numrecord = int(10)  
-# Number of time bins to average over when recording currents and voltages.
-nBinsRecord = 10
-# Number of synapses to be sampled per cell type pair that is plastic.
-nJrecord0 = 1000
-
-winsize = 250  # ms
+# Time interval where covs and corrs are computed.
 T1 = T / 2  # ms
 T2 = T  # ms
-
-dtRate = 100  # ms
-timeVector = np.arange(dtRate, T + dtRate, dtRate) / 1000
 
 # Set the random seed.
 np.random.seed(31415)
@@ -175,10 +119,10 @@ np.random.seed(31415)
 results_df = pd.DataFrame(
     np.nan,
     index=range(len(N_vector)),
-    columns=["N", "frac_exc", "frac_ext", "T", "dt", "cx", "rx", 
-             "eta_ee_hebb", "Jmax_ee", "eta_ee_koh", "beta", "eta_ie_homeo",
-             "alpha_ie", "eta_ie_hebb", "Jmax_ie_hebb", "eta_ei", "alpha_ei",
-             "eta_ii", "alpha_ii"
+    columns=["N", "frac_exc", "frac_ext", "T", "cx", "rx",
+             "eta_ee_hebb", "jmax_ee", "eta_ee_koh", "beta", "eta_ie_homeo",
+             "rho_ie", "eta_ie_hebb", "jmax_ie_hebb", "eta_ei", "rho_ei",
+             "eta_ii", "rho_ii",
              "eRate", "iRate", "mCee", "mCei", "mCii", "mRee", "mRei", "mRii",
              "mJee", "mJie", "mJei", "mJii"]
     )
@@ -187,59 +131,30 @@ results_df["N"] = N_vector
 results_df["frac_exc"] = frac_exc
 results_df["frac_ext"] = frac_ext
 results_df["T"] = T
-results_df["dt"] = dt
 results_df["cx"] = cx
 results_df["rx"] = rx
 results_df["eta_ee_hebb"] = eta_ee_hebb
+results_df["jmax_ee"] = jmax_ee
 results_df["eta_ee_koh"] = eta_ee_koh
 results_df["eta_ie_hebb"] = eta_ie_hebb
-results_df["alpha_ie"] = alpha_ie
-results_df["alpha_ei"] = alpha_ei
-results_df["alpha_ii"] = alpha_ii
+results_df["jmax_ie_hebb"] = jmax_ie_hebb
+results_df["eta_ie_homeo"] = eta_ie_homeo
+results_df["eta_ei"] = eta_ei
+results_df["eta_ii"] = eta_ii
+results_df["rho_ie"] = rho_ie
+results_df["rho_ei"] = rho_ei
+results_df["rho_ii"] = rho_ii
 
 results_df = results_df.set_index("N")
 
 for N in N_vector:
-    
-    Jm = np.array([[jee, jei], [jie, jii]]) / np.sqrt(N)
-    Jxm = np.array([[jex], [jix]]) / np.sqrt(N)
-
-    # EE hebb
-    Jmax_ee = 30 / np.sqrt(N)
-    results_df.loc[N, "Jmax_ee"] = Jmax_ee
-    # EE kohonen
-    beta = 2 / np.sqrt(N)
-    results_df.loc[N, "beta"] = beta
-    # IE hebb
-    Jmax_ie_hebb = 125 / np.sqrt(N)
-    results_df.loc[N, "Jmax_ie_hebb"] = Jmax_ie_hebb
-    # IE homeostatic
-    Jnorm_ie = 200 / np.sqrt(N)
-    eta_ie_homeo = 0 / 10**3 / Jnorm_ie  # Learning rate, if zero then no plasticity.
-    results_df.loc[N, "eta_ie_homeo"] = eta_ie_homeo
-    # EI homeostatic
-    Jnorm_ei = -200 / np.sqrt(N)
-    eta_ei = 1 / 10**3 / Jnorm_ei  # Learning rate, if zero then no plasticity.
-    results_df.loc[N, "eta_ei"] = eta_ei
-    # II homeostatic
-    Jnorm_ii = -300 / np.sqrt(N)
-    eta_ii = 1 / 10**3 / Jnorm_ii  # Learning rate, if zero then no plasticity.
-    results_df.loc[N, "eta_ii"] = eta_ii
 
     pnn = plasticNeuralNetwork(
         N,
-        frac_exc,
-        frac_ext,
-        T,
-        dt,
-        jestim,
-        jistim,
-        nBinsRecord,
+        T
     )
-    
-    pnn.connectivity(Jm, Jxm, P, Px, nJrecord0)
-
-    pnn.ffwd_spikes(cx, rx, taujitter, T)
+    pnn.connectivity()
+    pnn.ffwd_spikes(T, cx, rx)
 
     (
         s,
@@ -254,49 +169,27 @@ for N in N_vector:
         VRec,
         timeRecord,
     ) = pnn.simulate(
-        Cm,
-        gL,
-        VT,
-        Vre,
-        Vth,
-        EL,
-        DeltaT,
-        taue,
-        taui,
-        taux,
-        tauSTDP,
-        numrecord,
-        eta_ee_hebb,
-        Jmax_ee,
-        eta_ee_koh,
-        beta,
-        eta_ie_homeo,
-        alpha_ie,
-        eta_ie_hebb,
-        Jmax_ie_hebb,
-        eta_ei,
-        alpha_ei,
-        eta_ii,
-        alpha_ii,
-        dt,
-        nBinsRecord,
+        eta_ee_hebb=eta_ee_hebb,
+        jmax_ee=jmax_ee,
+        eta_ee_koh=eta_ee_koh,
+        eta_ie_homeo=eta_ie_homeo,
+        jmax_ie_hebb=jmax_ie_hebb,
+        eta_ie_hebb=eta_ie_hebb,
+        eta_ei=eta_ei,
+        eta_ii=eta_ii,
+        rho_ie=rho_ie,
+        rho_ei=rho_ei,
+        rho_ii=rho_ii
     )
 
     # Compute relevant variables and save.
-
-    # Compute rates
-    hist, bin_edges = np.histogram(s[0, s[1, :] < frac_exc * N], bins=len(timeVector))
-    eRateT = hist / (dtRate * frac_exc * N) * 1000
-    hist, bin_edges = np.histogram(s[0, s[1, :] >= frac_exc * N], bins=len(timeVector))
-    iRateT = hist / (dtRate * (1 - frac_exc) * N) * 1000
-    eRate = np.mean(eRateT[len(eRateT)//2:])
-    iRate = np.mean(iRateT[len(iRateT)//2:])
-
-    results_df.loc[N, "eRate"] = eRate
-    results_df.loc[N, "iRate"] = iRate
+    eRateT, iRateT, timeVector = compute_firing_rate(s, T, N)
+    # Average rates over the second half of the simulation (when at steady state).
+    results_df.loc[N, "eRate"] = np.mean(eRateT[len(eRateT)//2:])
+    results_df.loc[N, "iRate"] = np.mean(iRateT[len(iRateT)//2:])
 
     # Covs and Corrs
-    C = SpikeCountCov(s, N, T1, T2, winsize)
+    C = spike_count_cov(s, N, T1, T2)
     R = cov2corr(C)
     mC = average_cov_corr_over_subpops(C, N, frac_exc)
     mR = average_cov_corr_over_subpops(R, N, frac_exc)
@@ -320,9 +213,123 @@ for N in N_vector:
 
 
 #%% [markdown]
-## Save and load relevant data variables for analysis and plotting.
+# Save and load relevant data variables for analysis and plotting.
 
 # %%
 results_df.to_csv(DATA_FILE_PATH)
 
+#%% [markdown]
+# Load relevant data variables for analysis and plotting.
+# We'll focus on plotting relevant quantities like rates, covariances, correlations and synaptic weights over N.
+# They should converge to a fixed point if appropriate conditions are chosen (see Akil et al. 2021).
+
 #%%
+# Load data.
+results_df = pd.read_csv("../data/processed/pbn_data_2023APR20-1604.csv")
+
+#%%
+# Let's start with Rates.
+
+fig = plt.figure(figsize=(8, 5))
+ax = plt.subplot(111)
+sns.set()
+sns.set_style("whitegrid")
+sns.set_style("white")
+sns.set_style("ticks")
+sns.set_context("talk", font_scale=1.9, rc={"lines.linewidth": 3.3})
+
+plt.plot(results_df["N"], results_df["eRate"], label="e")
+plt.plot(results_df["N"], results_df["iRate"], label="i")
+
+plt.xlabel("N")
+plt.ylabel("Rates (Hz)")
+plt.xscale("log")
+leg = plt.legend(loc="upper right", fontsize=18, frameon="none", markerscale=1)
+leg.get_frame().set_linewidth(0.0)
+
+sns.despine()
+plt.show()
+
+# %%
+# Covariances.
+
+fig = plt.figure(figsize=(8, 5))
+ax = plt.subplot(111)
+sns.set()
+sns.set_style("whitegrid")
+sns.set_style("white")
+sns.set_style("ticks")
+sns.set_context("talk", font_scale=1.9, rc={"lines.linewidth": 3.3})
+
+plt.plot(results_df["N"], results_df["mCee"], label="ee")
+plt.plot(results_df["N"], results_df["mCei"], label="ei")
+plt.plot(results_df["N"], results_df["mCii"], label="ii")
+
+plt.xlabel("N")
+plt.ylabel("Mean Covariances")
+plt.xscale("log")
+leg = plt.legend(loc="upper right", fontsize=18, frameon="none", markerscale=1)
+leg.get_frame().set_linewidth(0.0)
+
+sns.despine()
+plt.show()
+
+
+# %%
+# Correlations.
+
+fig = plt.figure(figsize=(8, 5))
+ax = plt.subplot(111)
+sns.set()
+sns.set_style("whitegrid")
+sns.set_style("white")
+sns.set_style("ticks")
+sns.set_context("talk", font_scale=1.9, rc={"lines.linewidth": 3.3})
+
+plt.plot(results_df["N"], results_df["mRee"], label="ee")
+plt.plot(results_df["N"], results_df["mRei"], label="ei")
+plt.plot(results_df["N"], results_df["mRii"], label="ii")
+
+plt.xlabel("N")
+plt.ylabel("Mean Correlations")
+plt.xscale("log")
+leg = plt.legend(loc="upper right", fontsize=18, frameon="none", markerscale=1)
+leg.get_frame().set_linewidth(0.0)
+
+sns.despine()
+plt.show()
+
+
+# %%
+# Syanptic weights.
+fig = plt.figure(figsize=(8, 5))
+ax = plt.subplot(111)
+sns.set()
+sns.set_style("whitegrid")
+sns.set_style("white")
+sns.set_style("ticks")
+sns.set_context("talk", font_scale=1.9, rc={"lines.linewidth": 3.3})
+
+if eta_ee_hebb != 0:
+    plt.plot(results_df["N"], results_df["mJee"], label="ee")
+if eta_ee_koh != 0:
+    plt.plot(results_df["N"], results_df["mJee"], label="ee")
+if eta_ie_hebb != 0:
+    plt.plot(results_df["N"], results_df["mJie"], label="ie")
+if eta_ie_homeo != 0:
+    plt.plot(results_df["N"], results_df["mJie"], label="ie")
+if eta_ei != 0:
+    plt.plot(results_df["N"], results_df["mJei"], label="ei")
+if eta_ii != 0:
+    plt.plot(results_df["N"], results_df["mJii"], label="ii")
+
+plt.xlabel("Syn. weight")
+plt.ylabel("Count")
+leg = plt.legend(loc="upper right", fontsize=18, frameon="none", markerscale=1)
+leg.get_frame().set_linewidth(0.0)
+
+sns.despine()
+plt.show()
+
+# %%
+

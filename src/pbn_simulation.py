@@ -33,7 +33,7 @@ import datetime as dt
 import os
 from pathlib import Path
 
-from plastic_balanced_network.helpers import plasticNeuralNetwork, spike_count_cov, cov2corr, average_cov_corr_over_subpops
+from plastic_balanced_network.helpers import plasticNeuralNetwork, compute_firing_rate, spike_count_cov, cov2corr, average_cov_corr_over_subpops
 
 #%%
 # Construct a str containing the datetime when the simulation is run.
@@ -417,25 +417,8 @@ plt.show()
 # Time course of firing rates.
 
 #%%
-# Time course of firing rates.
-
-# Compute histogram of rates (over time)
-dtRate = 100  # ms
-timeVector = np.arange(dtRate, T + dtRate, dtRate) / 1000
-hist, bin_edges = np.histogram(s[0, s[1, :] < frac_exc * N], bins=len(timeVector))
-eRateT = hist / (dtRate * frac_exc * N) * 1000
-
-hist, bin_edges = np.histogram(s[0, s[1, :] >= frac_exc * N], bins=len(timeVector))
-iRateT = hist / (dtRate * (1 - frac_exc) * N) * 1000
-
-# Slide a window over the rates to smooth them.
-window = 5
-Num_points = int(len(eRateT) - window)
-eRate_New = np.zeros((Num_points, 1))
-iRate_New = np.zeros((Num_points, 1))
-for i in range(Num_points):
-    eRate_New[i, 0] = np.mean(eRateT[i : i + window])
-    iRate_New[i, 0] = np.mean(iRateT[i : i + window])
+# Compute smoothed histogram of rates (over time)
+eRateT, iRateT, timeVector = compute_firing_rate(s, T, N, frac_exc=0.8, dtRate=10, window_size=10)
 
 # Start the figure.
 fig = plt.figure(figsize=(8, 5))
@@ -447,8 +430,8 @@ sns.set_style("ticks")
 sns.set_context("talk", font_scale=1.9, rc={"lines.linewidth": 3.3})
 
 # Plot time-dependent rates
-plt.plot(np.linspace(0, T / 1000, num=Num_points), eRate_New, color="blue", label=r"e")
-plt.plot(np.linspace(0, T / 1000, num=Num_points), iRate_New, color="red", label=r"i")
+plt.plot(timeVector, eRateT, color="blue", label=r"e")
+plt.plot(timeVector, iRateT, color="red", label=r"i")
 
 plt.ylabel("rate (Hz)")
 plt.xlabel("time (s)")

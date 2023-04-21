@@ -37,6 +37,9 @@ jobs:
 
     - name: Run black
       run: black --check src/plastic_balanced_network
+      env:
+        PYTHONPATH: ${{ env.PYTHONPATH }}:${{ github.workspace }}
+      working-directory: .
 
     - name: Generate documentation
       run: |

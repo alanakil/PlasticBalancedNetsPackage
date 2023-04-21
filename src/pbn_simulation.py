@@ -56,9 +56,7 @@ DATA_FILE_PATH = f"{DATA_DIR}/pbn_data_{datadatetime}.npz"
 
 #%%
 # Set up logging.
-log_format = (
-    "%(asctime)s - %(levelname)-8s - %(name)s - %(funcName)s:%(lineno)d - %(message)s"
-)
+log_format = "%(asctime)s - %(levelname)-8s - %(name)s - %(funcName)s:%(lineno)d - %(message)s"
 # Use loglevel to filter out undesired logs.
 loglevel = "INFO"
 loglevel = str(loglevel).replace('"', "")
@@ -140,19 +138,7 @@ pnn.ffwd_spikes(T, cx, rx)
 # Note that spike trains are recorded in s as follows:
 # s(0,:) are the spike times
 # s(1,:) are the associated neuron indices
-(
-    s,
-    sx,
-    JRec_ee,
-    JRec_ie,
-    JRec_ei,
-    JRec_ii,
-    IeRec,
-    IiRec,
-    IxRec,
-    VRec,
-    timeRecord,
-) = pnn.simulate(
+(s, sx, JRec_ee, JRec_ie, JRec_ei, JRec_ii, IeRec, IiRec, IxRec, VRec, timeRecord,) = pnn.simulate(
     eta_ee_hebb=eta_ee_hebb,
     eta_ee_koh=eta_ee_koh,
     eta_ie_homeo=eta_ie_homeo,
@@ -423,9 +409,7 @@ plt.show()
 
 #%%
 # Compute smoothed histogram of rates (over time)
-eRateT, iRateT, timeVector = compute_firing_rate(
-    s, T, N, frac_exc=0.8, dtRate=10, window_size=10
-)
+eRateT, iRateT, timeVector = compute_firing_rate(s, T, N, frac_exc=0.8, dtRate=10, window_size=10)
 
 # Start the figure.
 fig = plt.figure(figsize=(8, 5))

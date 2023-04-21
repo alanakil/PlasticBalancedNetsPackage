@@ -48,9 +48,7 @@ DATA_FILE_PATH = f"{DATA_DIR}/pbn_data_{datadatetime}.csv"
 
 #%%
 # Set up logging.
-log_format = (
-    "%(asctime)s - %(levelname)-8s - %(name)s - %(funcName)s:%(lineno)d - %(message)s"
-)
+log_format = "%(asctime)s - %(levelname)-8s - %(name)s - %(funcName)s:%(lineno)d - %(message)s"
 # Use loglevel to filter out undesired logs.
 loglevel = "INFO"
 loglevel = str(loglevel).replace('"', "")
@@ -186,19 +184,7 @@ for N in N_vector:
     pnn.connectivity()
     pnn.ffwd_spikes(T, cx, rx)
 
-    (
-        s,
-        sx,
-        JRec_ee,
-        JRec_ie,
-        JRec_ei,
-        JRec_ii,
-        IeRec,
-        IiRec,
-        IxRec,
-        VRec,
-        timeRecord,
-    ) = pnn.simulate(
+    (s, sx, JRec_ee, JRec_ie, JRec_ei, JRec_ii, IeRec, IiRec, IxRec, VRec, timeRecord,) = pnn.simulate(
         eta_ee_hebb=eta_ee_hebb,
         jmax_ee=jmax_ee,
         eta_ee_koh=eta_ee_koh,

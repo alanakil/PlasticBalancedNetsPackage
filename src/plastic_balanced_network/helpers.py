@@ -15,13 +15,13 @@ import sys
 
 # %%
 class PlasticNeuralNetwork:
-    """plasticNeuralNetwork is a class that builds a neural network with
+    """PlasticNeuralNetwork is a class that builds a neural network with
     correlated or uncorrelated firing as well as with plastic or static
     synaptic weights on any connection.
     It contains functions to define the connectivity, simulate feedforward external
     spike trains, and to simulate the recurrent network's firing.
 
-    Inputs
+    Arguments
     :param N: Total number of neurons in recurrent neural network.
     :type N: int
     :param T: Total time of simulation in milliseconds.
@@ -183,7 +183,7 @@ class PlasticNeuralNetwork:
         """
         Create connectivity matrix and arrays to record individual weights of all four connections.
 
-        Inputs
+        Arguments
         :param jee: Unscaled coupling strength from E to E neurons. Defaults to 25.
         :type jee: float
         :param jie: Unscaled coupling strength from E to I neurons. Defaults to 112.5.
@@ -435,7 +435,7 @@ class PlasticNeuralNetwork:
         """
         Create all spike trains of the Poisson feedforward, external layer.
 
-        Inputs
+        Arguments
         :param T: Total time of simulation.
         :type T: int
         :param cx: Value of mean correlation between feedforward Poisson spike trains. Defaults to 0.1.
@@ -564,7 +564,7 @@ class PlasticNeuralNetwork:
         """
         Execute Network simulation.
 
-        Inputs
+        Arguments
         :param Cm: Membrane capacitance. Defaults to 1.
         :type Cm: float or int
         :param gL: Leak conductance. Defaults to 1/15.
@@ -1122,7 +1122,7 @@ class PlasticNeuralNetwork:
 def compute_firing_rate(s, T, N, frac_exc=0.8, dtRate=10, window_size=10):
     """
     Calculate the mean firing rate of E and I populations as a function of time.
-    Inputs
+    Arguments
     :param s: Matrix of covariances or correlations.
     :type s: np.ndarray
     :param T: Total time of simulation.
@@ -1171,7 +1171,7 @@ def spike_count_cov(s, N, T1, T2, winsize=250):
     winsize is the window size over which spikes are counted,
     so winsize is assumed to be much smaller than T2-T1
 
-    Inputs
+    Arguments
     :param s: Spike trains of all neurons.
     :type s: np.ndarray
     :param N: Total number of neurons
@@ -1207,7 +1207,7 @@ def spike_count_cov(s, N, T1, T2, winsize=250):
 def cov2corr(cov):
     """convert covariance matrix to correlation matrix
 
-    Inputs
+    Arguments
     :param cov: Covariance matrix.
     :type cov: np.ndarray
 
@@ -1224,7 +1224,7 @@ def cov2corr(cov):
 def average_cov_corr_over_subpops(C, N, frac_exc=0.8):
     """
     Average covariances or correlations over subpopulations.
-    Inputs
+    Arguments
     :param C: Matrix of covariances or correlations.
     :type C: np.ndarray
     :param N: Total number of neurons.

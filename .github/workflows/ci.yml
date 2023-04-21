@@ -27,11 +27,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Test with pytest
-      run: |
-        pip install .
-        pytest tests/ --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
-
     - name: Run flake8
       run: flake8 --config=.flake8 src/plastic_balanced_network
 
@@ -40,6 +35,10 @@ jobs:
       env:
         PYTHONPATH: ${{ env.PYTHONPATH }}:${{ github.workspace }}
       working-directory: .
+
+    - name: Test with pytest
+      run: |
+        pytest tests/ --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
 
     - name: Generate documentation
       run: |

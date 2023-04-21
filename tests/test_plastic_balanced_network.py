@@ -7,7 +7,7 @@ import unittest
 from numpy.testing import assert_array_equal
 from scipy.stats import expon, kstest
 
-from src.plastic_balanced_network.helpers import PlasticNeuralNetwork
+from plastic_balanced_network.network import PlasticNeuralNetwork
 
 #%%
 

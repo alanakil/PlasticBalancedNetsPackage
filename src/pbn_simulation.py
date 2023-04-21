@@ -32,7 +32,7 @@ from datetime import datetime as dtm
 import os
 from pathlib import Path
 
-from plastic_balanced_network.helpers import (
+from plastic_balanced_network.network import (
     PlasticNeuralNetwork,
     compute_firing_rate,
     spike_count_cov,

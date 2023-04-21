@@ -39,7 +39,7 @@ There is a great deal of flexibility to simulate a network with any combination 
 Installation: Run `pip install plastic_balanced_network` in the terminal. 
 Alternatively, clone the repo and run `pip install -e .`
 
-Import: `from plastic_balanced_network.helpers import PlasticNeuralNetwork`
+Import: `from plastic_balanced_network.network import PlasticNeuralNetwork`
 
 You may also import other useful functions for analysis: `from plastic_balanced_network.helpers import compute_firing_rate, spike_count_cov, cov2corr, average_cov_corr_over_subpops`
 

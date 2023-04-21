@@ -1,8 +1,8 @@
 """
-Functions to build and simulate a plastic balanced network.
+Plastic balanced network class. Includes functions to initialize, build connectivity, simulate, etc.
 """
 __author__ = "Alan Akil (alan.akil@yahoo.com)"
-__date__ = "MARCH 2023"
+__date__ = "APRIL 2023"
 
 # %%
 import numpy as np

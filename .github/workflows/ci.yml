@@ -42,7 +42,6 @@ jobs:
 
     - name: Generate documentation
       run: |
-        sphinx-quickstart -p plastic_balanced_network -a "Alan Akil" -q --ext-autodoc --ext-viewcode --ext-intersphinx --ext-todo docs
         sphinx-build -b html docs docs/_build
 
     - name: Publish documentation

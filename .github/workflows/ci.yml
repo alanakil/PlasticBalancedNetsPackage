@@ -42,7 +42,8 @@ jobs:
 
     - name: Generate documentation
       run: |
-        sphinx-build -b html docs docs/_build
+        sphinx-quickstart -p plastic_balanced_network -a "Alan Akil" -q --ext-autodoc --ext-viewcode --ext-intersphinx --ext-todo docs
+        sphinx-build -b html docs docs/_build -c conf.py
 
     - name: Publish documentation
       uses: peaceiris/actions-gh-pages@v3

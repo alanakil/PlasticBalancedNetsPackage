@@ -4,7 +4,7 @@ Functions to build and simulate a plastic balanced network.
 __author__ = "Alan Akil (alan.akil@yahoo.com)"
 __date__ = "MARCH 2023"
 
-#%%
+# %%
 import numpy as np
 import random2
 import math
@@ -13,7 +13,7 @@ import logging
 import sys
 
 
-#%%
+# %%
 class PlasticNeuralNetwork:
     """plasticNeuralNetwork is a class that builds a neural network with
     correlated or uncorrelated firing as well as with plastic or static
@@ -948,7 +948,6 @@ class PlasticNeuralNetwork:
 
             # If there are spikes
             if len(Ispike) != 0:
-
                 # Store spike times and neuron indices
                 if nspike + len(Ispike) <= self.maxns:
                     s[0, nspike + 1 : nspike + len(Ispike) + 1] = self.total_time[i]
@@ -1155,7 +1154,7 @@ def compute_firing_rate(s, T, N, frac_exc=0.8, dtRate=10, window_size=10):
     return eRateT, iRateT, timeVector
 
 
-#%%
+# %%
 
 
 def spike_count_cov(s, N, T1, T2, winsize=250):

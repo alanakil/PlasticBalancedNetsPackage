@@ -13,7 +13,7 @@ Before running, ensure that the package is installed in your virtual environment
 __author__ = "Alan Akil (alan.akil@yahoo.com)"
 __date__ = "APRIL 2023"
 
-#%%
+# %%
 # Load python packages.
 import numpy as np
 import pandas as pd
@@ -32,7 +32,7 @@ from plastic_balanced_network.helpers import (
     average_cov_corr_over_subpops,
 )
 
-#%%
+# %%
 # Construct a str containing the datetime when the simulation is run.
 todaysdate = dtm.today()
 datetime_format = "%Y%b%d-%H%M"
@@ -46,7 +46,7 @@ os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(LOG_DIR, exist_ok=True)
 DATA_FILE_PATH = f"{DATA_DIR}/pbn_data_{datadatetime}.csv"
 
-#%%
+# %%
 # Set up logging.
 log_format = "%(asctime)s - %(levelname)-8s - %(name)s - %(funcName)s:%(lineno)d - %(message)s"
 # Use loglevel to filter out undesired logs.
@@ -76,7 +76,7 @@ logging.info(f"Data directory: {DATA_DIR}.")
 logging.info(f"Logs directory: {LOG_DIR}.")
 
 
-#%%
+# %%
 # Define all input variables for the network simulation.
 logging.info("Define input variables for plastic balanced network simulation.")
 
@@ -118,7 +118,7 @@ T2 = T  # ms
 # Set the random seed.
 np.random.seed(31415)
 
-#%%
+# %%
 # Loop over N. Compute relevant variables and only save those.
 
 results_df = pd.DataFrame(
@@ -179,12 +179,23 @@ results_df["rho_ii"] = rho_ii
 results_df = results_df.set_index("N")
 
 for N in N_vector:
-
     pnn = PlasticNeuralNetwork(N, T)
     pnn.connectivity()
     pnn.ffwd_spikes(T, cx, rx)
 
-    (s, sx, JRec_ee, JRec_ie, JRec_ei, JRec_ii, IeRec, IiRec, IxRec, VRec, timeRecord,) = pnn.simulate(
+    (
+        s,
+        sx,
+        JRec_ee,
+        JRec_ie,
+        JRec_ei,
+        JRec_ii,
+        IeRec,
+        IiRec,
+        IxRec,
+        VRec,
+        timeRecord,
+    ) = pnn.simulate(
         eta_ee_hebb=eta_ee_hebb,
         jmax_ee=jmax_ee,
         eta_ee_koh=eta_ee_koh,
@@ -228,22 +239,22 @@ for N in N_vector:
     results_df.loc[N, "mJii"] = np.mean(JRec_ii[len(JRec_ii) // 2 :])
 
 
-#%% [markdown]
+# %% [markdown]
 # Save and load relevant data variables for analysis and plotting.
 
 # %%
 results_df.to_csv(DATA_FILE_PATH)
 
-#%% [markdown]
+# %% [markdown]
 # Load relevant data variables for analysis and plotting.
 # We'll focus on plotting relevant quantities like rates, covariances, correlations and synaptic weights over N.
 # They should converge to a fixed point if appropriate conditions are chosen (see Akil et al. 2021).
 
-#%%
+# %%
 # Load data.
 results_df = pd.read_csv("../data/processed/pbn_data_2023APR20-1604.csv")
 
-#%%
+# %%
 # Let's start with Rates.
 
 fig = plt.figure(figsize=(8, 5))

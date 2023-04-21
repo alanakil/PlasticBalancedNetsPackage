@@ -21,7 +21,7 @@ Please refer to the README.md for detailed instructions on how to run this code.
 __author__ = "Alan Akil (alan.akil@yahoo.com)"
 __date__ = "APRIL 2023"
 
-#%%
+# %%
 # Load python packages.
 import numpy as np
 import matplotlib.pyplot as plt
@@ -40,7 +40,7 @@ from plastic_balanced_network.helpers import (
     average_cov_corr_over_subpops,
 )
 
-#%%
+# %%
 # Construct a str containing the datetime when the simulation is run.
 todaysdate = dtm.today()
 datetime_format = "%Y%b%d-%H%M"
@@ -54,7 +54,7 @@ os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(LOG_DIR, exist_ok=True)
 DATA_FILE_PATH = f"{DATA_DIR}/pbn_data_{datadatetime}.npz"
 
-#%%
+# %%
 # Set up logging.
 log_format = "%(asctime)s - %(levelname)-8s - %(name)s - %(funcName)s:%(lineno)d - %(message)s"
 # Use loglevel to filter out undesired logs.
@@ -84,7 +84,7 @@ logging.info(f"Data directory: {DATA_DIR}.")
 logging.info(f"Logs directory: {LOG_DIR}.")
 
 
-#%%
+# %%
 # Define all input variables for the network simulation.
 logging.info("Define input variables for plastic balanced network simulation.")
 
@@ -118,27 +118,39 @@ rho_ii = 0.020  # Target rate 20Hz
 # Set the random seed.
 np.random.seed(31415)
 
-#%%
+# %%
 # Define the model.
 pnn = PlasticNeuralNetwork(
     N,
     T,
 )
 
-#%%
+# %%
 # Initialize the connectivity.
 pnn.connectivity()
 
-#%%
+# %%
 # Generate Poisson ffwd spike trains.
 pnn.ffwd_spikes(T, cx, rx)
 
-#%%
+# %%
 # Simulate plastic network.
 # Note that spike trains are recorded in s as follows:
 # s(0,:) are the spike times
 # s(1,:) are the associated neuron indices
-(s, sx, JRec_ee, JRec_ie, JRec_ei, JRec_ii, IeRec, IiRec, IxRec, VRec, timeRecord,) = pnn.simulate(
+(
+    s,
+    sx,
+    JRec_ee,
+    JRec_ie,
+    JRec_ei,
+    JRec_ii,
+    IeRec,
+    IiRec,
+    IxRec,
+    VRec,
+    timeRecord,
+) = pnn.simulate(
     eta_ee_hebb=eta_ee_hebb,
     eta_ee_koh=eta_ee_koh,
     eta_ie_homeo=eta_ie_homeo,
@@ -147,7 +159,7 @@ pnn.ffwd_spikes(T, cx, rx)
     eta_ii=eta_ii,
 )
 
-#%%
+# %%
 # If one uses default parameters from the pnn class, we can easily access them like this:
 frac_exc = pnn.frac_exc
 frac_ext = pnn.frac_ext
@@ -169,10 +181,10 @@ jmax_ee = pnn.jmax_ee
 jmax_ie_hebb = pnn.jmax_ie_hebb
 dt = pnn.dt
 
-#%% [markdown]
+# %% [markdown]
 ## Save and load relevant data variables for analysis and plotting.
 
-#%%
+# %%
 # Save data containing relevant variables.
 np.savez(
     DATA_FILE_PATH,  # File name
@@ -221,7 +233,7 @@ np.savez(
     rho_ii=rho_ii,
 )
 
-#%%
+# %%
 # Load data from previous runs.
 data = np.load(DATA_FILE_PATH)
 # loop through the variables and set them as local variables with the same name as the key
@@ -234,7 +246,7 @@ for key, _value in data.items():
 # %% [markdown]
 # Raster plot of neurons firing.
 
-#%%
+# %%
 # Raster plot.
 fig = plt.figure(figsize=(8, 5))
 ax = plt.subplot(111)
@@ -407,7 +419,7 @@ plt.show()
 # %% [markdown]
 # Time course of firing rates.
 
-#%%
+# %%
 # Compute smoothed histogram of rates (over time)
 eRateT, iRateT, timeVector = compute_firing_rate(s, T, N, frac_exc=0.8, dtRate=10, window_size=10)
 
@@ -438,7 +450,7 @@ plt.show()
 # %% [markdown]
 # Compute empirical spike train covariances and correlations.
 
-#%%
+# %%
 # Compute spike count covariances over windows of size
 # winsize starting at time T1 and ending at time T2.
 winsize = 250  # ms

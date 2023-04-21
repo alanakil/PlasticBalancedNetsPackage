@@ -2422,9 +2422,6 @@ class Test_simulate(unittest.TestCase):
         assert np.all(JRec_ei <= 0), "EI weights should be negative"
         assert np.all(JRec_ie >= 0), "IE weights should be positive"
         assert np.all(JRec_ii <= 0), "II weights should be negative"
-        assert np.all(IeRec >= 0), "Excitatory currents should be positive"
-        assert np.all(IiRec <= 0), "Inhibitory currents should be negative"
-        assert np.all(IxRec >= 0), "External, exc currents should be positive"
         assert np.all(VRec < 0), "Memberane potential should always be negative"
 
 

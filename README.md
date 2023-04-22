@@ -1,16 +1,15 @@
-<!-- ![Build Status](https://travis-ci.com/alanakil/PlasticBalancedNetsPackage.svg?branch=main) -->
-<!-- ![codecov](https://codecov.io/gh/alanakil/PlasticBalancedNetsPackage/branch/main/graph/badge.svg) -->
-[![PyPI version](https://badge.fury.io/py/plastic-balanced-network.svg)](https://badge.fury.io/py/plastic-balanced-network)
 ![Python version](https://img.shields.io/badge/python-3.8%20|%203.9%20|%203.10-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/alanakil/PlasticBalancedNetsPackage)
 [![Downloads](https://pepy.tech/badge/plastic-balanced-network)](https://pepy.tech/project/plastic-balanced-network)
 [![Downloads](https://static.pepy.tech/badge/plastic-balanced-network/month)](https://pepy.tech/project/plastic-balanced-network)
 [![Downloads](https://static.pepy.tech/badge/plastic-balanced-network/week)](https://pepy.tech/project/plastic-balanced-network)
-<!-- ![Conda Version](https://img.shields.io/conda/vn/conda-forge/PlasticBalancedNetsPackage) -->
-<!-- ![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/PlasticBalancedNetsPackage.svg) -->
-[![Docs Status](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/alanakil/PlasticBalancedNetsPackage/actions?query=workflow%3ADocs)
-[![Build and Test](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/ci.yml/badge.svg)](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/ci.yml)
+[![Build and Test](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/buildandtest.yml/badge.svg)](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/buildandtest.yml)
+[![Code Coverage](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/codecov.yml/badge.svg)](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/codecov.yml)
+[![Documentation](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/docs.yml/badge.svg)](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/docs.yml)
+[![Lint](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/linting.yml/badge.svg)](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/linting.yml)
+[![Publish to PyPI.org](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/publish.yaml/badge.svg)](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/publish.yaml)
+[![pages-build-deployment](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/alanakil/PlasticBalancedNetsPackage/actions/workflows/pages/pages-build-deployment)
 
 # PlasticBalancedNetsPackage
 

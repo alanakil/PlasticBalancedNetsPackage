@@ -23,6 +23,10 @@ tests/__pycache__
 !docs/changelog.rst
 !docs/make.bat
 !docs/index.rst
+!docs/plastic_balanced_network.rst
+!docs/plastic_balanced_network.network.rst
+!docs/plastic_balanced_network.helpers.rst
+!docs/modules.rst
 !docs/_build/
 !docs/_build/.gitkeep
 !logs/.gitkeep

@@ -21,30 +21,46 @@ class PlasticNeuralNetwork:
     It contains functions to define the connectivity, simulate feedforward external
     spike trains, and to simulate the recurrent network's firing.
 
-    Arguments
-    :param N: Total number of neurons in recurrent neural network.
-    :type N: int
-    :param T: Total time of simulation in milliseconds.
-    :type T: int
-    :param frac_exc: Fraction of excitatory neurons. Defaults to 0.8.
-    :type frac_exc: float or int
-    :param frac_ext: Fraction of excitatory neurons in external layer. Defaults to 0.2.
-    :type frac_ext: float or int
-    :param dt: Time bin size in milliseconds for time discretization. Defaults to 0.1 ms.
-    :type dt: float or int
-    :param jestim: Added constant current to excitatory neurons. Defaults to 0.
-    :type jestim: float or int
-    :param jistim: Added constant current to inhibitory neurons. Defaults to 0.
-    :type jistim: float or int
-    :param nBinsRecord: Number of bins to record average and record over. Defaults to 10.
-    :type nBinsRecord: int
+    Parameters
+    ----------
+    N: int
+        Total number of neurons.
+    T: int
+        Total simulation time in milliseconds.
+    frac_exc: float
+        Fraction of E neurons. Defaults to 0.8.
+    frac_exc: float
+        Fraction of E neurons in external layer. Defaults to 0.2.
+    dt: float or int
+        Time bin size in milliseconds for time discretization. Defaults to 0.1 ms.
+    jestim: float or int
+        Added constant current to excitatory neurons. Defaults to 0.
+    jistim: float or int
+        Added constant current to inhibitory neurons. Defaults to 0.
+    nBinsRecord: int 
+        Number of bins to record average and record over. Defaults to 10.
 
-    Returns as part of self.
-    :return: Number of excitatory neurons (Ne); Number of inhibitory neurons (Ni); Number of external neurons (Nx);
-    Total number of discretized time points (Nt); Time vector of added constant stimulatiom (Istim);
-    Weight coupling for Istim (Jstim); Maximum number of spikes to terminate pathologic behavior (maxns);
-    Discretized recorded time domain (timeRecord); Number of points in discretized recorded time domain (Ntrec).
-    :rtype: tuple(int, int, int, int, np.ndarray, np.ndarray, float or int, np.ndarray, int)
+    Returns (as part of self)
+    --------
+    :return: 
+    Ne: int
+        Total number of E neurons.
+    Ni: int
+        Total number of I neurons.
+    Nx: int
+        Total number of X neurons.
+    Nt: int
+        Total number of discretized time points.
+    Istim: np.ndarray
+        Time vector of added constant stimulation.
+    Jstim: np.ndarray
+        Weight coupling for Istim.
+    maxns: int
+        Maximum number of spikes to terminate pathologic behavior.
+    timeRecord: np.ndarray
+        Discretized recorded time domain.
+    Ntrec: int
+        Number of points in discretized recorded time domain.
     """
 
     def __init__(
@@ -183,42 +199,57 @@ class PlasticNeuralNetwork:
         """
         Create connectivity matrix and arrays to record individual weights of all four connections.
 
-        Arguments
-        :param jee: Unscaled coupling strength from E to E neurons. Defaults to 25.
-        :type jee: float
-        :param jie: Unscaled coupling strength from E to I neurons. Defaults to 112.5.
-        :type jie: float
-        :param jei: Unscaled coupling strength from I to E neurons. Defaults to -150.
-        :type jei: float
-        :param jii: Unscaled coupling strength from I to I neurons. Defaults to -250.
-        :type jii: float
-        :param jex: Unscaled coupling strength from X to E neurons. Defaults to 180.
-        :type jex: float
-        :param jix: Unscaled coupling strength from X to I neurons. Defaults to 135.
-        :type jix: float
-        :param p_ee: Probability of connection from E to E neurons. Defaults to 0.1.
-        :type p_ee: float
-        :param p_ie: Probability of connection from E to I neurons. Defaults to 0.1.
-        :type p_ie: float
-        :param p_ei: Probability of connection from I to E neurons. Defaults to 0.1.
-        :type p_ei: float
-        :param p_ii: Probability of connection from I to I neurons. Defaults to 0.1.
-        :type p_ii: float
-        :param p_ex: Probability of connection from X to E neurons. Defaults to 0.1.
-        :type p_ex: float
-        :param p_ix: Probability of connection from X to I neurons. Defaults to 0.1.
-        :type p_ix: float
-        :param nJrecord0: Count of synaptic weights recorded. Relevant when network is plastic.
-        :type nJrecord0: int
+        Parameters
+        ---------
+        jee: float
+            Unscaled coupling strength from E to E neurons. Defaults to 25.
+        jie: float
+            Unscaled coupling strength from E to I neurons. Defaults to 112.5.
+        jei: float
+            Unscaled coupling strength from I to E neurons. Defaults to -150.
+        jii: float
+            Unscaled coupling strength from I to I neurons. Defaults to -250.
+        jex: float
+            Unscaled coupling strength from X to E neurons. Defaults to 180.
+        jix: float
+            Unscaled coupling strength from X to I neurons. Defaults to 135.
+        p_ee: float
+            Probability of connection from E to E neurons. Defaults to 0.1.
+        p_ie: float
+            Probability of connection from E to I neurons. Defaults to 0.1.
+        p_ei: float
+            Probability of connection from I to E neurons. Defaults to 0.1.
+        p_ii: float
+            Probability of connection from I to I neurons. Defaults to 0.1.
+        p_ex: float
+            Probability of connection from X to E neurons. Defaults to 0.1.
+        p_ix: float
+            Probability of connection from X to I neurons. Defaults to 0.1.
+        nJrecord0: int
+            Count of synaptic weights recorded. Relevant when network is plastic. Defaults to 100.
 
-        Returns as part of self.
-        :return: Recurrent connectivity matrix (J); External feedforward connectivity matrix (Jx);
-        Indices of recorded EE synaptic weights (Jrecord_ee);
-        Indices of recorded IE synaptic weights (Jrecord_ie); Indices of recorded EI synaptic weights (Jrecord_ei);
-        Indices of recorded II synaptic weights (Jrecord_ii); Number of recorded EE synaptic weights (numrecordJ_ee);
-        Number of recorded IE synaptic weights (numrecordJ_ie); Number of recorded EI synaptic weights (numrecordJ_ei);
-        Number of recorded II synaptic weights (numrecordJ_ii).
-        :rtype: tuple(np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray,  int, int, int, int)
+        Returns (as part of self)
+        -------
+        J: np.ndarray
+            Recurrent connectivity matrix.
+        Jx: np.ndarray
+            External feedforward connectivity matrix.
+        Jrecord_ee: np.ndarray
+            Indices of recorded EE synaptic weights.
+        Jrecord_ie: np.ndarray
+            Indices of recorded IE synaptic weights.
+        Jrecord_ei: np.ndarray
+            Indices of recorded EI synaptic weights.
+        Jrecord_ii: np.ndarray
+            Indices of recorded II synaptic weights.
+        numrecordJ_ee: int
+            Number of recorded EE synaptic weights.
+        numrecordJ_ie: int
+            Number of recorded IE synaptic weights.
+        numrecordJ_ei: int
+            Number of recorded EI synaptic weights.
+        numrecordJ_ii: int
+            Number of recorded II synaptic weights.
         """
         # Test types
         if not isinstance(jee, (float, np.floating, int, np.integer)):
@@ -435,20 +466,23 @@ class PlasticNeuralNetwork:
         """
         Create all spike trains of the Poisson feedforward, external layer.
 
-        Arguments
-        :param T: Total time of simulation.
-        :type T: int
-        :param cx: Value of mean correlation between feedforward Poisson spike trains. Defaults to 0.1.
-        :type cx: float or int
-        :param rx: Rate of feedforward Poisson neurons in Hz. Defaults to 0.01 kHz.
-        :type rx: float or int
-        :param taujitter: Spike trains are jittered by taujitter milliseconds to avoid perfect synchrony. Defaults to 5 ms.
-        :type taujitter: float or int
+        Parameters
+        ----------
+        T: int
+            Total simulation time in milliseconds.
+        cx: float or int
+            Value of mean correlation between feedforward Poisson spike trains. Defaults to 0.1.
+        rx: float or int
+            Rate of feedforward Poisson neurons in kHz. Defaults to 0.01 kHz.
+        taujitter: float or int
+            Spike trains are jittered by taujitter milliseconds to avoid perfect synchrony. Defaults to 5 ms.
 
         Returns (as part of `self`)
-        :return: Feedforward, Poisson spike trains recorded as spike time and neuron index (sx);
-        Total number of spikes in sx (nspikeX).
-        :rtype: tuple(np.ndarray, int)
+        --------
+        sx: np.ndarray
+            Feedforward, Poisson spike trains recorded as spike time and neuron index.
+        nspikeX: int 
+            Total number of spikes in sx ().
         """
         # None errors.
         if T is None:
@@ -564,73 +598,87 @@ class PlasticNeuralNetwork:
         """
         Execute Network simulation.
 
-        Arguments
-        :param Cm: Membrane capacitance. Defaults to 1.
-        :type Cm: float or int
-        :param gL: Leak conductance. Defaults to 1/15.
-        :type gL: float or int
-        :param VT: Threshold in EIF neuron. Defaults to -55.
-        :type VT: float or int
-        :param Vre: Reset voltage. Defaults to -75.
-        :type Vre: float or int
-        :param Vth: Hard threshold that determines when a spike happened. Defaults to -50.
-        :type Vth: float or int
-        :param EL: Resting potential. Defaults to -72.
-        :type EL: float or int
-        :param DeltaT: EIF neuron parameter. Determines the shape of the rise to spike. Defaults to 1.
-        :type DeltaT: float or int
-        :param taue: Timescale of excitatory neurons in milliseconds. Defaults to 8 ms.
-        :type taue: float or int
-        :param taui: Timescale of inhibitory neurons in milliseconds. Defaults to 4 ms.
-        :type taui: float or int
-        :param taux: Timescale of external neurons in milliseconds. Defaults to 10 ms.
-        :type taux: float or int
-        :param tauSTDP: Timescale of eligibility trace used for STDP. Defaults to 200 ms.
-        :type tauSTDP: float or int
-        :param numrecord: Number of neurons to record currents and voltage from. Defaults to 100.
-        :type numrecord: int
-        :param eta_ee_hebb: Learning rate of EE Hebbian STDP. Defaults to 0.
-        Pick a value in the approximate order of 10^-3 or lower as a start point.
-        :type eta_ee_hebb: float or int
-        :param Jmax_ee: Hard constraint on EE Hebbian STDP. Defaults to 30/np.sqrt(N).
-        :type Jmax_ee: float or int
-        :param eta_ee_koh: Learning rate of Kohonen STDP. Defaults to 0.
-        Pick a value in the approximate order of 10^-3 or lower as a start point.
-        :type eta_ee_koh: float or int
-        :param beta: Parameter for Kohonen STDP. Defaults to 2/np.sqrt(N).
-        :type beta: float or int
-        :param eta_ie_homeo: Learning rate of iSTDP. Defaults to 0.
-        Pick a value in the approximate order of 10^-3 or lower as a start point.
-        :type eta_ie_homeo: float or int
-        :param rho_ie: Target rate of I neurons in iSTDP. Defaults to 0.020 kHz.
-        :type rho_ie: float or int
-        :param eta_ie_hebb: Learning rate of IE Hebbian STDP. Defaults to 0.
-        Pick a value in the approximate order of 10^-3 as a start point.
-        :type eta_ie_hebb: float or int
-        :param Jmax_ie_hebb: Hard constraint on IE Hebbian STDP. Defaults to 125/np.sqrt(N).
-        :type Jmax_ie_hebb: float or int
-        :param eta_ei: Learning rate of iSTDP. Defaults to 0.
-        Pick a value in the approximate order of 10^-3 or lower as a start point.
-        :type eta_ei: float or int
-        :param rho_ei: Parameter that determines target rate in iSTDP. Defaults to 0.010 kHz.
-        :type rho_ei: float or int
-        :param eta_ii: Learning rate of iSTDP. Defaults to 0.
-        Pick a value in the approximate order of 10^-3 or lower as a start point.
-        :type eta_ii: float or int
-        :param rho_ii: Parameter that determines target rate in iSTDP. Defaults to 0.020 kHz.
-        :type rho_ii: float or int
-
+        Parameters
+        ----------
+        Cm: float or int
+            Membrane capacitance. Defaults to 1.
+        gL: float or int
+            Leak conductance. Defaults to 1/15.
+        VT: float or int
+            Threshold in EIF neuron. Defaults to -55.
+        Vre: float or int
+            Reset voltage. Defaults to -75.
+        Vth: float or int
+            Hard threshold that determines when a spike happened. Defaults to -50.
+        EL: float or int
+            Resting potential. Defaults to -72.
+        DeltaT: float or int
+            EIF neuron parameter. Determines the shape of the rise to spike. Defaults to 1.
+        taue: float or int
+            Timescale of excitatory neurons in milliseconds. Defaults to 8 ms.
+        taui: float or int
+            Timescale of inhibitory neurons in milliseconds. Defaults to 4 ms.
+        taux: float or int
+            Timescale of external neurons in milliseconds. Defaults to 10 ms.
+        tauSTDP: float or int
+            Timescale of eligibility trace used for STDP. Defaults to 200 ms.
+        numrecord: int
+            Number of neurons to record currents and voltage from. Defaults to 100.
+        eta_ee_hebb: float or int
+            Learning rate of EE Hebbian STDP. Defaults to 0.
+            Pick a value in the approximate order of 10^-3 or lower as a start point.
+        Jmax_ee: float or int
+            Hard constraint on EE Hebbian STDP. Defaults to 30/np.sqrt(N).
+        eta_ee_koh: float or int
+            Learning rate of Kohonen STDP. Defaults to 0.
+            Pick a value in the approximate order of 10^-3 or lower as a start point.
+        beta: float or int
+            Parameter for Kohonen STDP. Defaults to 2/np.sqrt(N).
+        eta_ie_homeo: float or int
+            Learning rate of iSTDP. Defaults to 0.
+            Pick a value in the approximate order of 10^-3 or lower as a start point.
+        rho_ie: float or int
+            Target rate of I neurons in iSTDP. Defaults to 0.020 kHz.
+        eta_ie_hebb: float or int
+            Learning rate of IE Hebbian STDP. Defaults to 0.
+            Pick a value in the approximate order of 10^-3 as a start point.
+        Jmax_ie_hebb: float or int
+            Hard constraint on IE Hebbian STDP. Defaults to 125/np.sqrt(N).
+        eta_ei: float or int
+            Learning rate of iSTDP. Defaults to 0.
+            Pick a value in the approximate order of 10^-3 or lower as a start point.
+        rho_ei: float or int
+            Parameter that determines target rate in iSTDP. Defaults to 0.010 kHz.
+        eta_ii: float or int
+            Learning rate of iSTDP. Defaults to 0.
+            Pick a value in the approximate order of 10^-3 or lower as a start point.
+        rho_ii: float or int
+            Parameter that determines target rate in iSTDP. Defaults to 0.020 kHz.
+        
         Returns
-        :return: A tuple containing spike train of all neurons in recurrent neural network (s);
-        spike train of all feedforward neurons (sx),
-        matrices of neurons (rows) by time bins (cols) for EE, EI, IE,
-        and II recorded weights (JRec_ee, JRec_ie, JRec_ei, JRec_ii);
-        matrices of neurons (rows) by time bins (cols) for E, I, and X input currents (IeRec, IiRec, IxRec);
-        matrix of neurons (rows) by time bins (cols) for recurrent network voltages (VRec);
-        and discretized recorded time domain (timeRecord).
-        :rtype: tuple(np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray,
-        np.ndarray, np.ndarray, np.ndarray, np.ndarray)
-
+        -------
+        s: np.ndarray
+            A tuple containing spike train of all neurons in recurrent neural network.
+        s: np.ndarray
+            A tuple containing spike train of all feedforward neurons.
+        JRec_ee: np.ndarray
+            Matrix of neurons (rows) by time bins (cols) for EE recorded weights.
+        JRec_ie: np.ndarray
+            Matrix of neurons (rows) by time bins (cols) for IE recorded weights.
+        JRec_ei: np.ndarray
+            Matrix of neurons (rows) by time bins (cols) for EI recorded weights.
+        JRec_ii: np.ndarray
+            Matrix of neurons (rows) by time bins (cols) for II recorded weights.
+        IeRec: np.ndarray
+            Matrix of neurons (rows) by time bins (cols) for E recorded input currents.
+        IiRec: np.ndarray
+            Matrix of neurons (rows) by time bins (cols) for I recorded input currents.
+        IxRec: np.ndarray
+            Matrix of neurons (rows) by time bins (cols) for X recorded input currents.
+        VRec: np.ndarray
+            Matrix of neurons (rows) by time bins (cols) for voltages of neurons in recurrent network.
+        timeRecord: np.ndarray
+            Discretized recorded time domain.
         """
         # Type errors.
         if not isinstance(Cm, (float, np.floating, int, np.integer)):

@@ -15,21 +15,24 @@ import logging
 def compute_firing_rate(s, T, N, frac_exc=0.8, dtRate=10, window_size=10):
     """
     Calculate the mean firing rate of E and I populations as a function of time.
-    Arguments
-    :param s: Matrix of covariances or correlations.
-    :type s: np.ndarray
-    :param T: Total time of simulation.
-    :type T: int
-    :param N: Total number of neurons.
-    :type N: int
-    :param frac_exc: Fraction of E neurons. Defaults to 0.8.
-    :type frac_exc: float
-    :param dtRate: Size of time bin to count spikes over. Defaults to 10 ms.
-    :type dtRate: int
-    :param windowsize: Size of window for moving average. Defaults to 10 bins.
-    :type windowsize: int
+    
+    Parameters
+    ----------
+    s: np.ndarray
+        Spike trains of all neurons.
+    T: int
+        Total simulation time in milliseconds.
+    N: int
+        Total number of neurons.
+    frac_exc: float
+        Fraction of E neurons. Defaults to 0.8.
+    dtRate: int
+        Size of time bin to count spikes over. Defaults to 10 ms.
+    window_size: int
+        Size of window for moving average. Defaults to 10 bins.
 
     Returns
+    ----------
     :return: Time varying firing rate of E and I neurons, respectively (eRateT, iRateT).
     :rtype: tuple(np.ndarray,np.ndarray)
     """
@@ -68,21 +71,23 @@ def spike_count_cov(s, N, T1, T2, winsize=250):
     winsize is the window size over which spikes are counted,
     so winsize is assumed to be much smaller than T2-T1
 
-    Arguments
-    :param s: Spike trains of all neurons.
-    :type s: np.ndarray
-    :param N: Total number of neurons
-    :type N: int
-    :param T1: Start time to count spikes for covariance calculation.
-    :type T1: float or int
-    :param T2: End time to count spikes for covariance calculation.
-    :type T2: float or int
-    :param winsize: Time window over which spikes are counted. Defaults to 250 ms.
-    :type winsize: int
+    Parameters
+    ----------
+    s: np.ndarray
+        Spike trains of all neurons.
+    N: int
+        Total number of neurons.
+    T1: float or int
+        Start time to count spikes for covariance calculation.
+    T2: float or int
+        End time to count spikes for covariance calculation.
+    winsize: int
+        Time window over which spikes are counted. Defaults to 250 ms.
 
-    Returns (as part of `self`)
-    :return C: Full spike count covariance matrix.
-    :rtype C: np.ndarray
+    Returns
+    ----------
+    C: np.ndarray
+        Full spike count covariance matrix.
     """
     start_time = time.time()
     #   Count only spikes between T1, T2
@@ -109,13 +114,15 @@ def spike_count_cov(s, N, T1, T2, winsize=250):
 def cov2corr(cov):
     """convert covariance matrix to correlation matrix
 
-    Arguments
-    :param cov: Covariance matrix.
-    :type cov: np.ndarray
+    Parameters
+    ----------
+    cov: np.ndarray
+        Covariance matrix.
 
-    Returns (as part of `self`)
-    :return corr: Full spike count correlation matrix.
-    :rtype corr: np.ndarray
+    Returns
+    ----------
+    corr: np.ndarray
+        Correlation matrix.
     """
     start_time = time.time()
     cov = np.asanyarray(cov)
@@ -131,19 +138,19 @@ def average_cov_corr_over_subpops(C, N, frac_exc=0.8):
     """
     Average covariances or correlations over subpopulations.
     
-    Arguments
-    ---------
+    Parameters
+    ----------
     C: np.ndarray
         Matrix of covariances or correlations.
-    :param N: Total number of neurons.
-    :type N: int
-    :param frac_exc: Fraction of E neurons. Defaults to 0.8.
-    :type frac_exc: float
+    N: int
+        Total number of neurons.
+    frac_exc: float
+        Fraction of E neurons. Defaults to 0.8.
 
     Returns
     -------
-    :return mC: Mean spike count covariance matrix.
-    :rtype mC: np.ndarray
+    mC: np.ndarray
+        Mean spike count covariance or correlation matrix.
     """
     start_time = time.time()
     # Get mean spike count covariances over each sub-pop

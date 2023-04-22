@@ -47,11 +47,18 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="plastic_balanced_network.html">plastic_balanced_network package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="plastic_balanced_network.html#submodules">Submodules</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">plastic_balanced_network.network module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">plastic_balanced_network.network module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#plastic_balanced_network.network.PlasticNeuralNetwork"><code class="docutils literal notranslate"><span class="pre">PlasticNeuralNetwork</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plastic_balanced_network.network.average_cov_corr_over_subpops"><code class="docutils literal notranslate"><span class="pre">average_cov_corr_over_subpops()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plastic_balanced_network.network.compute_firing_rate"><code class="docutils literal notranslate"><span class="pre">compute_firing_rate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plastic_balanced_network.network.cov2corr"><code class="docutils literal notranslate"><span class="pre">cov2corr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plastic_balanced_network.network.spike_count_cov"><code class="docutils literal notranslate"><span class="pre">spike_count_cov()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="plastic_balanced_network.helpers.html">plastic_balanced_network.helpers module</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="plastic_balanced_network.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plastic_balanced_network.html#module-plastic_balanced_network">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">0.0.2-b (2023-04-22)</a></li>
@@ -83,8 +90,252 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="plastic-balanced-network-network-module">
-<h1>plastic_balanced_network.network module<a class="headerlink" href="#plastic-balanced-network-network-module" title="Permalink to this heading"></a></h1>
+  <section id="module-plastic_balanced_network.network">
+<span id="plastic-balanced-network-network-module"></span><h1>plastic_balanced_network.network module<a class="headerlink" href="#module-plastic_balanced_network.network" title="Permalink to this heading"></a></h1>
+<p>Plastic balanced network class. Includes functions to initialize, build connectivity, simulate, etc.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="plastic_balanced_network.network.PlasticNeuralNetwork">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">plastic_balanced_network.network.</span></span><span class="sig-name descname"><span class="pre">PlasticNeuralNetwork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_exc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jestim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jistim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nBinsRecord</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plastic_balanced_network/network.html#PlasticNeuralNetwork"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plastic_balanced_network.network.PlasticNeuralNetwork" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>PlasticNeuralNetwork is a class that builds a neural network with
+correlated or uncorrelated firing as well as with plastic or static
+synaptic weights on any connection.
+It contains functions to define the connectivity, simulate feedforward external
+spike trains, and to simulate the recurrent network’s firing.</p>
+<p>Arguments
+:param N: Total number of neurons in recurrent neural network.
+:type N: int
+:param T: Total time of simulation in milliseconds.
+:type T: int
+:param frac_exc: Fraction of excitatory neurons. Defaults to 0.8.
+:type frac_exc: float or int
+:param frac_ext: Fraction of excitatory neurons in external layer. Defaults to 0.2.
+:type frac_ext: float or int
+:param dt: Time bin size in milliseconds for time discretization. Defaults to 0.1 ms.
+:type dt: float or int
+:param jestim: Added constant current to excitatory neurons. Defaults to 0.
+:type jestim: float or int
+:param jistim: Added constant current to inhibitory neurons. Defaults to 0.
+:type jistim: float or int
+:param nBinsRecord: Number of bins to record average and record over. Defaults to 10.
+:type nBinsRecord: int</p>
+<p>Returns as part of self.
+:return: Number of excitatory neurons (Ne); Number of inhibitory neurons (Ni); Number of external neurons (Nx);
+Total number of discretized time points (Nt); Time vector of added constant stimulatiom (Istim);
+Weight coupling for Istim (Jstim); Maximum number of spikes to terminate pathologic behavior (maxns);
+Discretized recorded time domain (timeRecord); Number of points in discretized recorded time domain (Ntrec).
+:rtype: tuple(int, int, int, int, np.ndarray, np.ndarray, float or int, np.ndarray, int)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="plastic_balanced_network.network.PlasticNeuralNetwork.connectivity">
+<span class="sig-name descname"><span class="pre">connectivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">112.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jei</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-150</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">180</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">135</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_ee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_ie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_ei</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_ii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_ex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_ix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nJrecord0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plastic_balanced_network/network.html#PlasticNeuralNetwork.connectivity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plastic_balanced_network.network.PlasticNeuralNetwork.connectivity" title="Permalink to this definition"></a></dt>
+<dd><p>Create connectivity matrix and arrays to record individual weights of all four connections.</p>
+<p>Arguments
+:param jee: Unscaled coupling strength from E to E neurons. Defaults to 25.
+:type jee: float
+:param jie: Unscaled coupling strength from E to I neurons. Defaults to 112.5.
+:type jie: float
+:param jei: Unscaled coupling strength from I to E neurons. Defaults to -150.
+:type jei: float
+:param jii: Unscaled coupling strength from I to I neurons. Defaults to -250.
+:type jii: float
+:param jex: Unscaled coupling strength from X to E neurons. Defaults to 180.
+:type jex: float
+:param jix: Unscaled coupling strength from X to I neurons. Defaults to 135.
+:type jix: float
+:param p_ee: Probability of connection from E to E neurons. Defaults to 0.1.
+:type p_ee: float
+:param p_ie: Probability of connection from E to I neurons. Defaults to 0.1.
+:type p_ie: float
+:param p_ei: Probability of connection from I to E neurons. Defaults to 0.1.
+:type p_ei: float
+:param p_ii: Probability of connection from I to I neurons. Defaults to 0.1.
+:type p_ii: float
+:param p_ex: Probability of connection from X to E neurons. Defaults to 0.1.
+:type p_ex: float
+:param p_ix: Probability of connection from X to I neurons. Defaults to 0.1.
+:type p_ix: float
+:param nJrecord0: Count of synaptic weights recorded. Relevant when network is plastic.
+:type nJrecord0: int</p>
+<p>Returns as part of self.
+:return: Recurrent connectivity matrix (J); External feedforward connectivity matrix (Jx);
+Indices of recorded EE synaptic weights (Jrecord_ee);
+Indices of recorded IE synaptic weights (Jrecord_ie); Indices of recorded EI synaptic weights (Jrecord_ei);
+Indices of recorded II synaptic weights (Jrecord_ii); Number of recorded EE synaptic weights (numrecordJ_ee);
+Number of recorded IE synaptic weights (numrecordJ_ie); Number of recorded EI synaptic weights (numrecordJ_ei);
+Number of recorded II synaptic weights (numrecordJ_ii).
+:rtype: tuple(np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray,  int, int, int, int)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="plastic_balanced_network.network.PlasticNeuralNetwork.ffwd_spikes">
+<span class="sig-name descname"><span class="pre">ffwd_spikes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taujitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plastic_balanced_network/network.html#PlasticNeuralNetwork.ffwd_spikes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plastic_balanced_network.network.PlasticNeuralNetwork.ffwd_spikes" title="Permalink to this definition"></a></dt>
+<dd><p>Create all spike trains of the Poisson feedforward, external layer.</p>
+<p>Arguments
+:param T: Total time of simulation.
+:type T: int
+:param cx: Value of mean correlation between feedforward Poisson spike trains. Defaults to 0.1.
+:type cx: float or int
+:param rx: Rate of feedforward Poisson neurons in Hz. Defaults to 0.01 kHz.
+:type rx: float or int
+:param taujitter: Spike trains are jittered by taujitter milliseconds to avoid perfect synchrony. Defaults to 5 ms.
+:type taujitter: float or int</p>
+<p>Returns (as part of <cite>self</cite>)
+:return: Feedforward, Poisson spike trains recorded as spike time and neuron index (sx);
+Total number of spikes in sx (nspikeX).
+:rtype: tuple(np.ndarray, int)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="plastic_balanced_network.network.PlasticNeuralNetwork.simulate">
+<span class="sig-name descname"><span class="pre">simulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Cm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.06666666666666667</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">VT</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-55</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vre</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Vth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-72</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DeltaT</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taui</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taux</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tauSTDP</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numrecord</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_ee_hebb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jmax_ee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_ee_koh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_ie_homeo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_ie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_ie_hebb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jmax_ie_hebb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">125</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_ei</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_ei</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_ii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_ii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.02</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plastic_balanced_network/network.html#PlasticNeuralNetwork.simulate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plastic_balanced_network.network.PlasticNeuralNetwork.simulate" title="Permalink to this definition"></a></dt>
+<dd><p>Execute Network simulation.</p>
+<p>Arguments
+:param Cm: Membrane capacitance. Defaults to 1.
+:type Cm: float or int
+:param gL: Leak conductance. Defaults to 1/15.
+:type gL: float or int
+:param VT: Threshold in EIF neuron. Defaults to -55.
+:type VT: float or int
+:param Vre: Reset voltage. Defaults to -75.
+:type Vre: float or int
+:param Vth: Hard threshold that determines when a spike happened. Defaults to -50.
+:type Vth: float or int
+:param EL: Resting potential. Defaults to -72.
+:type EL: float or int
+:param DeltaT: EIF neuron parameter. Determines the shape of the rise to spike. Defaults to 1.
+:type DeltaT: float or int
+:param taue: Timescale of excitatory neurons in milliseconds. Defaults to 8 ms.
+:type taue: float or int
+:param taui: Timescale of inhibitory neurons in milliseconds. Defaults to 4 ms.
+:type taui: float or int
+:param taux: Timescale of external neurons in milliseconds. Defaults to 10 ms.
+:type taux: float or int
+:param tauSTDP: Timescale of eligibility trace used for STDP. Defaults to 200 ms.
+:type tauSTDP: float or int
+:param numrecord: Number of neurons to record currents and voltage from. Defaults to 100.
+:type numrecord: int
+:param eta_ee_hebb: Learning rate of EE Hebbian STDP. Defaults to 0.
+Pick a value in the approximate order of 10^-3 or lower as a start point.
+:type eta_ee_hebb: float or int
+:param Jmax_ee: Hard constraint on EE Hebbian STDP. Defaults to 30/np.sqrt(N).
+:type Jmax_ee: float or int
+:param eta_ee_koh: Learning rate of Kohonen STDP. Defaults to 0.
+Pick a value in the approximate order of 10^-3 or lower as a start point.
+:type eta_ee_koh: float or int
+:param beta: Parameter for Kohonen STDP. Defaults to 2/np.sqrt(N).
+:type beta: float or int
+:param eta_ie_homeo: Learning rate of iSTDP. Defaults to 0.
+Pick a value in the approximate order of 10^-3 or lower as a start point.
+:type eta_ie_homeo: float or int
+:param rho_ie: Target rate of I neurons in iSTDP. Defaults to 0.020 kHz.
+:type rho_ie: float or int
+:param eta_ie_hebb: Learning rate of IE Hebbian STDP. Defaults to 0.
+Pick a value in the approximate order of 10^-3 as a start point.
+:type eta_ie_hebb: float or int
+:param Jmax_ie_hebb: Hard constraint on IE Hebbian STDP. Defaults to 125/np.sqrt(N).
+:type Jmax_ie_hebb: float or int
+:param eta_ei: Learning rate of iSTDP. Defaults to 0.
+Pick a value in the approximate order of 10^-3 or lower as a start point.
+:type eta_ei: float or int
+:param rho_ei: Parameter that determines target rate in iSTDP. Defaults to 0.010 kHz.
+:type rho_ei: float or int
+:param eta_ii: Learning rate of iSTDP. Defaults to 0.
+Pick a value in the approximate order of 10^-3 or lower as a start point.
+:type eta_ii: float or int
+:param rho_ii: Parameter that determines target rate in iSTDP. Defaults to 0.020 kHz.
+:type rho_ii: float or int</p>
+<p>Returns
+:return: A tuple containing spike train of all neurons in recurrent neural network (s);
+spike train of all feedforward neurons (sx),
+matrices of neurons (rows) by time bins (cols) for EE, EI, IE,
+and II recorded weights (JRec_ee, JRec_ie, JRec_ei, JRec_ii);
+matrices of neurons (rows) by time bins (cols) for E, I, and X input currents (IeRec, IiRec, IxRec);
+matrix of neurons (rows) by time bins (cols) for recurrent network voltages (VRec);
+and discretized recorded time domain (timeRecord).
+:rtype: tuple(np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray,
+np.ndarray, np.ndarray, np.ndarray, np.ndarray)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plastic_balanced_network.network.average_cov_corr_over_subpops">
+<span class="sig-prename descclassname"><span class="pre">plastic_balanced_network.network.</span></span><span class="sig-name descname"><span class="pre">average_cov_corr_over_subpops</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_exc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plastic_balanced_network/network.html#average_cov_corr_over_subpops"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plastic_balanced_network.network.average_cov_corr_over_subpops" title="Permalink to this definition"></a></dt>
+<dd><p>Average covariances or correlations over subpopulations.
+Arguments
+:param C: Matrix of covariances or correlations.
+:type C: np.ndarray
+:param N: Total number of neurons.
+:type N: int
+:param frac_exc: Fraction of E neurons. Defaults to 0.8.
+:type frac_exc: float</p>
+<p>Returns
+:return mC: Mean spike count covariance matrix.
+:rtype mC: np.ndarray</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plastic_balanced_network.network.compute_firing_rate">
+<span class="sig-prename descclassname"><span class="pre">plastic_balanced_network.network.</span></span><span class="sig-name descname"><span class="pre">compute_firing_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_exc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtRate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plastic_balanced_network/network.html#compute_firing_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plastic_balanced_network.network.compute_firing_rate" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the mean firing rate of E and I populations as a function of time.
+Arguments
+:param s: Matrix of covariances or correlations.
+:type s: np.ndarray
+:param T: Total time of simulation.
+:type T: int
+:param N: Total number of neurons.
+:type N: int
+:param frac_exc: Fraction of E neurons. Defaults to 0.8.
+:type frac_exc: float
+:param dtRate: Size of time bin to count spikes over. Defaults to 10 ms.
+:type dtRate: int
+:param windowsize: Size of window for moving average. Defaults to 10 bins.
+:type windowsize: int</p>
+<p>Returns
+:return: Time varying firing rate of E and I neurons, respectively (eRateT, iRateT).
+:rtype: tuple(np.ndarray,np.ndarray)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plastic_balanced_network.network.cov2corr">
+<span class="sig-prename descclassname"><span class="pre">plastic_balanced_network.network.</span></span><span class="sig-name descname"><span class="pre">cov2corr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cov</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plastic_balanced_network/network.html#cov2corr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plastic_balanced_network.network.cov2corr" title="Permalink to this definition"></a></dt>
+<dd><p>convert covariance matrix to correlation matrix</p>
+<p>Arguments
+:param cov: Covariance matrix.
+:type cov: np.ndarray</p>
+<p>Returns (as part of <cite>self</cite>)
+:return corr: Full spike count correlation matrix.
+:rtype corr: np.ndarray</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plastic_balanced_network.network.spike_count_cov">
+<span class="sig-prename descclassname"><span class="pre">plastic_balanced_network.network.</span></span><span class="sig-name descname"><span class="pre">spike_count_cov</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">winsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plastic_balanced_network/network.html#spike_count_cov"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plastic_balanced_network.network.spike_count_cov" title="Permalink to this definition"></a></dt>
+<dd><p>Compute NxN spike count covariance matrix.
+s is a 2x(ns) matrix where ns is the number of spikes
+s(0,:) lists spike times
+and s(1,:) lists corresponding neuron indices
+Neuron indices are assumed to go from 0 to N-1</p>
+<p>Spikes are counts starting at time T1 and ending at
+time T2.</p>
+<p>winsize is the window size over which spikes are counted,
+so winsize is assumed to be much smaller than T2-T1</p>
+<p>Arguments
+:param s: Spike trains of all neurons.
+:type s: np.ndarray
+:param N: Total number of neurons
+:type N: int
+:param T1: Start time to count spikes for covariance calculation.
+:type T1: float or int
+:param T2: End time to count spikes for covariance calculation.
+:type T2: float or int
+:param winsize: Time window over which spikes are counted. Defaults to 250 ms.
+:type winsize: int</p>
+<p>Returns (as part of <cite>self</cite>)
+:return C: Full spike count covariance matrix.
+:rtype C: np.ndarray</p>
+</dd></dl>
+
 </section>
 
 

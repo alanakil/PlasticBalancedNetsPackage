@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>plastic_balanced_network.helpers &mdash; Plastic Balanced Networks 0.0.2-beta documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Plastic Balanced Networks
+          </a>
+              <div class="version">
+                0.0.2-beta
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../plastic_balanced_network.html">plastic_balanced_network package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">0.0.2-b (2023-04-22)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id1">0.0.1-b (2023-04-22)</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Plastic Balanced Networks</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">plastic_balanced_network.helpers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for plastic_balanced_network.helpers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions to analyze activity of plastic balanced network.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Alan Akil (alan.akil@yahoo.com)&quot;</span>
+<span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;APRIL 2023&quot;</span>
+
+<span class="c1"># %%</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="c1"># %%</span>
+
+
+<div class="viewcode-block" id="compute_firing_rate"><a class="viewcode-back" href="../../plastic_balanced_network.helpers.html#plastic_balanced_network.helpers.compute_firing_rate">[docs]</a><span class="k">def</span> <span class="nf">compute_firing_rate</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">frac_exc</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">dtRate</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the mean firing rate of E and I populations as a function of time.</span>
+<span class="sd">    Arguments</span>
+<span class="sd">    :param s: Matrix of covariances or correlations.</span>
+<span class="sd">    :type s: np.ndarray</span>
+<span class="sd">    :param T: Total time of simulation.</span>
+<span class="sd">    :type T: int</span>
+<span class="sd">    :param N: Total number of neurons.</span>
+<span class="sd">    :type N: int</span>
+<span class="sd">    :param frac_exc: Fraction of E neurons. Defaults to 0.8.</span>
+<span class="sd">    :type frac_exc: float</span>
+<span class="sd">    :param dtRate: Size of time bin to count spikes over. Defaults to 10 ms.</span>
+<span class="sd">    :type dtRate: int</span>
+<span class="sd">    :param windowsize: Size of window for moving average. Defaults to 10 bins.</span>
+<span class="sd">    :type windowsize: int</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    :return: Time varying firing rate of E and I neurons, respectively (eRateT, iRateT).</span>
+<span class="sd">    :rtype: tuple(np.ndarray,np.ndarray)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">timeVector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">dtRate</span><span class="p">,</span> <span class="n">T</span> <span class="o">+</span> <span class="n">dtRate</span><span class="p">,</span> <span class="n">dtRate</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span>
+
+    <span class="n">hist</span><span class="p">,</span> <span class="n">bin_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">&lt;</span> <span class="n">frac_exc</span> <span class="o">*</span> <span class="n">N</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">timeVector</span><span class="p">))</span>
+    <span class="n">eRateT</span> <span class="o">=</span> <span class="n">hist</span> <span class="o">/</span> <span class="p">(</span><span class="n">dtRate</span> <span class="o">*</span> <span class="n">frac_exc</span> <span class="o">*</span> <span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">hist</span><span class="p">,</span> <span class="n">bin_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">&gt;=</span> <span class="n">frac_exc</span> <span class="o">*</span> <span class="n">N</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">timeVector</span><span class="p">))</span>
+    <span class="n">iRateT</span> <span class="o">=</span> <span class="n">hist</span> <span class="o">/</span> <span class="p">(</span><span class="n">dtRate</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">frac_exc</span><span class="p">)</span> <span class="o">*</span> <span class="n">N</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+
+    <span class="c1"># Smooth rates. We multiplied by 1000 to get them in units of Hz.</span>
+    <span class="n">eRateT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">eRateT</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">window_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">)</span>
+    <span class="n">iRateT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">iRateT</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">window_size</span><span class="p">)</span> <span class="o">/</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">)</span>
+
+    <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time for computing rates: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">elapsed_time</span><span class="o">/</span><span class="mi">60</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2"> minutes.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">eRateT</span><span class="p">,</span> <span class="n">iRateT</span><span class="p">,</span> <span class="n">timeVector</span></div>
+
+
+<span class="c1"># %%</span>
+
+
+<div class="viewcode-block" id="spike_count_cov"><a class="viewcode-back" href="../../plastic_balanced_network.helpers.html#plastic_balanced_network.helpers.spike_count_cov">[docs]</a><span class="k">def</span> <span class="nf">spike_count_cov</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">winsize</span><span class="o">=</span><span class="mi">250</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute NxN spike count covariance matrix.</span>
+<span class="sd">    s is a 2x(ns) matrix where ns is the number of spikes</span>
+<span class="sd">    s(0,:) lists spike times</span>
+<span class="sd">    and s(1,:) lists corresponding neuron indices</span>
+<span class="sd">    Neuron indices are assumed to go from 0 to N-1</span>
+
+<span class="sd">    Spikes are counts starting at time T1 and ending at</span>
+<span class="sd">    time T2.</span>
+
+<span class="sd">    winsize is the window size over which spikes are counted,</span>
+<span class="sd">    so winsize is assumed to be much smaller than T2-T1</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    :param s: Spike trains of all neurons.</span>
+<span class="sd">    :type s: np.ndarray</span>
+<span class="sd">    :param N: Total number of neurons</span>
+<span class="sd">    :type N: int</span>
+<span class="sd">    :param T1: Start time to count spikes for covariance calculation.</span>
+<span class="sd">    :type T1: float or int</span>
+<span class="sd">    :param T2: End time to count spikes for covariance calculation.</span>
+<span class="sd">    :type T2: float or int</span>
+<span class="sd">    :param winsize: Time window over which spikes are counted. Defaults to 250 ms.</span>
+<span class="sd">    :type winsize: int</span>
+
+<span class="sd">    Returns (as part of `self`)</span>
+<span class="sd">    :return C: Full spike count covariance matrix.</span>
+<span class="sd">    :rtype C: np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="c1">#   Count only spikes between T1, T2</span>
+    <span class="n">s1</span> <span class="o">=</span> <span class="n">s</span><span class="p">[:,</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">&lt;=</span> <span class="n">T2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">&gt;=</span> <span class="n">T1</span><span class="p">)]</span>
+
+    <span class="c1">#   Count only for neurons between 0, N</span>
+    <span class="n">s1</span> <span class="o">=</span> <span class="n">s</span><span class="p">[:,</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)]</span>
+
+    <span class="c1">#   Edges for histogram</span>
+    <span class="n">edgest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">winsize</span><span class="p">)</span>
+    <span class="n">edgesi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1">#   Get 2D histogram of spike indices and times</span>
+    <span class="n">counts</span><span class="p">,</span> <span class="n">xedges</span><span class="p">,</span> <span class="n">yedges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram2d</span><span class="p">(</span><span class="n">s1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:],</span> <span class="n">s1</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="n">bins</span><span class="o">=</span><span class="p">(</span><span class="n">edgest</span><span class="p">,</span> <span class="n">edgesi</span><span class="p">))</span>
+    <span class="c1">#   Compute and return covariance N x N matrix</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">transpose</span><span class="p">()))</span>
+
+    <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time for computing covariance matrix: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">elapsed_time</span><span class="o">/</span><span class="mi">60</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2"> minutes.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">C</span></div>
+
+
+<div class="viewcode-block" id="cov2corr"><a class="viewcode-back" href="../../plastic_balanced_network.helpers.html#plastic_balanced_network.helpers.cov2corr">[docs]</a><span class="k">def</span> <span class="nf">cov2corr</span><span class="p">(</span><span class="n">cov</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;convert covariance matrix to correlation matrix</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    :param cov: Covariance matrix.</span>
+<span class="sd">    :type cov: np.ndarray</span>
+
+<span class="sd">    Returns (as part of `self`)</span>
+<span class="sd">    :return corr: Full spike count correlation matrix.</span>
+<span class="sd">    :rtype corr: np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
+    <span class="n">std_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">cov</span><span class="p">))</span>
+    <span class="n">corr</span> <span class="o">=</span> <span class="n">cov</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">std_</span><span class="p">,</span> <span class="n">std_</span><span class="p">)</span>
+
+    <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time for converting covariance matrix into correlation matrix: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">elapsed_time</span><span class="o">/</span><span class="mi">60</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2"> minutes.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">corr</span></div>
+
+
+<div class="viewcode-block" id="average_cov_corr_over_subpops"><a class="viewcode-back" href="../../plastic_balanced_network.helpers.html#plastic_balanced_network.helpers.average_cov_corr_over_subpops">[docs]</a><span class="k">def</span> <span class="nf">average_cov_corr_over_subpops</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">frac_exc</span><span class="o">=</span><span class="mf">0.8</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Average covariances or correlations over subpopulations.</span>
+<span class="sd">    Arguments</span>
+<span class="sd">    :param C: Matrix of covariances or correlations.</span>
+<span class="sd">    :type C: np.ndarray</span>
+<span class="sd">    :param N: Total number of neurons.</span>
+<span class="sd">    :type N: int</span>
+<span class="sd">    :param frac_exc: Fraction of E neurons. Defaults to 0.8.</span>
+<span class="sd">    :type frac_exc: float</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    :return mC: Mean spike count covariance matrix.</span>
+<span class="sd">    :rtype mC: np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="c1"># Get mean spike count covariances over each sub-pop</span>
+    <span class="n">II</span><span class="p">,</span> <span class="n">JJ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">))</span>
+    <span class="n">mCee</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">C</span><span class="p">[(</span><span class="n">II</span> <span class="o">&lt;</span> <span class="n">frac_exc</span> <span class="o">*</span> <span class="n">N</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">JJ</span> <span class="o">&lt;</span> <span class="n">II</span><span class="p">)])</span>
+    <span class="n">mCei</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">C</span><span class="p">[(</span><span class="n">II</span> <span class="o">&lt;</span> <span class="n">frac_exc</span> <span class="o">*</span> <span class="n">N</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">JJ</span> <span class="o">&gt;=</span> <span class="n">frac_exc</span> <span class="o">*</span> <span class="n">N</span><span class="p">)])</span>
+    <span class="n">mCii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">C</span><span class="p">[(</span><span class="n">II</span> <span class="o">&gt;</span> <span class="n">frac_exc</span> <span class="o">*</span> <span class="n">N</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">JJ</span> <span class="o">&gt;</span> <span class="n">II</span><span class="p">)])</span>
+
+    <span class="c1"># Mean-field spike count cov matrix</span>
+    <span class="c1"># Compare this to the theoretical prediction</span>
+    <span class="n">mC</span> <span class="o">=</span> <span class="p">[[</span><span class="n">mCee</span><span class="p">,</span> <span class="n">mCei</span><span class="p">],</span> <span class="p">[</span><span class="n">mCei</span><span class="p">,</span> <span class="n">mCii</span><span class="p">]]</span>
+
+    <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time for averaging corrs or covs: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">elapsed_time</span><span class="o">/</span><span class="mi">60</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2"> minutes.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mC</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .
+      <span class="lastupdated">Last updated on 2023, Apr, 22.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

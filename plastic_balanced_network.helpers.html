@@ -48,10 +48,16 @@
 <li class="toctree-l1 current"><a class="reference internal" href="plastic_balanced_network.html">plastic_balanced_network package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="plastic_balanced_network.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="plastic_balanced_network.network.html">plastic_balanced_network.network module</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">plastic_balanced_network.helpers module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">plastic_balanced_network.helpers module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#plastic_balanced_network.helpers.average_cov_corr_over_subpops"><code class="docutils literal notranslate"><span class="pre">average_cov_corr_over_subpops()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plastic_balanced_network.helpers.compute_firing_rate"><code class="docutils literal notranslate"><span class="pre">compute_firing_rate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plastic_balanced_network.helpers.cov2corr"><code class="docutils literal notranslate"><span class="pre">cov2corr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plastic_balanced_network.helpers.spike_count_cov"><code class="docutils literal notranslate"><span class="pre">spike_count_cov()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="plastic_balanced_network.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="plastic_balanced_network.html#module-plastic_balanced_network">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">0.0.2-b (2023-04-22)</a></li>
@@ -83,8 +89,87 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="plastic-balanced-network-helpers-module">
-<h1>plastic_balanced_network.helpers module<a class="headerlink" href="#plastic-balanced-network-helpers-module" title="Permalink to this heading"></a></h1>
+  <section id="module-plastic_balanced_network.helpers">
+<span id="plastic-balanced-network-helpers-module"></span><h1>plastic_balanced_network.helpers module<a class="headerlink" href="#module-plastic_balanced_network.helpers" title="Permalink to this heading"></a></h1>
+<p>Functions to analyze activity of plastic balanced network.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="plastic_balanced_network.helpers.average_cov_corr_over_subpops">
+<span class="sig-prename descclassname"><span class="pre">plastic_balanced_network.helpers.</span></span><span class="sig-name descname"><span class="pre">average_cov_corr_over_subpops</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_exc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plastic_balanced_network/helpers.html#average_cov_corr_over_subpops"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plastic_balanced_network.helpers.average_cov_corr_over_subpops" title="Permalink to this definition"></a></dt>
+<dd><p>Average covariances or correlations over subpopulations.
+Arguments
+:param C: Matrix of covariances or correlations.
+:type C: np.ndarray
+:param N: Total number of neurons.
+:type N: int
+:param frac_exc: Fraction of E neurons. Defaults to 0.8.
+:type frac_exc: float</p>
+<p>Returns
+:return mC: Mean spike count covariance matrix.
+:rtype mC: np.ndarray</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plastic_balanced_network.helpers.compute_firing_rate">
+<span class="sig-prename descclassname"><span class="pre">plastic_balanced_network.helpers.</span></span><span class="sig-name descname"><span class="pre">compute_firing_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_exc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtRate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plastic_balanced_network/helpers.html#compute_firing_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plastic_balanced_network.helpers.compute_firing_rate" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the mean firing rate of E and I populations as a function of time.
+Arguments
+:param s: Matrix of covariances or correlations.
+:type s: np.ndarray
+:param T: Total time of simulation.
+:type T: int
+:param N: Total number of neurons.
+:type N: int
+:param frac_exc: Fraction of E neurons. Defaults to 0.8.
+:type frac_exc: float
+:param dtRate: Size of time bin to count spikes over. Defaults to 10 ms.
+:type dtRate: int
+:param windowsize: Size of window for moving average. Defaults to 10 bins.
+:type windowsize: int</p>
+<p>Returns
+:return: Time varying firing rate of E and I neurons, respectively (eRateT, iRateT).
+:rtype: tuple(np.ndarray,np.ndarray)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plastic_balanced_network.helpers.cov2corr">
+<span class="sig-prename descclassname"><span class="pre">plastic_balanced_network.helpers.</span></span><span class="sig-name descname"><span class="pre">cov2corr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cov</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plastic_balanced_network/helpers.html#cov2corr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plastic_balanced_network.helpers.cov2corr" title="Permalink to this definition"></a></dt>
+<dd><p>convert covariance matrix to correlation matrix</p>
+<p>Arguments
+:param cov: Covariance matrix.
+:type cov: np.ndarray</p>
+<p>Returns (as part of <cite>self</cite>)
+:return corr: Full spike count correlation matrix.
+:rtype corr: np.ndarray</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="plastic_balanced_network.helpers.spike_count_cov">
+<span class="sig-prename descclassname"><span class="pre">plastic_balanced_network.helpers.</span></span><span class="sig-name descname"><span class="pre">spike_count_cov</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">winsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">250</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plastic_balanced_network/helpers.html#spike_count_cov"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plastic_balanced_network.helpers.spike_count_cov" title="Permalink to this definition"></a></dt>
+<dd><p>Compute NxN spike count covariance matrix.
+s is a 2x(ns) matrix where ns is the number of spikes
+s(0,:) lists spike times
+and s(1,:) lists corresponding neuron indices
+Neuron indices are assumed to go from 0 to N-1</p>
+<p>Spikes are counts starting at time T1 and ending at
+time T2.</p>
+<p>winsize is the window size over which spikes are counted,
+so winsize is assumed to be much smaller than T2-T1</p>
+<p>Arguments
+:param s: Spike trains of all neurons.
+:type s: np.ndarray
+:param N: Total number of neurons
+:type N: int
+:param T1: Start time to count spikes for covariance calculation.
+:type T1: float or int
+:param T2: End time to count spikes for covariance calculation.
+:type T2: float or int
+:param winsize: Time window over which spikes are counted. Defaults to 250 ms.
+:type winsize: int</p>
+<p>Returns (as part of <cite>self</cite>)
+:return C: Full spike count covariance matrix.
+:rtype C: np.ndarray</p>
+</dd></dl>
+
 </section>
 
 

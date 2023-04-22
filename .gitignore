@@ -18,6 +18,10 @@ tests/__pycache__
 # But keep
 !dist/.gitkeep
 !docs/.gitkeep
+!docs/Makefile
+!docs/conf.py
+!docs/make.bat
+!docs/index.rst
 !docs/_build/
 !docs/_build/.gitkeep
 !logs/.gitkeep

@@ -39,16 +39,3 @@ jobs:
     - name: Test with pytest
       run: |
         pytest tests/ --doctest-modules --junitxml=junit/test-results.xml --cov=src/plastic_balanced_network --cov-report=xml --cov-report=html
-
-    - name: Generate documentation
-      run: |
-        sphinx-quickstart -p plastic_balanced_network -a "Alan Akil" -q --ext-autodoc --ext-viewcode --ext-intersphinx --ext-todo docs
-        sphinx-build -b html docs docs/_build -c .
-
-    - name: Publish documentation
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        personal_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_branch: gh-pages
-        publish_dir: ./docs/_build/html
-

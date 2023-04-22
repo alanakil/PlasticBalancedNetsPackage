@@ -20,6 +20,7 @@ tests/__pycache__
 !docs/.gitkeep
 !docs/Makefile
 !docs/conf.py
+!docs/changelog.rst
 !docs/make.bat
 !docs/index.rst
 !docs/_build/

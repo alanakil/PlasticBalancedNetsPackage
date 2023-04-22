@@ -12,11 +12,11 @@ jobs:
           pip install -r requirements.txt
       - name: Build documentation
         run: |
-          cd docs
-          make html
+          sphinx-quickstart -p plastic_balanced_network -a "Alan Akil" -q --ext-autodoc --ext-viewcode --ext-intersphinx --ext-todo docs
+          sphinx-build -b html docs docs/_build -c .
       - name: Deploy documentation to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: docs/build/html/
+          folder: docs/_build/html/
           token: ${{ secrets.GITHUB_TOKEN }}

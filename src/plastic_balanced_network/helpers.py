@@ -33,8 +33,12 @@ def compute_firing_rate(s, T, N, frac_exc=0.8, dtRate=10, window_size=10):
 
     Returns
     ----------
-    :return: Time varying firing rate of E and I neurons, respectively (eRateT, iRateT).
-    :rtype: tuple(np.ndarray,np.ndarray)
+    eRateT: np.ndarray
+        Smoothed time varying firing rate of E neurons.
+    iRateT: np.ndarray
+        Smoothed time varying firing rate of I neurons.
+    timeVector: np.ndarray
+        Discretized time domain.
     """
     start_time = time.time()
     timeVector = np.arange(dtRate, T + dtRate, dtRate) / 1000

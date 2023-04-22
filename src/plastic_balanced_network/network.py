@@ -40,27 +40,26 @@ class PlasticNeuralNetwork:
     nBinsRecord: int 
         Number of bins to record average and record over. Defaults to 10.
 
-    Returns (as part of self)
+    Returns
     --------
-    :return: 
     Ne: int
-        Total number of E neurons.
+        Total number of E neurons (as part of self).
     Ni: int
-        Total number of I neurons.
+        Total number of I neurons (as part of self).
     Nx: int
-        Total number of X neurons.
+        Total number of X neurons (as part of self).
     Nt: int
-        Total number of discretized time points.
+        Total number of discretized time points (as part of self).
     Istim: np.ndarray
-        Time vector of added constant stimulation.
+        Time vector of added constant stimulation (as part of self).
     Jstim: np.ndarray
-        Weight coupling for Istim.
+        Weight coupling for Istim (as part of self).
     maxns: int
-        Maximum number of spikes to terminate pathologic behavior.
+        Maximum number of spikes to terminate pathologic behavior (as part of self).
     timeRecord: np.ndarray
-        Discretized recorded time domain.
+        Discretized recorded time domain (as part of self).
     Ntrec: int
-        Number of points in discretized recorded time domain.
+        Number of points in discretized recorded time domain (as part of self).
     """
 
     def __init__(
@@ -228,28 +227,28 @@ class PlasticNeuralNetwork:
         nJrecord0: int
             Count of synaptic weights recorded. Relevant when network is plastic. Defaults to 100.
 
-        Returns (as part of self)
+        Returns
         -------
         J: np.ndarray
-            Recurrent connectivity matrix.
+            Recurrent connectivity matrix (as part of self).
         Jx: np.ndarray
-            External feedforward connectivity matrix.
+            External feedforward connectivity matrix (as part of self).
         Jrecord_ee: np.ndarray
-            Indices of recorded EE synaptic weights.
+            Indices of recorded EE synaptic weights (as part of self).
         Jrecord_ie: np.ndarray
-            Indices of recorded IE synaptic weights.
+            Indices of recorded IE synaptic weights (as part of self).
         Jrecord_ei: np.ndarray
-            Indices of recorded EI synaptic weights.
+            Indices of recorded EI synaptic weights (as part of self).
         Jrecord_ii: np.ndarray
-            Indices of recorded II synaptic weights.
+            Indices of recorded II synaptic weights (as part of self).
         numrecordJ_ee: int
-            Number of recorded EE synaptic weights.
+            Number of recorded EE synaptic weights (as part of self).
         numrecordJ_ie: int
-            Number of recorded IE synaptic weights.
+            Number of recorded IE synaptic weights (as part of self).
         numrecordJ_ei: int
-            Number of recorded EI synaptic weights.
+            Number of recorded EI synaptic weights (as part of self).
         numrecordJ_ii: int
-            Number of recorded II synaptic weights.
+            Number of recorded II synaptic weights (as part of self).
         """
         # Test types
         if not isinstance(jee, (float, np.floating, int, np.integer)):
@@ -477,12 +476,12 @@ class PlasticNeuralNetwork:
         taujitter: float or int
             Spike trains are jittered by taujitter milliseconds to avoid perfect synchrony. Defaults to 5 ms.
 
-        Returns (as part of `self`)
+        Returns
         --------
         sx: np.ndarray
-            Feedforward, Poisson spike trains recorded as spike time and neuron index.
+            Feedforward, Poisson spike trains recorded as spike time and neuron index (as part of self).
         nspikeX: int 
-            Total number of spikes in sx ().
+            Total number of spikes in sx (as part of self).
         """
         # None errors.
         if T is None:

@@ -2,8 +2,8 @@ import os
 from pathlib import Path
 
 NAME = 'plastic_balanced_network'
-ROOT_DIR = Path(__file__).parent
-DOCS_DIR = Path(__file__)
+ROOT_DIR = Path(__file__).parent.parent
+DOCS_DIR = Path(__file__).parent
 PACKAGE_DIR = os.path.join(ROOT_DIR, "src", NAME)
 about = {}
 with open(os.path.join(PACKAGE_DIR, "VERSION")) as f:

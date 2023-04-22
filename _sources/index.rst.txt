@@ -10,6 +10,8 @@ Welcome to plastic_balanced_network's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   plastic_balanced_network
+   changelog
 
 
 Indices and tables

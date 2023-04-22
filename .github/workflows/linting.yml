@@ -24,10 +24,10 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run flake8
-      run: flake8 --config=.flake8 src/plastic_balanced_network
+      run: flake8 --config=.flake8 src/plastic_balanced_network tests
 
     - name: Run black
-      run: black --check src/plastic_balanced_network
+      run: black --check src/plastic_balanced_network tests
       env:
         PYTHONPATH: ${{ env.PYTHONPATH }}:${{ github.workspace }}
       working-directory: .

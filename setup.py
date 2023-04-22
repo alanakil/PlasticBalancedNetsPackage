@@ -63,6 +63,7 @@ setup(
     ],
     platforms=["Windows", "Linux", "Mac OS-X", "UNIX"],
     python_requires = REQUIRES_PYTHON,
+    include_package_data=True,
     install_requires = list_reqs(),
     extras_require = EXTRAS_REQUIRE,
     setup_requires = [

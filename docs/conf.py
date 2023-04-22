@@ -14,7 +14,7 @@ with open(os.path.join(PACKAGE_DIR, "VERSION")) as f:
 sys.path.append(ROOT_DIR)
 sys.path.append(PACKAGE_DIR)
 
-import plastic_balanced_network
+import src.plastic_balanced_network
 
 # -- Project information -----------------------------------------------------
 

@@ -98,24 +98,17 @@
 <dd><p>Average covariances or correlations over subpopulations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>C</strong> (<em>np.ndarray</em>) – Matrix of covariances or correlations.</p>
-</dd>
-</dl>
-<p>:param :
-:type : param N: Total number of neurons.
-:param :
-:type : type N: int
-:param :
-:type : param frac_exc: Fraction of E neurons. Defaults to 0.8.
-:param :
-:type : type frac_exc: float</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><ul class="simple">
-<li><p><em>return mC: Mean spike count covariance matrix.</em></p></li>
-<li><p><em>rtype mC: np.ndarray</em></p></li>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>C</strong> (<em>np.ndarray</em>) – Matrix of covariances or correlations.</p></li>
+<li><p><strong>N</strong> (<em>int</em>) – Total number of neurons.</p></li>
+<li><p><strong>frac_exc</strong> (<em>float</em>) – Fraction of E neurons. Defaults to 0.8.</p></li>
 </ul>
-</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>mC</strong> – Mean spike count covariance or correlation matrix.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -123,35 +116,43 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="plastic_balanced_network.helpers.compute_firing_rate">
 <span class="sig-prename descclassname"><span class="pre">plastic_balanced_network.helpers.</span></span><span class="sig-name descname"><span class="pre">compute_firing_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frac_exc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtRate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plastic_balanced_network/helpers.html#compute_firing_rate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plastic_balanced_network.helpers.compute_firing_rate" title="Permalink to this definition"></a></dt>
-<dd><p>Calculate the mean firing rate of E and I populations as a function of time.
-Arguments
-:param s: Matrix of covariances or correlations.
-:type s: np.ndarray
-:param T: Total time of simulation.
-:type T: int
-:param N: Total number of neurons.
-:type N: int
-:param frac_exc: Fraction of E neurons. Defaults to 0.8.
-:type frac_exc: float
-:param dtRate: Size of time bin to count spikes over. Defaults to 10 ms.
-:type dtRate: int
-:param windowsize: Size of window for moving average. Defaults to 10 bins.
-:type windowsize: int</p>
-<p>Returns
-:return: Time varying firing rate of E and I neurons, respectively (eRateT, iRateT).
-:rtype: tuple(np.ndarray,np.ndarray)</p>
+<dd><p>Calculate the mean firing rate of E and I populations as a function of time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> (<em>np.ndarray</em>) – Spike trains of all neurons.</p></li>
+<li><p><strong>T</strong> (<em>int</em>) – Total simulation time in milliseconds.</p></li>
+<li><p><strong>N</strong> (<em>int</em>) – Total number of neurons.</p></li>
+<li><p><strong>frac_exc</strong> (<em>float</em>) – Fraction of E neurons. Defaults to 0.8.</p></li>
+<li><p><strong>dtRate</strong> (<em>int</em>) – Size of time bin to count spikes over. Defaults to 10 ms.</p></li>
+<li><p><strong>window_size</strong> (<em>int</em>) – Size of window for moving average. Defaults to 10 bins.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>return: Time varying firing rate of E and I neurons, respectively (eRateT, iRateT).</em></p></li>
+<li><p><em>rtype: tuple(np.ndarray,np.ndarray)</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="plastic_balanced_network.helpers.cov2corr">
 <span class="sig-prename descclassname"><span class="pre">plastic_balanced_network.helpers.</span></span><span class="sig-name descname"><span class="pre">cov2corr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cov</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plastic_balanced_network/helpers.html#cov2corr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plastic_balanced_network.helpers.cov2corr" title="Permalink to this definition"></a></dt>
 <dd><p>convert covariance matrix to correlation matrix</p>
-<p>Arguments
-:param cov: Covariance matrix.
-:type cov: np.ndarray</p>
-<p>Returns (as part of <cite>self</cite>)
-:return corr: Full spike count correlation matrix.
-:rtype corr: np.ndarray</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cov</strong> (<em>np.ndarray</em>) – Covariance matrix.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>corr</strong> – Correlation matrix.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -166,20 +167,23 @@ Neuron indices are assumed to go from 0 to N-1</p>
 time T2.</p>
 <p>winsize is the window size over which spikes are counted,
 so winsize is assumed to be much smaller than T2-T1</p>
-<p>Arguments
-:param s: Spike trains of all neurons.
-:type s: np.ndarray
-:param N: Total number of neurons
-:type N: int
-:param T1: Start time to count spikes for covariance calculation.
-:type T1: float or int
-:param T2: End time to count spikes for covariance calculation.
-:type T2: float or int
-:param winsize: Time window over which spikes are counted. Defaults to 250 ms.
-:type winsize: int</p>
-<p>Returns (as part of <cite>self</cite>)
-:return C: Full spike count covariance matrix.
-:rtype C: np.ndarray</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> (<em>np.ndarray</em>) – Spike trains of all neurons.</p></li>
+<li><p><strong>N</strong> (<em>int</em>) – Total number of neurons.</p></li>
+<li><p><strong>T1</strong> (<em>float</em><em> or </em><em>int</em>) – Start time to count spikes for covariance calculation.</p></li>
+<li><p><strong>T2</strong> (<em>float</em><em> or </em><em>int</em>) – End time to count spikes for covariance calculation.</p></li>
+<li><p><strong>winsize</strong> (<em>int</em>) – Time window over which spikes are counted. Defaults to 250 ms.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>C</strong> – Full spike count covariance matrix.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

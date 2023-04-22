@@ -89,21 +89,24 @@
 <div class="viewcode-block" id="compute_firing_rate"><a class="viewcode-back" href="../../plastic_balanced_network.helpers.html#plastic_balanced_network.helpers.compute_firing_rate">[docs]</a><span class="k">def</span> <span class="nf">compute_firing_rate</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">frac_exc</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">dtRate</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the mean firing rate of E and I populations as a function of time.</span>
-<span class="sd">    Arguments</span>
-<span class="sd">    :param s: Matrix of covariances or correlations.</span>
-<span class="sd">    :type s: np.ndarray</span>
-<span class="sd">    :param T: Total time of simulation.</span>
-<span class="sd">    :type T: int</span>
-<span class="sd">    :param N: Total number of neurons.</span>
-<span class="sd">    :type N: int</span>
-<span class="sd">    :param frac_exc: Fraction of E neurons. Defaults to 0.8.</span>
-<span class="sd">    :type frac_exc: float</span>
-<span class="sd">    :param dtRate: Size of time bin to count spikes over. Defaults to 10 ms.</span>
-<span class="sd">    :type dtRate: int</span>
-<span class="sd">    :param windowsize: Size of window for moving average. Defaults to 10 bins.</span>
-<span class="sd">    :type windowsize: int</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    s: np.ndarray</span>
+<span class="sd">        Spike trains of all neurons.</span>
+<span class="sd">    T: int</span>
+<span class="sd">        Total simulation time in milliseconds.</span>
+<span class="sd">    N: int</span>
+<span class="sd">        Total number of neurons.</span>
+<span class="sd">    frac_exc: float</span>
+<span class="sd">        Fraction of E neurons. Defaults to 0.8.</span>
+<span class="sd">    dtRate: int</span>
+<span class="sd">        Size of time bin to count spikes over. Defaults to 10 ms.</span>
+<span class="sd">    window_size: int</span>
+<span class="sd">        Size of window for moving average. Defaults to 10 bins.</span>
 
 <span class="sd">    Returns</span>
+<span class="sd">    ----------</span>
 <span class="sd">    :return: Time varying firing rate of E and I neurons, respectively (eRateT, iRateT).</span>
 <span class="sd">    :rtype: tuple(np.ndarray,np.ndarray)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -142,21 +145,23 @@
 <span class="sd">    winsize is the window size over which spikes are counted,</span>
 <span class="sd">    so winsize is assumed to be much smaller than T2-T1</span>
 
-<span class="sd">    Arguments</span>
-<span class="sd">    :param s: Spike trains of all neurons.</span>
-<span class="sd">    :type s: np.ndarray</span>
-<span class="sd">    :param N: Total number of neurons</span>
-<span class="sd">    :type N: int</span>
-<span class="sd">    :param T1: Start time to count spikes for covariance calculation.</span>
-<span class="sd">    :type T1: float or int</span>
-<span class="sd">    :param T2: End time to count spikes for covariance calculation.</span>
-<span class="sd">    :type T2: float or int</span>
-<span class="sd">    :param winsize: Time window over which spikes are counted. Defaults to 250 ms.</span>
-<span class="sd">    :type winsize: int</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    s: np.ndarray</span>
+<span class="sd">        Spike trains of all neurons.</span>
+<span class="sd">    N: int</span>
+<span class="sd">        Total number of neurons.</span>
+<span class="sd">    T1: float or int</span>
+<span class="sd">        Start time to count spikes for covariance calculation.</span>
+<span class="sd">    T2: float or int</span>
+<span class="sd">        End time to count spikes for covariance calculation.</span>
+<span class="sd">    winsize: int</span>
+<span class="sd">        Time window over which spikes are counted. Defaults to 250 ms.</span>
 
-<span class="sd">    Returns (as part of `self`)</span>
-<span class="sd">    :return C: Full spike count covariance matrix.</span>
-<span class="sd">    :rtype C: np.ndarray</span>
+<span class="sd">    Returns</span>
+<span class="sd">    ----------</span>
+<span class="sd">    C: np.ndarray</span>
+<span class="sd">        Full spike count covariance matrix.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="c1">#   Count only spikes between T1, T2</span>
@@ -183,13 +188,15 @@
 <div class="viewcode-block" id="cov2corr"><a class="viewcode-back" href="../../plastic_balanced_network.helpers.html#plastic_balanced_network.helpers.cov2corr">[docs]</a><span class="k">def</span> <span class="nf">cov2corr</span><span class="p">(</span><span class="n">cov</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;convert covariance matrix to correlation matrix</span>
 
-<span class="sd">    Arguments</span>
-<span class="sd">    :param cov: Covariance matrix.</span>
-<span class="sd">    :type cov: np.ndarray</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cov: np.ndarray</span>
+<span class="sd">        Covariance matrix.</span>
 
-<span class="sd">    Returns (as part of `self`)</span>
-<span class="sd">    :return corr: Full spike count correlation matrix.</span>
-<span class="sd">    :rtype corr: np.ndarray</span>
+<span class="sd">    Returns</span>
+<span class="sd">    ----------</span>
+<span class="sd">    corr: np.ndarray</span>
+<span class="sd">        Correlation matrix.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
@@ -205,19 +212,19 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Average covariances or correlations over subpopulations.</span>
 <span class="sd">    </span>
-<span class="sd">    Arguments</span>
-<span class="sd">    ---------</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
 <span class="sd">    C: np.ndarray</span>
 <span class="sd">        Matrix of covariances or correlations.</span>
-<span class="sd">    :param N: Total number of neurons.</span>
-<span class="sd">    :type N: int</span>
-<span class="sd">    :param frac_exc: Fraction of E neurons. Defaults to 0.8.</span>
-<span class="sd">    :type frac_exc: float</span>
+<span class="sd">    N: int</span>
+<span class="sd">        Total number of neurons.</span>
+<span class="sd">    frac_exc: float</span>
+<span class="sd">        Fraction of E neurons. Defaults to 0.8.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    :return mC: Mean spike count covariance matrix.</span>
-<span class="sd">    :rtype mC: np.ndarray</span>
+<span class="sd">    mC: np.ndarray</span>
+<span class="sd">        Mean spike count covariance or correlation matrix.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="c1"># Get mean spike count covariances over each sub-pop</span>

@@ -15,7 +15,7 @@ import logging
 def compute_firing_rate(s, T, N, frac_exc=0.8, dtRate=10, window_size=10):
     """
     Calculate the mean firing rate of E and I populations as a function of time.
-    
+
     Parameters
     ----------
     s: np.ndarray
@@ -141,7 +141,7 @@ def cov2corr(cov):
 def average_cov_corr_over_subpops(C, N, frac_exc=0.8):
     """
     Average covariances or correlations over subpopulations.
-    
+
     Parameters
     ----------
     C: np.ndarray

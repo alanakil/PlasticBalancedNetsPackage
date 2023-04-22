@@ -1,6 +1,6 @@
 ### Test functions in plastic_balanced_network/
 
-#%%
+# %%
 import pytest
 import numpy as np
 import unittest
@@ -9,7 +9,8 @@ from scipy.stats import expon, kstest
 
 from src.plastic_balanced_network.network import PlasticNeuralNetwork
 
-#%%
+# %%
+
 
 class Test__init__(unittest.TestCase):
     def test_N_type_str(self):
@@ -25,6 +26,7 @@ class Test__init__(unittest.TestCase):
                 jistim=1,
                 nBinsRecord=100,
             )
+
     def test_frac_exc_type_str(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.__init__(
@@ -38,6 +40,7 @@ class Test__init__(unittest.TestCase):
                 jistim=1,
                 nBinsRecord=100,
             )
+
     def test_frac_ext_type_str(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.__init__(
@@ -51,6 +54,7 @@ class Test__init__(unittest.TestCase):
                 jistim=1,
                 nBinsRecord=100,
             )
+
     def test_T_type_str(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.__init__(
@@ -64,6 +68,7 @@ class Test__init__(unittest.TestCase):
                 jistim=1,
                 nBinsRecord=100,
             )
+
     def test_dt_type_str(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.__init__(
@@ -77,6 +82,7 @@ class Test__init__(unittest.TestCase):
                 jistim=1,
                 nBinsRecord=100,
             )
+
     def test_jestim_type_str(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.__init__(
@@ -90,6 +96,7 @@ class Test__init__(unittest.TestCase):
                 jistim=1,
                 nBinsRecord=100,
             )
+
     def test_jistim_type_str(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.__init__(
@@ -103,6 +110,7 @@ class Test__init__(unittest.TestCase):
                 jistim="1",
                 nBinsRecord=100,
             )
+
     def test_nBinsRecord_type_str(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.__init__(
@@ -116,6 +124,7 @@ class Test__init__(unittest.TestCase):
                 jistim=1,
                 nBinsRecord="100",
             )
+
     def test_N_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.__init__(
@@ -129,6 +138,7 @@ class Test__init__(unittest.TestCase):
                 jistim=1,
                 nBinsRecord=100,
             )
+
     def test_frac_exc_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.__init__(
@@ -142,6 +152,7 @@ class Test__init__(unittest.TestCase):
                 jistim=1,
                 nBinsRecord=100,
             )
+
     def test_frac_ext_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.__init__(
@@ -155,6 +166,7 @@ class Test__init__(unittest.TestCase):
                 jistim=1,
                 nBinsRecord=100,
             )
+
     def test_T_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.__init__(
@@ -168,6 +180,7 @@ class Test__init__(unittest.TestCase):
                 jistim=1,
                 nBinsRecord=100,
             )
+
     def test_dt_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.__init__(
@@ -181,6 +194,7 @@ class Test__init__(unittest.TestCase):
                 jistim=1,
                 nBinsRecord=100,
             )
+
     def test_nBinsRecord_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.__init__(
@@ -207,9 +221,9 @@ class Test__init__(unittest.TestCase):
         jestim = 0.0
         jistim = 0.0
         nBinsRecord = 10
-        
+
         pnn = PlasticNeuralNetwork(N, T, frac_exc, frac_ext, dt, jestim, jistim, nBinsRecord)
-        
+
         self.assertEqual(pnn.N, N)
         self.assertEqual(pnn.Ne, int(round(frac_exc * N)))
         self.assertEqual(pnn.Ni, int(round((1 - frac_exc) * N)))
@@ -217,485 +231,511 @@ class Test__init__(unittest.TestCase):
         self.assertEqual(pnn.Nt, round(T / dt))
         assert_array_equal(pnn.total_time, np.arange(dt, T + dt, dt))
         assert_array_equal(pnn.Istim, np.zeros(len(np.arange(dt, T + dt, dt))))
-        assert_array_equal(pnn.Jstim, np.sqrt(N) * np.hstack(
-            (jestim * np.ones((1, pnn.Ne)), jistim * np.ones((1, pnn.Ni)))
-        ))
+        assert_array_equal(
+            pnn.Jstim, np.sqrt(N) * np.hstack((jestim * np.ones((1, pnn.Ne)), jistim * np.ones((1, pnn.Ni))))
+        )
         self.assertEqual(pnn.maxns, round(0.05 * N * T))
         assert_array_equal(pnn.timeRecord, np.arange(nBinsRecord * dt, T + nBinsRecord * dt, nBinsRecord * dt))
         self.assertEqual(pnn.Ntrec, len(np.arange(nBinsRecord * dt, T + nBinsRecord * dt, nBinsRecord * dt)))
-    
-    
-#%%
+
+
+# %%
 class Test_connectivity(unittest.TestCase):
     def test_jee_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee="25", 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
-                jix=135, 
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
+                jee="25",
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
+                jix=135,
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
             )
+
     def test_jie_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie="112.5", 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
-                jix=135, 
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
+                jee=25,
+                jie="112.5",
+                jei=-150,
+                jii=-250,
+                jex=180,
+                jix=135,
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
             )
+
     def test_jei_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei="-150", 
-                jii=-250, 
-                jex=180, 
-                jix=135, 
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
+                jee=25,
+                jie=112.5,
+                jei="-150",
+                jii=-250,
+                jex=180,
+                jix=135,
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
             )
+
     def test_jii_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii="-250", 
-                jex=180, 
-                jix=135, 
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii="-250",
+                jex=180,
+                jix=135,
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
             )
+
     def test_jex_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex="180", 
-                jix=135, 
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex="180",
+                jix=135,
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
             )
+
     def test_jix_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
                 jix="135",
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
             )
+
     def test_p_ee_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
-                jix=135, 
-                p_ee="0.1", 
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
+                jix=135,
+                p_ee="0.1",
                 p_ie=0.1,
                 p_ei=0.1,
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
             )
+
     def test_p_ie_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
-                jix=135, 
-                p_ee=0.1, 
-                p_ie="0.1", 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
+                jix=135,
+                p_ee=0.1,
+                p_ie="0.1",
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
             )
+
     def test_p_ei_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
-                jix=135, 
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei="0.1", 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
+                jix=135,
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei="0.1",
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
             )
+
     def test_p_ii_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
-                jix=135, 
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii="0.1", 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
+                jix=135,
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii="0.1",
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
             )
+
     def test_p_ex_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
-                jix=135, 
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex="0.1", 
-                p_ix=0.1, 
-                nJrecord0=100
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
+                jix=135,
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex="0.1",
+                p_ix=0.1,
+                nJrecord0=100,
             )
+
     def test_p_ix_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
                 jix=135,
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix="0.1", 
-                nJrecord0=100
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix="0.1",
+                nJrecord0=100,
             )
+
     def test_nJrecord0_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
                 jix=135,
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=[100]
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=[100],
             )
+
     # Value tests.
     def test_jee_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=-25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
+                jee=-25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
                 jix=135,
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
-            )   
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
+            )
+
     def test_jie_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=-112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
+                jee=25,
+                jie=-112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
                 jix=135,
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
-            )   
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
+            )
+
     def test_jei_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=150, 
-                jii=-250, 
-                jex=180, 
+                jee=25,
+                jie=112.5,
+                jei=150,
+                jii=-250,
+                jex=180,
                 jix=135,
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
-            )   
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
+            )
+
     def test_jii_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=250, 
-                jex=180, 
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=250,
+                jex=180,
                 jix=135,
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
-            )   
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
+            )
+
     def test_jex_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=-180, 
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=-180,
                 jix=135,
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
-            )   
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
+            )
+
     def test_jix_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
                 jix=-135,
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
-            )   
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
+            )
+
     def test_Pee_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
                 jix=135,
-                p_ee=-0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
-            )   
+                p_ee=-0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
+            )
+
     def test_Pie_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
                 jix=135,
-                p_ee=0.1, 
-                p_ie=-0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
-            )   
+                p_ee=0.1,
+                p_ie=-0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
+            )
+
     def test_Pei_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
                 jix=135,
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=-0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
-            )   
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=-0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
+            )
+
     def test_Pii_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
                 jix=135,
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=-0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
-            )   
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=-0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=100,
+            )
+
     def test_Pex_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
                 jix=135,
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=-0.1, 
-                p_ix=0.1, 
-                nJrecord0=100
-            )   
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=-0.1,
+                p_ix=0.1,
+                nJrecord0=100,
+            )
+
     def test_Pix_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
                 jix=135,
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=-0.1, 
-                nJrecord0=100
-            )   
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=-0.1,
+                nJrecord0=100,
+            )
+
     def test_nJrecord0_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.connectivity(
                 self,
-                jee=25, 
-                jie=112.5, 
-                jei=-150, 
-                jii=-250, 
-                jex=180, 
+                jee=25,
+                jie=112.5,
+                jei=-150,
+                jii=-250,
+                jex=180,
                 jix=135,
-                p_ee=0.1, 
-                p_ie=0.1, 
-                p_ei=0.1, 
-                p_ii=0.1, 
-                p_ex=0.1, 
-                p_ix=0.1, 
-                nJrecord0=-100
+                p_ee=0.1,
+                p_ie=0.1,
+                p_ei=0.1,
+                p_ii=0.1,
+                p_ex=0.1,
+                p_ix=0.1,
+                nJrecord0=-100,
             )
+
     def test_connectivity_outcomes(self):
         """
         Test connectivity of PlasticNeuralNetwork object.
@@ -728,137 +768,104 @@ class Test_connectivity(unittest.TestCase):
         # Ffwd connection probs
         Px = np.array([[p_ex], [p_ix]])
         nJrecord0 = 1000
-        
+
         pnn = PlasticNeuralNetwork(N, T, frac_exc, frac_ext, dt, jestim, jistim, nBinsRecord)
         pnn.connectivity(jee, jie, jei, jii, jex, jix, p_ee, p_ie, p_ei, p_ii, p_ex, p_ix, nJrecord0)
 
         np.random.seed(314)
-        assert_array_equal(pnn.J, np.vstack(
-            (
-                np.hstack(
-                    (
-                        np.array(
-                            Jm[0, 0]
-                            * np.random.binomial(1, P[0, 0], (pnn.Ne, pnn.Ne))
-                        ),
-                        np.array(
-                            Jm[0, 1]
-                            * np.random.binomial(1, P[0, 1], (pnn.Ne, pnn.Ni))
-                        ),
-                    )
-                ),
-                np.hstack(
-                    (
-                        np.array(
-                            Jm[1, 0]
-                            * np.random.binomial(1, P[1, 0], (pnn.Ni, pnn.Ne))
-                        ),
-                        np.array(
-                            Jm[1, 1]
-                            * np.random.binomial(1, P[1, 1], (pnn.Ni, pnn.Ni))
-                        ),
-                    )
-                ),
-            )
+        assert_array_equal(
+            pnn.J,
+            np.vstack(
+                (
+                    np.hstack(
+                        (
+                            np.array(Jm[0, 0] * np.random.binomial(1, P[0, 0], (pnn.Ne, pnn.Ne))),
+                            np.array(Jm[0, 1] * np.random.binomial(1, P[0, 1], (pnn.Ne, pnn.Ni))),
+                        )
+                    ),
+                    np.hstack(
+                        (
+                            np.array(Jm[1, 0] * np.random.binomial(1, P[1, 0], (pnn.Ni, pnn.Ne))),
+                            np.array(Jm[1, 1] * np.random.binomial(1, P[1, 1], (pnn.Ni, pnn.Ni))),
+                        )
+                    ),
+                )
+            ),
         )
+        assert_array_equal(
+            pnn.Jx,
+            np.vstack(
+                (
+                    np.array(Jxm[0, 0] * np.random.binomial(1, Px[0, 0], (pnn.Ne, pnn.Nx))),
+                    np.array(Jxm[1, 0] * np.random.binomial(1, Px[1, 0], (pnn.Ni, pnn.Nx))),
+                )
+            ),
         )
-        assert_array_equal(pnn.Jx, np.vstack(
-            (
-                np.array(
-                    Jxm[0, 0] * np.random.binomial(1, Px[0, 0], (pnn.Ne, pnn.Nx))
-                ),
-                np.array(
-                    Jxm[1, 0] * np.random.binomial(1, Px[1, 0], (pnn.Ni, pnn.Nx))
-                ),
-            )
-        )
-        )
-        self.assertEqual(len(pnn.Jrecord_ee[0,:]), nJrecord0)
-        self.assertEqual(len(pnn.Jrecord_ei[0,:]), nJrecord0)
-        self.assertEqual(len(pnn.Jrecord_ie[0,:]), nJrecord0)
-        self.assertEqual(len(pnn.Jrecord_ii[0,:]), nJrecord0)
+        self.assertEqual(len(pnn.Jrecord_ee[0, :]), nJrecord0)
+        self.assertEqual(len(pnn.Jrecord_ei[0, :]), nJrecord0)
+        self.assertEqual(len(pnn.Jrecord_ie[0, :]), nJrecord0)
+        self.assertEqual(len(pnn.Jrecord_ii[0, :]), nJrecord0)
         self.assertEqual(pnn.numrecordJ_ee, nJrecord0)
         self.assertEqual(pnn.numrecordJ_ei, nJrecord0)
         self.assertEqual(pnn.numrecordJ_ie, nJrecord0)
         self.assertEqual(pnn.numrecordJ_ii, nJrecord0)
-        
 
-#%%
+
+# %%
+
 
 class Test_ffwd_spikes:
     def test_cx_type(self):
         with pytest.raises(TypeError):
-            PlasticNeuralNetwork.ffwd_spikes(
-                self,
-                T=10000,
-                cx="0.1", 
-                rx=10/1000, 
-                taujitter=5
-            ) 
+            PlasticNeuralNetwork.ffwd_spikes(self, T=10000, cx="0.1", rx=10 / 1000, taujitter=5)
+
     def test_rx_type(self):
         with pytest.raises(TypeError):
-            PlasticNeuralNetwork.ffwd_spikes(
-                self,
-                T=10000,
-                cx=0.1, 
-                rx=[10/1000], 
-                taujitter=5
-            ) 
+            PlasticNeuralNetwork.ffwd_spikes(self, T=10000, cx=0.1, rx=[10 / 1000], taujitter=5)
+
     def test_taujitter_type(self):
         with pytest.raises(TypeError):
-            PlasticNeuralNetwork.ffwd_spikes(
-                self,
-                T=10000,
-                cx=0.1, 
-                rx=10/1000, 
-                taujitter="5"
-            ) 
+            PlasticNeuralNetwork.ffwd_spikes(self, T=10000, cx=0.1, rx=10 / 1000, taujitter="5")
+
     def test_T_type(self):
         with pytest.raises(TypeError):
-            PlasticNeuralNetwork.ffwd_spikes(
-                self,
-                T="10000",
-                cx=0.1, 
-                rx=10/1000, 
-                taujitter=5
-            )
+            PlasticNeuralNetwork.ffwd_spikes(self, T="10000", cx=0.1, rx=10 / 1000, taujitter=5)
+
     # Value tests
     def test_cx_value(self):
         with pytest.raises(ValueError):
-            PlasticNeuralNetwork.ffwd_spikes(
-                self,
-                T=10000,
-                cx=-0.1, 
-                rx=10/1000, 
-                taujitter=5
-            )   
+            PlasticNeuralNetwork.ffwd_spikes(self, T=10000, cx=-0.1, rx=10 / 1000, taujitter=5)
+
     def test_rx_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.ffwd_spikes(
                 self,
                 T=10000,
-                cx=0.1, 
-                rx=-10/1000, 
-                taujitter=5, 
-            )   
+                cx=0.1,
+                rx=-10 / 1000,
+                taujitter=5,
+            )
+
     def test_taujitter_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.ffwd_spikes(
                 self,
                 T=10000,
-                cx=0.1, 
-                rx=10/1000, 
-                taujitter=-5, 
-            )   
+                cx=0.1,
+                rx=10 / 1000,
+                taujitter=-5,
+            )
+
     def test_T_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.ffwd_spikes(
                 self,
                 T=-10000,
-                cx=0.1, 
-                rx=10/1000, 
-                taujitter=5, 
-            )   
+                cx=0.1,
+                rx=10 / 1000,
+                taujitter=5,
+            )
+
     def test_ffwd_spikes_outcomes(self):
         """
         Test ffwd spike generation of PlasticNeuralNetwork object.
@@ -877,24 +884,25 @@ class Test_ffwd_spikes:
 
         # Fix seed for reproducibility.
         np.random.seed(314)
-        
+
         pnn = PlasticNeuralNetwork(N, T, frac_exc, frac_ext, dt, jestim, jistim, nBinsRecord)
         pnn.ffwd_spikes(T, cx, rx, taujitter)
 
         # External ffwd spike trains should be Poisson. So the interspike interval (i.e, ISI) should be Exp-distributed.
 
         # inter-arrival times of events. WLOG Pick the first neuron in the layer.
-        inter_arrival_times = pnn.sx[0, pnn.sx[1,:]==1]
+        inter_arrival_times = pnn.sx[0, pnn.sx[1, :] == 1]
         # fit the inter-arrival times to an exponential distribution
         fit_params = expon.fit(inter_arrival_times)
         # perform the KS test
-        ks_stat, p_value = kstest(inter_arrival_times, 'expon', fit_params)
+        ks_stat, p_value = kstest(inter_arrival_times, "expon", fit_params)
 
         # assert p-value is above significance level (e.g. 0.05)
         assert p_value > 0.05
-    
 
-#%%
+
+# %%
+
 
 class Test_simulate(unittest.TestCase):
     def test_Cm_type(self):
@@ -902,7 +910,7 @@ class Test_simulate(unittest.TestCase):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm="1",
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -925,7 +933,8 @@ class Test_simulate(unittest.TestCase):
                 rho_ei=1,
                 eta_ii=-1,
                 rho_ii=1,
-            ) 
+            )
+
     def test_gL_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
@@ -954,13 +963,14 @@ class Test_simulate(unittest.TestCase):
                 rho_ei=1,
                 eta_ii=-1,
                 rho_ii=1,
-            ) 
+            )
+
     def test_VT_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT="-55",
                 Vre=-75,
                 Vth=-50,
@@ -983,13 +993,14 @@ class Test_simulate(unittest.TestCase):
                 rho_ei=1,
                 eta_ii=-1,
                 rho_ii=1,
-            ) 
+            )
+
     def test_Vre_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre="-75",
                 Vth=-50,
@@ -1012,13 +1023,14 @@ class Test_simulate(unittest.TestCase):
                 rho_ei=1,
                 eta_ii=-1,
                 rho_ii=1,
-            ) 
+            )
+
     def test_Vth_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth="-50",
@@ -1041,13 +1053,14 @@ class Test_simulate(unittest.TestCase):
                 rho_ei=1,
                 eta_ii=-1,
                 rho_ii=1,
-            ) 
+            )
+
     def test_EL_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1070,13 +1083,14 @@ class Test_simulate(unittest.TestCase):
                 rho_ei=1,
                 eta_ii=-1,
                 rho_ii=1,
-            ) 
+            )
+
     def test_DeltaT_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1098,14 +1112,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei=1,
                 eta_ii=-1,
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_taue_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1127,14 +1142,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei=1,
                 eta_ii=-1,
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_taui_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1156,14 +1172,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei=1,
                 eta_ii=-1,
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_taux_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1185,14 +1202,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei=1,
                 eta_ii=-1,
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_tauSTDP_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1214,14 +1232,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei=1,
                 eta_ii=-1,
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_numrecord_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1243,14 +1262,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei=1,
                 eta_ii=-1,
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_eta_ee_hebb_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1272,14 +1292,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei=1,
                 eta_ii=-1,
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_Jmax_ee_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1301,14 +1322,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei=1,
                 eta_ii=-1,
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_eta_ee_koh_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1330,14 +1352,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei=1,
                 eta_ii=-1,
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_beta_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1359,14 +1382,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei=1,
                 eta_ii=-1,
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_eta_ie_homeo_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1388,14 +1412,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei=1,
                 eta_ii=-1,
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_rho_ie_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1417,14 +1442,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei=1,
                 eta_ii=-1,
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_eta_ie_hebb_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1446,14 +1472,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei=1,
                 eta_ii=-1,
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_jmax_ie_hebb_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1475,14 +1502,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei=1,
                 eta_ii=-1,
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_eta_ei_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1504,14 +1532,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei="-1",
                 rho_ei=1,
                 eta_ii=-1,
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_rho_ei_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1533,14 +1562,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei="1",
                 eta_ii=-1,
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_eta_ii_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1562,14 +1592,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei=1,
                 eta_ii="-1",
-                rho_ii=1
-            ) 
+                rho_ii=1,
+            )
+
     def test_rho_ii_type(self):
         with pytest.raises(TypeError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1591,14 +1622,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-1,
                 rho_ei=1,
                 eta_ii=-1,
-                rho_ii="1"
-            ) 
+                rho_ii="1",
+            )
+
     def test_Cm_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=-1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1620,14 +1652,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_gL_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=-1/15,
+                gL=-1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1649,14 +1682,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_VT_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=55,
                 Vre=-75,
                 Vth=-50,
@@ -1678,14 +1712,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_Vre_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=75,
                 Vth=-50,
@@ -1707,14 +1742,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_Vth_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=50,
@@ -1736,14 +1772,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_EL_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1765,14 +1802,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_DeltaT_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1794,14 +1832,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_taue_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1823,14 +1862,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_taui_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1852,14 +1892,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_taux_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1881,14 +1922,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_tauSTDP_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1910,14 +1952,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_numrecord_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1939,14 +1982,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_eta_ee_hebb_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1968,14 +2012,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_jmax_ee_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -1997,14 +2042,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_eta_ee_koh_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -2026,14 +2072,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_beta_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -2055,14 +2102,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_eta_ie_homeo_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -2084,14 +2132,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_rho_ie_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -2113,14 +2162,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_eta_ie_hebb_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -2142,14 +2192,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_jmax_ie_hebb_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -2171,14 +2222,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_eta_ei_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -2200,14 +2252,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=-10,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_rho_ei_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -2229,14 +2282,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=-0.010,
                 eta_ii=0,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_eta_ii_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -2258,14 +2312,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=-10,
-                rho_ii=0.020
-            ) 
+                rho_ii=0.020,
+            )
+
     def test_rho_ii_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -2287,14 +2342,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=-0.020
-            ) 
+                rho_ii=-0.020,
+            )
+
     def test_double_stdp_ee_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -2316,14 +2372,15 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=-0.020
-            ) 
+                rho_ii=-0.020,
+            )
+
     def test_double_stdp_ie_value(self):
         with pytest.raises(ValueError):
             PlasticNeuralNetwork.simulate(
                 self,
                 Cm=1,
-                gL=1/15,
+                gL=1 / 15,
                 VT=-55,
                 Vre=-75,
                 Vth=-50,
@@ -2345,8 +2402,9 @@ class Test_simulate(unittest.TestCase):
                 eta_ei=0,
                 rho_ei=0.010,
                 eta_ii=0,
-                rho_ii=-0.020
-            ) 
+                rho_ii=-0.020,
+            )
+
     def test_simulate_outcomes(self):
         """
         Test network simulation of PlasticNeuralNetwork object.
@@ -2369,10 +2427,7 @@ class Test_simulate(unittest.TestCase):
         np.random.seed(31415)
 
         # Define the model.
-        pnn = PlasticNeuralNetwork(
-            N=N,
-            T=T
-        )
+        pnn = PlasticNeuralNetwork(N=N, T=T)
         # Initialize the connectivity
         pnn.connectivity(nJrecord0=nJrecord0)
         # Generate Poisson ffwd spike trains
@@ -2396,24 +2451,24 @@ class Test_simulate(unittest.TestCase):
             eta_ii=eta_ii,
         )
 
-        self.assertEqual(len(JRec_ee[:,0]), nJrecord0)
-        self.assertEqual(len(JRec_ei[:,0]), nJrecord0)
-        self.assertEqual(len(JRec_ie[:,0]), nJrecord0)
-        self.assertEqual(len(JRec_ii[:,0]), nJrecord0)
+        self.assertEqual(len(JRec_ee[:, 0]), nJrecord0)
+        self.assertEqual(len(JRec_ei[:, 0]), nJrecord0)
+        self.assertEqual(len(JRec_ie[:, 0]), nJrecord0)
+        self.assertEqual(len(JRec_ii[:, 0]), nJrecord0)
 
-        self.assertEqual(len(IeRec[:,0]), numrecord)
-        self.assertEqual(len(IeRec[0,:]), pnn.Ntrec)
-        
-        self.assertEqual(len(IiRec[:,0]), numrecord)
-        self.assertEqual(len(IiRec[0,:]), pnn.Ntrec)
+        self.assertEqual(len(IeRec[:, 0]), numrecord)
+        self.assertEqual(len(IeRec[0, :]), pnn.Ntrec)
 
-        self.assertEqual(len(IxRec[:,0]), numrecord)
-        self.assertEqual(len(IxRec[0,:]), pnn.Ntrec)
+        self.assertEqual(len(IiRec[:, 0]), numrecord)
+        self.assertEqual(len(IiRec[0, :]), pnn.Ntrec)
 
-        self.assertEqual(len(JRec_ee[0,:]), pnn.Ntrec)
-        self.assertEqual(len(JRec_ei[0,:]), pnn.Ntrec)
-        self.assertEqual(len(JRec_ie[0,:]), pnn.Ntrec)
-        self.assertEqual(len(JRec_ii[0,:]), pnn.Ntrec)
+        self.assertEqual(len(IxRec[:, 0]), numrecord)
+        self.assertEqual(len(IxRec[0, :]), pnn.Ntrec)
+
+        self.assertEqual(len(JRec_ee[0, :]), pnn.Ntrec)
+        self.assertEqual(len(JRec_ei[0, :]), pnn.Ntrec)
+        self.assertEqual(len(JRec_ie[0, :]), pnn.Ntrec)
+        self.assertEqual(len(JRec_ii[0, :]), pnn.Ntrec)
 
         print(IeRec[IeRec < 0])
 
@@ -2425,4 +2480,4 @@ class Test_simulate(unittest.TestCase):
         assert np.all(VRec < 0), "Memberane potential should always be negative"
 
 
-#%%
+# %%

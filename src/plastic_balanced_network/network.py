@@ -37,7 +37,7 @@ class PlasticNeuralNetwork:
         Added constant current to excitatory neurons. Defaults to 0.
     jistim: float or int
         Added constant current to inhibitory neurons. Defaults to 0.
-    nBinsRecord: int 
+    nBinsRecord: int
         Number of bins to record average and record over. Defaults to 10.
 
     Returns
@@ -480,7 +480,7 @@ class PlasticNeuralNetwork:
         --------
         sx: np.ndarray
             Feedforward, Poisson spike trains recorded as spike time and neuron index (as part of self).
-        nspikeX: int 
+        nspikeX: int
             Total number of spikes in sx (as part of self).
         """
         # None errors.
@@ -653,7 +653,7 @@ class PlasticNeuralNetwork:
             Pick a value in the approximate order of 10^-3 or lower as a start point.
         rho_ii: float or int
             Parameter that determines target rate in iSTDP. Defaults to 0.020 kHz.
-        
+
         Returns
         -------
         s: np.ndarray

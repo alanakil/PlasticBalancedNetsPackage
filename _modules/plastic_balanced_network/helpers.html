@@ -204,15 +204,18 @@
 <div class="viewcode-block" id="average_cov_corr_over_subpops"><a class="viewcode-back" href="../../plastic_balanced_network.helpers.html#plastic_balanced_network.helpers.average_cov_corr_over_subpops">[docs]</a><span class="k">def</span> <span class="nf">average_cov_corr_over_subpops</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">frac_exc</span><span class="o">=</span><span class="mf">0.8</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Average covariances or correlations over subpopulations.</span>
+<span class="sd">    </span>
 <span class="sd">    Arguments</span>
-<span class="sd">    :param C: Matrix of covariances or correlations.</span>
-<span class="sd">    :type C: np.ndarray</span>
+<span class="sd">    ---------</span>
+<span class="sd">    C: np.ndarray</span>
+<span class="sd">        Matrix of covariances or correlations.</span>
 <span class="sd">    :param N: Total number of neurons.</span>
 <span class="sd">    :type N: int</span>
 <span class="sd">    :param frac_exc: Fraction of E neurons. Defaults to 0.8.</span>
 <span class="sd">    :type frac_exc: float</span>
 
 <span class="sd">    Returns</span>
+<span class="sd">    -------</span>
 <span class="sd">    :return mC: Mean spike count covariance matrix.</span>
 <span class="sd">    :rtype mC: np.ndarray</span>
 <span class="sd">    &quot;&quot;&quot;</span>

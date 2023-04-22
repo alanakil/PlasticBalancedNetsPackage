@@ -130,15 +130,18 @@ def cov2corr(cov):
 def average_cov_corr_over_subpops(C, N, frac_exc=0.8):
     """
     Average covariances or correlations over subpopulations.
+    
     Arguments
-    :param C: Matrix of covariances or correlations.
-    :type C: np.ndarray
+    ---------
+    C: np.ndarray
+        Matrix of covariances or correlations.
     :param N: Total number of neurons.
     :type N: int
     :param frac_exc: Fraction of E neurons. Defaults to 0.8.
     :type frac_exc: float
 
     Returns
+    -------
     :return mC: Mean spike count covariance matrix.
     :rtype mC: np.ndarray
     """

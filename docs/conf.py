@@ -11,8 +11,10 @@ with open(os.path.join(PACKAGE_DIR, "VERSION")) as f:
     _version = f.read().strip()
     about["__version__"] = _version
 
-sys.path.insert(0, ROOT_DIR)
-sys.path.insert(0, PACKAGE_DIR)
+sys.path.append(ROOT_DIR)
+sys.path.append(PACKAGE_DIR)
+sys.path.append(os.path.abspath('../..'))
+sys.path.append(os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 

@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import sys
 
 NAME = 'plastic_balanced_network'
 ROOT_DIR = Path(__file__).parent.parent
@@ -9,6 +10,8 @@ about = {}
 with open(os.path.join(PACKAGE_DIR, "VERSION")) as f:
     _version = f.read().strip()
     about["__version__"] = _version
+
+sys.path.insert(0, ROOT_DIR)
 
 # -- Project information -----------------------------------------------------
 

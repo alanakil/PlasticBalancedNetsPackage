@@ -7,7 +7,7 @@ Welcome to plastic_balanced_network's documentation!
 ====================================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
 
    plastic_balanced_network

@@ -12,8 +12,9 @@ jobs:
           pip install -r requirements.txt
       - name: Build documentation
         run: |
-          sphinx-quickstart -p plastic_balanced_network -a "Alan Akil" -q --ext-autodoc --ext-viewcode --ext-intersphinx --ext-todo docs
-          sphinx-build -b html docs docs/_build -c .
+          mkdir -p docs 
+          cd docs
+          make html
       - name: Deploy documentation to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:

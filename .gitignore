@@ -16,8 +16,8 @@ src/plastic_balanced_network.egg-info/
 src/plastic_balanced_network/__pycache__/
 tests/__pycache__
 # But keep
-# !dist/.gitkeep
-# !docs/_build/
-# !docs/_build/html/
-# !docs/_build/html/**
-# !docs/_build/.gitkeep
+!dist/.gitkeep
+!docs/.gitkeep
+!docs/_build/
+!docs/_build/.gitkeep
+!logs/.gitkeep

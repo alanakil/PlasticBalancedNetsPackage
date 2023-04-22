@@ -114,27 +114,26 @@
 <span class="sd">    nBinsRecord: int </span>
 <span class="sd">        Number of bins to record average and record over. Defaults to 10.</span>
 
-<span class="sd">    Returns (as part of self)</span>
+<span class="sd">    Returns</span>
 <span class="sd">    --------</span>
-<span class="sd">    :return: </span>
 <span class="sd">    Ne: int</span>
-<span class="sd">        Total number of E neurons.</span>
+<span class="sd">        Total number of E neurons (as part of self).</span>
 <span class="sd">    Ni: int</span>
-<span class="sd">        Total number of I neurons.</span>
+<span class="sd">        Total number of I neurons (as part of self).</span>
 <span class="sd">    Nx: int</span>
-<span class="sd">        Total number of X neurons.</span>
+<span class="sd">        Total number of X neurons (as part of self).</span>
 <span class="sd">    Nt: int</span>
-<span class="sd">        Total number of discretized time points.</span>
+<span class="sd">        Total number of discretized time points (as part of self).</span>
 <span class="sd">    Istim: np.ndarray</span>
-<span class="sd">        Time vector of added constant stimulation.</span>
+<span class="sd">        Time vector of added constant stimulation (as part of self).</span>
 <span class="sd">    Jstim: np.ndarray</span>
-<span class="sd">        Weight coupling for Istim.</span>
+<span class="sd">        Weight coupling for Istim (as part of self).</span>
 <span class="sd">    maxns: int</span>
-<span class="sd">        Maximum number of spikes to terminate pathologic behavior.</span>
+<span class="sd">        Maximum number of spikes to terminate pathologic behavior (as part of self).</span>
 <span class="sd">    timeRecord: np.ndarray</span>
-<span class="sd">        Discretized recorded time domain.</span>
+<span class="sd">        Discretized recorded time domain (as part of self).</span>
 <span class="sd">    Ntrec: int</span>
-<span class="sd">        Number of points in discretized recorded time domain.</span>
+<span class="sd">        Number of points in discretized recorded time domain (as part of self).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -302,28 +301,28 @@
 <span class="sd">        nJrecord0: int</span>
 <span class="sd">            Count of synaptic weights recorded. Relevant when network is plastic. Defaults to 100.</span>
 
-<span class="sd">        Returns (as part of self)</span>
+<span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        J: np.ndarray</span>
-<span class="sd">            Recurrent connectivity matrix.</span>
+<span class="sd">            Recurrent connectivity matrix (as part of self).</span>
 <span class="sd">        Jx: np.ndarray</span>
-<span class="sd">            External feedforward connectivity matrix.</span>
+<span class="sd">            External feedforward connectivity matrix (as part of self).</span>
 <span class="sd">        Jrecord_ee: np.ndarray</span>
-<span class="sd">            Indices of recorded EE synaptic weights.</span>
+<span class="sd">            Indices of recorded EE synaptic weights (as part of self).</span>
 <span class="sd">        Jrecord_ie: np.ndarray</span>
-<span class="sd">            Indices of recorded IE synaptic weights.</span>
+<span class="sd">            Indices of recorded IE synaptic weights (as part of self).</span>
 <span class="sd">        Jrecord_ei: np.ndarray</span>
-<span class="sd">            Indices of recorded EI synaptic weights.</span>
+<span class="sd">            Indices of recorded EI synaptic weights (as part of self).</span>
 <span class="sd">        Jrecord_ii: np.ndarray</span>
-<span class="sd">            Indices of recorded II synaptic weights.</span>
+<span class="sd">            Indices of recorded II synaptic weights (as part of self).</span>
 <span class="sd">        numrecordJ_ee: int</span>
-<span class="sd">            Number of recorded EE synaptic weights.</span>
+<span class="sd">            Number of recorded EE synaptic weights (as part of self).</span>
 <span class="sd">        numrecordJ_ie: int</span>
-<span class="sd">            Number of recorded IE synaptic weights.</span>
+<span class="sd">            Number of recorded IE synaptic weights (as part of self).</span>
 <span class="sd">        numrecordJ_ei: int</span>
-<span class="sd">            Number of recorded EI synaptic weights.</span>
+<span class="sd">            Number of recorded EI synaptic weights (as part of self).</span>
 <span class="sd">        numrecordJ_ii: int</span>
-<span class="sd">            Number of recorded II synaptic weights.</span>
+<span class="sd">            Number of recorded II synaptic weights (as part of self).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Test types</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">jee</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)):</span>
@@ -551,12 +550,12 @@
 <span class="sd">        taujitter: float or int</span>
 <span class="sd">            Spike trains are jittered by taujitter milliseconds to avoid perfect synchrony. Defaults to 5 ms.</span>
 
-<span class="sd">        Returns (as part of `self`)</span>
+<span class="sd">        Returns</span>
 <span class="sd">        --------</span>
 <span class="sd">        sx: np.ndarray</span>
-<span class="sd">            Feedforward, Poisson spike trains recorded as spike time and neuron index.</span>
+<span class="sd">            Feedforward, Poisson spike trains recorded as spike time and neuron index (as part of self).</span>
 <span class="sd">        nspikeX: int </span>
-<span class="sd">            Total number of spikes in sx ().</span>
+<span class="sd">            Total number of spikes in sx (as part of self).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># None errors.</span>
         <span class="k">if</span> <span class="n">T</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

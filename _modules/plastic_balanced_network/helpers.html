@@ -107,8 +107,12 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    ----------</span>
-<span class="sd">    :return: Time varying firing rate of E and I neurons, respectively (eRateT, iRateT).</span>
-<span class="sd">    :rtype: tuple(np.ndarray,np.ndarray)</span>
+<span class="sd">    eRateT: np.ndarray</span>
+<span class="sd">        Smoothed time varying firing rate of E neurons.</span>
+<span class="sd">    iRateT: np.ndarray</span>
+<span class="sd">        Smoothed time varying firing rate of I neurons.</span>
+<span class="sd">    timeVector: np.ndarray</span>
+<span class="sd">        Discretized time domain.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">timeVector</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">dtRate</span><span class="p">,</span> <span class="n">T</span> <span class="o">+</span> <span class="n">dtRate</span><span class="p">,</span> <span class="n">dtRate</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span>

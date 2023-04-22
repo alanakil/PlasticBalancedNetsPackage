@@ -109,31 +109,23 @@ spike trains, and to simulate the recurrent network’s firing.</p>
 <li><p><strong>jestim</strong> (<em>float</em><em> or </em><em>int</em>) – Added constant current to excitatory neurons. Defaults to 0.</p></li>
 <li><p><strong>jistim</strong> (<em>float</em><em> or </em><em>int</em>) – Added constant current to inhibitory neurons. Defaults to 0.</p></li>
 <li><p><strong>nBinsRecord</strong> (<em>int</em>) – Number of bins to record average and record over. Defaults to 10.</p></li>
-<li><p><strong>self</strong><strong>)</strong> (<em>Returns</em><em> (</em><em>as part of</em>) – </p></li>
-<li><p><strong>--------</strong> – </p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>Ne</strong> (<em>int</em>) – Total number of E neurons (as part of self).</p></li>
+<li><p><strong>Ni</strong> (<em>int</em>) – Total number of I neurons (as part of self).</p></li>
+<li><p><strong>Nx</strong> (<em>int</em>) – Total number of X neurons (as part of self).</p></li>
+<li><p><strong>Nt</strong> (<em>int</em>) – Total number of discretized time points (as part of self).</p></li>
+<li><p><strong>Istim</strong> (<em>np.ndarray</em>) – Time vector of added constant stimulation (as part of self).</p></li>
+<li><p><strong>Jstim</strong> (<em>np.ndarray</em>) – Weight coupling for Istim (as part of self).</p></li>
+<li><p><strong>maxns</strong> (<em>int</em>) – Maximum number of spikes to terminate pathologic behavior (as part of self).</p></li>
+<li><p><strong>timeRecord</strong> (<em>np.ndarray</em>) – Discretized recorded time domain (as part of self).</p></li>
+<li><p><strong>Ntrec</strong> (<em>int</em>) – Number of points in discretized recorded time domain (as part of self).</p></li>
+</ul>
+</p>
+</dd>
 </dl>
-<p>:param :
-:type : return:
-:param Ne: Total number of E neurons.
-:type Ne: int
-:param Ni: Total number of I neurons.
-:type Ni: int
-:param Nx: Total number of X neurons.
-:type Nx: int
-:param Nt: Total number of discretized time points.
-:type Nt: int
-:param Istim: Time vector of added constant stimulation.
-:type Istim: np.ndarray
-:param Jstim: Weight coupling for Istim.
-:type Jstim: np.ndarray
-:param maxns: Maximum number of spikes to terminate pathologic behavior.
-:type maxns: int
-:param timeRecord: Discretized recorded time domain.
-:type timeRecord: np.ndarray
-:param Ntrec: Number of points in discretized recorded time domain.
-:type Ntrec: int</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="plastic_balanced_network.network.PlasticNeuralNetwork.connectivity">
 <span class="sig-name descname"><span class="pre">connectivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">112.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jei</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-150</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-250</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">180</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">135</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_ee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_ie</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_ei</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_ii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_ex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_ix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nJrecord0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/plastic_balanced_network/network.html#PlasticNeuralNetwork.connectivity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#plastic_balanced_network.network.PlasticNeuralNetwork.connectivity" title="Permalink to this definition"></a></dt>
@@ -154,19 +146,22 @@ spike trains, and to simulate the recurrent network’s firing.</p>
 <li><p><strong>p_ex</strong> (<em>float</em>) – Probability of connection from X to E neurons. Defaults to 0.1.</p></li>
 <li><p><strong>p_ix</strong> (<em>float</em>) – Probability of connection from X to I neurons. Defaults to 0.1.</p></li>
 <li><p><strong>nJrecord0</strong> (<em>int</em>) – Count of synaptic weights recorded. Relevant when network is plastic. Defaults to 100.</p></li>
-<li><p><strong>self</strong><strong>)</strong> (<em>Returns</em><em> (</em><em>as part of</em>) – </p></li>
-<li><p><strong>-------</strong> – </p></li>
-<li><p><strong>J</strong> (<em>np.ndarray</em>) – Recurrent connectivity matrix.</p></li>
-<li><p><strong>Jx</strong> (<em>np.ndarray</em>) – External feedforward connectivity matrix.</p></li>
-<li><p><strong>Jrecord_ee</strong> (<em>np.ndarray</em>) – Indices of recorded EE synaptic weights.</p></li>
-<li><p><strong>Jrecord_ie</strong> (<em>np.ndarray</em>) – Indices of recorded IE synaptic weights.</p></li>
-<li><p><strong>Jrecord_ei</strong> (<em>np.ndarray</em>) – Indices of recorded EI synaptic weights.</p></li>
-<li><p><strong>Jrecord_ii</strong> (<em>np.ndarray</em>) – Indices of recorded II synaptic weights.</p></li>
-<li><p><strong>numrecordJ_ee</strong> (<em>int</em>) – Number of recorded EE synaptic weights.</p></li>
-<li><p><strong>numrecordJ_ie</strong> (<em>int</em>) – Number of recorded IE synaptic weights.</p></li>
-<li><p><strong>numrecordJ_ei</strong> (<em>int</em>) – Number of recorded EI synaptic weights.</p></li>
-<li><p><strong>numrecordJ_ii</strong> (<em>int</em>) – Number of recorded II synaptic weights.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>J</strong> (<em>np.ndarray</em>) – Recurrent connectivity matrix (as part of self).</p></li>
+<li><p><strong>Jx</strong> (<em>np.ndarray</em>) – External feedforward connectivity matrix (as part of self).</p></li>
+<li><p><strong>Jrecord_ee</strong> (<em>np.ndarray</em>) – Indices of recorded EE synaptic weights (as part of self).</p></li>
+<li><p><strong>Jrecord_ie</strong> (<em>np.ndarray</em>) – Indices of recorded IE synaptic weights (as part of self).</p></li>
+<li><p><strong>Jrecord_ei</strong> (<em>np.ndarray</em>) – Indices of recorded EI synaptic weights (as part of self).</p></li>
+<li><p><strong>Jrecord_ii</strong> (<em>np.ndarray</em>) – Indices of recorded II synaptic weights (as part of self).</p></li>
+<li><p><strong>numrecordJ_ee</strong> (<em>int</em>) – Number of recorded EE synaptic weights (as part of self).</p></li>
+<li><p><strong>numrecordJ_ie</strong> (<em>int</em>) – Number of recorded IE synaptic weights (as part of self).</p></li>
+<li><p><strong>numrecordJ_ei</strong> (<em>int</em>) – Number of recorded EI synaptic weights (as part of self).</p></li>
+<li><p><strong>numrecordJ_ii</strong> (<em>int</em>) – Number of recorded II synaptic weights (as part of self).</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -182,11 +177,14 @@ spike trains, and to simulate the recurrent network’s firing.</p>
 <li><p><strong>cx</strong> (<em>float</em><em> or </em><em>int</em>) – Value of mean correlation between feedforward Poisson spike trains. Defaults to 0.1.</p></li>
 <li><p><strong>rx</strong> (<em>float</em><em> or </em><em>int</em>) – Rate of feedforward Poisson neurons in kHz. Defaults to 0.01 kHz.</p></li>
 <li><p><strong>taujitter</strong> (<em>float</em><em> or </em><em>int</em>) – Spike trains are jittered by taujitter milliseconds to avoid perfect synchrony. Defaults to 5 ms.</p></li>
-<li><p><strong>self</strong><strong>)</strong> (<em>Returns</em><em> (</em><em>as part of</em>) – </p></li>
-<li><p><strong>--------</strong> – </p></li>
-<li><p><strong>sx</strong> (<em>np.ndarray</em>) – Feedforward, Poisson spike trains recorded as spike time and neuron index.</p></li>
-<li><p><strong>nspikeX</strong> (<em>int</em>) – Total number of spikes in sx ().</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>sx</strong> (<em>np.ndarray</em>) – Feedforward, Poisson spike trains recorded as spike time and neuron index (as part of self).</p></li>
+<li><p><strong>nspikeX</strong> (<em>int</em>) – Total number of spikes in sx (as part of self).</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>

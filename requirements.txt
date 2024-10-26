@@ -15,15 +15,3 @@ keyring
 setuptools
 twine
 numpydoc
-sphinx
-sphinx_rtd_theme
-black==23.3.0
-flake8==6.0.0
-flake8-bugbear
-flake8-builtins
-flake8-colors
-flake8-comprehensions
-flake8-isort
-isort
-pep8-naming
-check-manifest

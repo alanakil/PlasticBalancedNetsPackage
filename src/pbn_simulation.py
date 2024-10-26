@@ -18,6 +18,7 @@ Output data is saved in the `data/processed` folder.
 Logs are saved in `logs` folder.
 Please refer to the README.md for detailed instructions on how to run this code.
 """
+
 __author__ = "Alan Akil (alan.akil@yahoo.com)"
 __date__ = "APRIL 2023"
 
@@ -32,8 +33,8 @@ from datetime import datetime as dtm
 import os
 from pathlib import Path
 
-from plastic_balanced_network.network import (
-    PlasticNeuralNetwork,
+from plastic_balanced_network.network import PlasticNeuralNetwork
+from plastic_balanced_network.helpers import (
     compute_firing_rate,
     spike_count_cov,
     cov2corr,
@@ -56,7 +57,9 @@ DATA_FILE_PATH = f"{DATA_DIR}/pbn_data_{datadatetime}.npz"
 
 # %%
 # Set up logging.
-log_format = "%(asctime)s - %(levelname)-8s - %(name)s - %(funcName)s:%(lineno)d - %(message)s"
+log_format = (
+    "%(asctime)s - %(levelname)-8s - %(name)s - %(funcName)s:%(lineno)d - %(message)s"
+)
 # Use loglevel to filter out undesired logs.
 loglevel = "INFO"
 loglevel = str(loglevel).replace('"', "")
@@ -91,7 +94,7 @@ logging.info("Define input variables for plastic balanced network simulation.")
 # Total number of neurons.
 N = int(5000)
 # Total time (in ms) for simulation.
-T = 5000
+T = 500000
 
 # FFwd spike train rate (in kHz).
 rx = 10 / 1000
@@ -421,7 +424,9 @@ plt.show()
 
 # %%
 # Compute smoothed histogram of rates (over time)
-eRateT, iRateT, timeVector = compute_firing_rate(s, T, N, frac_exc=0.8, dtRate=10, window_size=10)
+eRateT, iRateT, timeVector = compute_firing_rate(
+    s, T, N, frac_exc=0.8, dtRate=10, window_size=10
+)
 
 # Start the figure.
 fig = plt.figure(figsize=(8, 5))
@@ -470,6 +475,10 @@ print(elapsed_time / 60, "minutes")
 
 mR = average_cov_corr_over_subpops(R, N, frac_exc)
 print("mR =", mR)
+print(f"Mean EE Correlations: {mR[0][0]:.4f}")
+print(f"Mean EI Correlations: {mR[0][1]:.4f}")
+print(f"Mean IE Correlations: {mR[1][0]:.4f}")
+print(f"Mean II Correlations: {mR[1][1]:.4f}")
 
 # %% [markdown]
 # Plot distributions of EE, EI, IE, II correlations.

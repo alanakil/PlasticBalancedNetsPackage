@@ -135,7 +135,9 @@ def cov2corr(cov):
     corr = cov / np.outer(std_, std_)
 
     elapsed_time = time.time() - start_time
-    logging.info(f"Time for converting covariance matrix into correlation matrix: {round(elapsed_time / 60, 2)} minutes.")
+    logging.info(
+        f"Time for converting covariance matrix into correlation matrix: {round(elapsed_time / 60, 2)} minutes."
+    )
     return corr
 
 

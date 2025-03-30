@@ -9,14 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9, 3.10, 3.11, 3.12]
-      fail-fast: false  # Let's keep building even if one fails
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+      fail-fast: true
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -30,7 +30,7 @@ jobs:
 
       # Save the dist/ artifacts (the wheels & sdist) with a name
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: dist-${{ matrix.python-version }}
           path: dist/*
@@ -40,7 +40,7 @@ jobs:
     needs: [build]
     steps:
       - name: Download artifacts for all Pythons
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           # Pick up all artifacts whose name starts with 'dist-'
           name: dist-*

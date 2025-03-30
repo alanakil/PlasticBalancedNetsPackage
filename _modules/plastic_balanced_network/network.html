@@ -1,18 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>plastic_balanced_network.network &mdash; Plastic Balanced Networks 0.0.2-beta documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <title>plastic_balanced_network.network &mdash; Plastic Balanced Networks 0.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=47de8214"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -29,9 +31,6 @@
           <a href="../../index.html" class="icon icon-home">
             Plastic Balanced Networks
           </a>
-              <div class="version">
-                0.0.2-beta
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -43,8 +42,9 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../plastic_balanced_network.html">plastic_balanced_network package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">0.0.2-b (2023-04-22)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id1">0.0.1-b (2023-04-22)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">0.0.3 (2025-03-30)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#b-2023-04-22">0.0.2-b (2023-04-22)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id2">0.0.1-b (2023-04-22)</a></li>
 </ul>
 
         </div>
@@ -75,6 +75,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Plastic balanced network class. Includes functions to initialize, build connectivity, simulate, etc.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Alan Akil (alan.akil@yahoo.com)&quot;</span>
 <span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;APRIL 2023&quot;</span>
 
@@ -88,7 +89,9 @@
 
 
 <span class="c1"># %%</span>
-<div class="viewcode-block" id="PlasticNeuralNetwork"><a class="viewcode-back" href="../../plastic_balanced_network.network.html#plastic_balanced_network.network.PlasticNeuralNetwork">[docs]</a><span class="k">class</span> <span class="nc">PlasticNeuralNetwork</span><span class="p">:</span>
+<div class="viewcode-block" id="PlasticNeuralNetwork">
+<a class="viewcode-back" href="../../plastic_balanced_network.network.html#plastic_balanced_network.network.PlasticNeuralNetwork">[docs]</a>
+<span class="k">class</span> <span class="nc">PlasticNeuralNetwork</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;PlasticNeuralNetwork is a class that builds a neural network with</span>
 <span class="sd">    correlated or uncorrelated firing as well as with plastic or static</span>
 <span class="sd">    synaptic weights on any connection.</span>
@@ -253,7 +256,9 @@
         <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time for initializing the class: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">elapsed_time</span><span class="o">/</span><span class="mi">60</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2"> minutes.&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PlasticNeuralNetwork.connectivity"><a class="viewcode-back" href="../../plastic_balanced_network.network.html#plastic_balanced_network.network.PlasticNeuralNetwork.connectivity">[docs]</a>    <span class="k">def</span> <span class="nf">connectivity</span><span class="p">(</span>
+<div class="viewcode-block" id="PlasticNeuralNetwork.connectivity">
+<a class="viewcode-back" href="../../plastic_balanced_network.network.html#plastic_balanced_network.network.PlasticNeuralNetwork.connectivity">[docs]</a>
+    <span class="k">def</span> <span class="nf">connectivity</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">jee</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
         <span class="n">jie</span><span class="o">=</span><span class="mf">112.5</span><span class="p">,</span>
@@ -481,7 +486,7 @@
             <span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connectivity matrices J and Jx were built successfully.&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Connectivity matrices J and Jx were built successfully.&quot;</span><span class="p">)</span>
 
         <span class="c1"># Define variables to record changes in weights.</span>
         <span class="c1"># Synaptic weights EE to record.</span>
@@ -535,7 +540,10 @@
         <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time for building connectivity matrix: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">elapsed_time</span><span class="o">/</span><span class="mi">60</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2"> minutes.&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PlasticNeuralNetwork.ffwd_spikes"><a class="viewcode-back" href="../../plastic_balanced_network.network.html#plastic_balanced_network.network.PlasticNeuralNetwork.ffwd_spikes">[docs]</a>    <span class="k">def</span> <span class="nf">ffwd_spikes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">cx</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">rx</span><span class="o">=</span><span class="mi">10</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">taujitter</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+
+<div class="viewcode-block" id="PlasticNeuralNetwork.ffwd_spikes">
+<a class="viewcode-back" href="../../plastic_balanced_network.network.html#plastic_balanced_network.network.PlasticNeuralNetwork.ffwd_spikes">[docs]</a>
+    <span class="k">def</span> <span class="nf">ffwd_spikes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">cx</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">rx</span><span class="o">=</span><span class="mi">10</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">taujitter</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create all spike trains of the Poisson feedforward, external layer.</span>
 
@@ -641,7 +649,10 @@
         <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time for generating feedforward Poisson spike trains: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">elapsed_time</span><span class="o">/</span><span class="mi">60</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2"> minutes.&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PlasticNeuralNetwork.simulate"><a class="viewcode-back" href="../../plastic_balanced_network.network.html#plastic_balanced_network.network.PlasticNeuralNetwork.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
+
+<div class="viewcode-block" id="PlasticNeuralNetwork.simulate">
+<a class="viewcode-back" href="../../plastic_balanced_network.network.html#plastic_balanced_network.network.PlasticNeuralNetwork.simulate">[docs]</a>
+    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">Cm</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">gL</span><span class="o">=</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">15</span><span class="p">,</span>
@@ -1049,8 +1060,10 @@
 
         <span class="c1"># Start the simulation.</span>
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_time</span><span class="p">)</span>
+        <span class="n">check_interval</span> <span class="o">=</span> <span class="n">total</span> <span class="o">//</span> <span class="mi">10</span>  <span class="c1"># 10% intervals</span>
 
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_time</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total</span><span class="p">):</span>
             <span class="c1"># Propagate ffwd spikes</span>
             <span class="k">while</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sx</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">iFspike</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_time</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">iFspike</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nspikeX</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
                 <span class="n">jpre</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sx</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">iFspike</span><span class="p">])</span>
@@ -1206,6 +1219,12 @@
             <span class="c1"># Reset mem pot.</span>
             <span class="n">V</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">Ispike</span><span class="p">]</span> <span class="o">=</span> <span class="n">Vre</span>
 
+            <span class="c1"># Print progress every 10%</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="n">check_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+                <span class="n">progress</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="n">total</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Progress: </span><span class="si">{</span><span class="n">progress</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">%. Elapsed time: </span><span class="si">{</span><span class="n">elapsed_time</span><span class="o">/</span><span class="mi">60</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> minutes.&quot;</span><span class="p">)</span>
+
         <span class="n">IeRec</span> <span class="o">=</span> <span class="n">IeRec</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nBinsRecord</span>  <span class="c1"># Normalize recorded variables by # bins</span>
         <span class="n">IiRec</span> <span class="o">=</span> <span class="n">IiRec</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nBinsRecord</span>
         <span class="n">IxRec</span> <span class="o">=</span> <span class="n">IxRec</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nBinsRecord</span>
@@ -1234,7 +1253,9 @@
             <span class="n">IxRec</span><span class="p">,</span>
             <span class="n">VRec</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">timeRecord</span><span class="p">,</span>
-        <span class="p">)</span></div></div>
+        <span class="p">)</span></div>
+</div>
+
 
 
 <span class="c1"># %%</span>
@@ -1248,7 +1269,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright .
-      <span class="lastupdated">Last updated on 2023, Apr, 23.
+      <span class="lastupdated">Last updated on 2025, Mar, 30.
       </span></p>
   </div>
 

@@ -1,18 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>plastic_balanced_network.helpers &mdash; Plastic Balanced Networks 0.0.2-beta documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <title>plastic_balanced_network.helpers &mdash; Plastic Balanced Networks 0.0.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=47de8214"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -29,9 +31,6 @@
           <a href="../../index.html" class="icon icon-home">
             Plastic Balanced Networks
           </a>
-              <div class="version">
-                0.0.2-beta
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -43,8 +42,9 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../plastic_balanced_network.html">plastic_balanced_network package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">0.0.2-b (2023-04-22)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id1">0.0.1-b (2023-04-22)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">0.0.3 (2025-03-30)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#b-2023-04-22">0.0.2-b (2023-04-22)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html#id2">0.0.1-b (2023-04-22)</a></li>
 </ul>
 
         </div>
@@ -75,6 +75,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Functions to analyze activity of plastic balanced network.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="n">__author__</span> <span class="o">=</span> <span class="s2">&quot;Alan Akil (alan.akil@yahoo.com)&quot;</span>
 <span class="n">__date__</span> <span class="o">=</span> <span class="s2">&quot;APRIL 2023&quot;</span>
 
@@ -86,7 +87,9 @@
 <span class="c1"># %%</span>
 
 
-<div class="viewcode-block" id="compute_firing_rate"><a class="viewcode-back" href="../../plastic_balanced_network.helpers.html#plastic_balanced_network.helpers.compute_firing_rate">[docs]</a><span class="k">def</span> <span class="nf">compute_firing_rate</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">frac_exc</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">dtRate</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<div class="viewcode-block" id="compute_firing_rate">
+<a class="viewcode-back" href="../../plastic_balanced_network.helpers.html#plastic_balanced_network.helpers.compute_firing_rate">[docs]</a>
+<span class="k">def</span> <span class="nf">compute_firing_rate</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">frac_exc</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">dtRate</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the mean firing rate of E and I populations as a function of time.</span>
 
@@ -132,10 +135,13 @@
     <span class="k">return</span> <span class="n">eRateT</span><span class="p">,</span> <span class="n">iRateT</span><span class="p">,</span> <span class="n">timeVector</span></div>
 
 
+
 <span class="c1"># %%</span>
 
 
-<div class="viewcode-block" id="spike_count_cov"><a class="viewcode-back" href="../../plastic_balanced_network.helpers.html#plastic_balanced_network.helpers.spike_count_cov">[docs]</a><span class="k">def</span> <span class="nf">spike_count_cov</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">winsize</span><span class="o">=</span><span class="mi">250</span><span class="p">):</span>
+<div class="viewcode-block" id="spike_count_cov">
+<a class="viewcode-back" href="../../plastic_balanced_network.helpers.html#plastic_balanced_network.helpers.spike_count_cov">[docs]</a>
+<span class="k">def</span> <span class="nf">spike_count_cov</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="n">winsize</span><span class="o">=</span><span class="mi">250</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute NxN spike count covariance matrix.</span>
 <span class="sd">    s is a 2x(ns) matrix where ns is the number of spikes</span>
@@ -189,7 +195,10 @@
     <span class="k">return</span> <span class="n">C</span></div>
 
 
-<div class="viewcode-block" id="cov2corr"><a class="viewcode-back" href="../../plastic_balanced_network.helpers.html#plastic_balanced_network.helpers.cov2corr">[docs]</a><span class="k">def</span> <span class="nf">cov2corr</span><span class="p">(</span><span class="n">cov</span><span class="p">):</span>
+
+<div class="viewcode-block" id="cov2corr">
+<a class="viewcode-back" href="../../plastic_balanced_network.helpers.html#plastic_balanced_network.helpers.cov2corr">[docs]</a>
+<span class="k">def</span> <span class="nf">cov2corr</span><span class="p">(</span><span class="n">cov</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;convert covariance matrix to correlation matrix</span>
 
 <span class="sd">    Parameters</span>
@@ -212,7 +221,10 @@
     <span class="k">return</span> <span class="n">corr</span></div>
 
 
-<div class="viewcode-block" id="average_cov_corr_over_subpops"><a class="viewcode-back" href="../../plastic_balanced_network.helpers.html#plastic_balanced_network.helpers.average_cov_corr_over_subpops">[docs]</a><span class="k">def</span> <span class="nf">average_cov_corr_over_subpops</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">frac_exc</span><span class="o">=</span><span class="mf">0.8</span><span class="p">):</span>
+
+<div class="viewcode-block" id="average_cov_corr_over_subpops">
+<a class="viewcode-back" href="../../plastic_balanced_network.helpers.html#plastic_balanced_network.helpers.average_cov_corr_over_subpops">[docs]</a>
+<span class="k">def</span> <span class="nf">average_cov_corr_over_subpops</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">frac_exc</span><span class="o">=</span><span class="mf">0.8</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Average covariances or correlations over subpopulations.</span>
 
@@ -244,6 +256,7 @@
     <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time for averaging corrs or covs: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">elapsed_time</span><span class="o">/</span><span class="mi">60</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2"> minutes.&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">mC</span></div>
+
 </pre></div>
 
            </div>
@@ -254,7 +267,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright .
-      <span class="lastupdated">Last updated on 2023, Apr, 23.
+      <span class="lastupdated">Last updated on 2025, Mar, 30.
       </span></p>
   </div>
 

@@ -217,7 +217,9 @@
     <span class="n">corr</span> <span class="o">=</span> <span class="n">cov</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">std_</span><span class="p">,</span> <span class="n">std_</span><span class="p">)</span>
 
     <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time for converting covariance matrix into correlation matrix: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">elapsed_time</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2"> minutes.&quot;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Time for converting covariance matrix into correlation matrix: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">elapsed_time</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2"> minutes.&quot;</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">corr</span></div>
 
 

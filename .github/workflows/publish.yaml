@@ -13,10 +13,10 @@ jobs:
       fail-fast: true
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -30,7 +30,7 @@ jobs:
 
       # Save the dist/ artifacts (the wheels & sdist) with a name
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist-${{ matrix.python-version }}
           path: dist/*
@@ -40,7 +40,7 @@ jobs:
     needs: [build]
     steps:
       - name: Download artifacts for all Pythons
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           # Pick up all artifacts whose name starts with 'dist-'
           name: dist-*

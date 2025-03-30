@@ -20,7 +20,7 @@ Please refer to the README.md for detailed instructions on how to run this code.
 """
 
 __author__ = "Alan Akil (alan.akil@yahoo.com)"
-__date__ = "APRIL 2023"
+__date__ = "MARCH  2025"
 
 # %%
 # Load python packages.
@@ -94,7 +94,7 @@ logging.info("Define input variables for plastic balanced network simulation.")
 # Total number of neurons.
 N = int(5000)
 # Total time (in ms) for simulation.
-T = 500000
+T = 50000
 
 # FFwd spike train rate (in kHz).
 rx = 10 / 1000
@@ -240,17 +240,15 @@ np.savez(
 # Load data from previous runs.
 data = np.load(DATA_FILE_PATH)
 # loop through the variables and set them as local variables with the same name as the key
-for key, _value in data.items():
+for key, value in data.items():
     exec(f"{key} = value")
+    logging.info(f"Loaded saved variable called {key}")
 
 # %% [markdown]
 ### Analysis of simulation
 
 # %% [markdown]
 # Raster plot of neurons firing.
-
-# %%
-# Raster plot.
 fig = plt.figure(figsize=(8, 5))
 ax = plt.subplot(111)
 
@@ -272,9 +270,6 @@ plt.show()
 
 # %% [markdown]
 # Balance of mean currents.
-
-# %%
-# Plot input currents.
 fig = plt.figure(figsize=(8, 5))
 ax = plt.subplot(111)
 sns.set()
@@ -308,9 +303,6 @@ sns.despine()
 plt.show()
 
 # %% [markdown]
-# Time course of mean synaptic weight.
-
-# %%
 # Time course of mean synaptic weight.
 fig = plt.figure(figsize=(8, 5))
 ax = plt.subplot(111)
@@ -346,9 +338,6 @@ sns.despine()
 plt.show()
 
 # %% [markdown]
-# Distribution synaptic weight over connections.
-
-# %%
 # Distribution synaptic weight over connections.
 fig = plt.figure(figsize=(8, 5))
 ax = plt.subplot(111)
@@ -421,9 +410,6 @@ plt.show()
 
 # %% [markdown]
 # Time course of firing rates.
-
-# %%
-# Compute smoothed histogram of rates (over time)
 eRateT, iRateT, timeVector = compute_firing_rate(
     s, T, N, frac_exc=0.8, dtRate=10, window_size=10
 )
@@ -454,8 +440,6 @@ plt.show()
 
 # %% [markdown]
 # Compute empirical spike train covariances and correlations.
-
-# %%
 # Compute spike count covariances over windows of size
 # winsize starting at time T1 and ending at time T2.
 winsize = 250  # ms
@@ -481,9 +465,6 @@ print(f"Mean IE Correlations: {mR[1][0]:.4f}")
 print(f"Mean II Correlations: {mR[1][1]:.4f}")
 
 # %% [markdown]
-# Plot distributions of EE, EI, IE, II correlations.
-
-# %%
 # Plot distributions of EE, EI, IE, II correlations.
 fig = plt.figure(figsize=(8, 5))
 ax = plt.subplot(111)
@@ -525,6 +506,5 @@ plt.ylabel("Count")
 
 sns.despine()
 plt.show()
-
 
 # %%

@@ -163,9 +163,7 @@ class PlasticNeuralNetwork:
         self.total_time = np.arange(dt, T + dt, dt)  # Time discretized domain.
         self.Istim = np.zeros(len(self.total_time))
         self.Istim[self.total_time > T / 2] = 0
-        self.Jstim = np.sqrt(N) * np.hstack(
-            (jestim * np.ones((1, self.Ne)), jistim * np.ones((1, self.Ni)))
-        )
+        self.Jstim = np.sqrt(N) * np.hstack((jestim * np.ones((1, self.Ne)), jistim * np.ones((1, self.Ni))))
         self.maxns = round(0.05 * N * T)  # Max num of spikes (50 Hz).
         dtRecord = nBinsRecord * dt
         self.timeRecord = np.arange(dtRecord, T + dtRecord, dtRecord)
@@ -176,15 +174,11 @@ class PlasticNeuralNetwork:
         logging.info(f"Simulating a network of {self.N} neurons.")
         logging.info(f"{self.Ne} neurons are excitatory.")
         logging.info(f"{self.Ni} neurons are inhibitory.")
-        logging.info(
-            f"The external layer, X, provides input from {self.Nx} excitatory neurons."
-        )
+        logging.info(f"The external layer, X, provides input from {self.Nx} excitatory neurons.")
         logging.info(f"The network will be simulated for {T/1000} seconds.")
 
         elapsed_time = time.time() - start_time
-        logging.info(
-            f"Time for initializing the class: {round(elapsed_time/60,2)} minutes."
-        )
+        logging.info(f"Time for initializing the class: {round(elapsed_time/60,2)} minutes.")
 
     def connectivity(
         self,
@@ -336,45 +330,31 @@ class PlasticNeuralNetwork:
             logging.exception(err)
             raise err
         if (p_ee > 1) | (p_ee < 0):
-            err = ValueError(
-                "ERROR: p_ee, EE Prob of connection, has to be between 0 and 1."
-            )
+            err = ValueError("ERROR: p_ee, EE Prob of connection, has to be between 0 and 1.")
             logging.exception(err)
             raise err
         if (p_ie > 1) | (p_ie < 0):
-            err = ValueError(
-                "ERROR: p_ie, IE Prob of connection, has to be between 0 and 1."
-            )
+            err = ValueError("ERROR: p_ie, IE Prob of connection, has to be between 0 and 1.")
             logging.exception(err)
             raise err
         if (p_ei > 1) | (p_ei < 0):
-            err = ValueError(
-                "ERROR: p_ei, EI Prob of connection, has to be between 0 and 1."
-            )
+            err = ValueError("ERROR: p_ei, EI Prob of connection, has to be between 0 and 1.")
             logging.exception(err)
             raise err
         if (p_ii > 1) | (p_ii < 0):
-            err = ValueError(
-                "ERROR: p_ii, II Prob of connection, has to be between 0 and 1."
-            )
+            err = ValueError("ERROR: p_ii, II Prob of connection, has to be between 0 and 1.")
             logging.exception(err)
             raise err
         if (p_ex > 1) | (p_ex < 0):
-            err = ValueError(
-                "ERROR: p_ex, EX Prob of connection, has to be between 0 and 1."
-            )
+            err = ValueError("ERROR: p_ex, EX Prob of connection, has to be between 0 and 1.")
             logging.exception(err)
             raise err
         if (p_ix > 1) | (p_ix < 0):
-            err = ValueError(
-                "ERROR: p_ix, IX Prob of connection, has to be between 0 and 1."
-            )
+            err = ValueError("ERROR: p_ix, IX Prob of connection, has to be between 0 and 1.")
             logging.exception(err)
             raise err
         if nJrecord0 <= 0:
-            err = ValueError(
-                "ERROR: nJrecord0, number of syn weights recorded, has to be positive."
-            )
+            err = ValueError("ERROR: nJrecord0, number of syn weights recorded, has to be positive.")
             logging.exception(err)
             raise err
 
@@ -408,26 +388,14 @@ class PlasticNeuralNetwork:
             (
                 np.hstack(
                     (
-                        np.array(
-                            Jm[0, 0]
-                            * np.random.binomial(1, P[0, 0], (self.Ne, self.Ne))
-                        ),
-                        np.array(
-                            Jm[0, 1]
-                            * np.random.binomial(1, P[0, 1], (self.Ne, self.Ni))
-                        ),
+                        np.array(Jm[0, 0] * np.random.binomial(1, P[0, 0], (self.Ne, self.Ne))),
+                        np.array(Jm[0, 1] * np.random.binomial(1, P[0, 1], (self.Ne, self.Ni))),
                     )
                 ),
                 np.hstack(
                     (
-                        np.array(
-                            Jm[1, 0]
-                            * np.random.binomial(1, P[1, 0], (self.Ni, self.Ne))
-                        ),
-                        np.array(
-                            Jm[1, 1]
-                            * np.random.binomial(1, P[1, 1], (self.Ni, self.Ni))
-                        ),
+                        np.array(Jm[1, 0] * np.random.binomial(1, P[1, 0], (self.Ni, self.Ne))),
+                        np.array(Jm[1, 1] * np.random.binomial(1, P[1, 1], (self.Ni, self.Ni))),
                     )
                 ),
             )
@@ -435,12 +403,8 @@ class PlasticNeuralNetwork:
 
         self.Jx = np.vstack(
             (
-                np.array(
-                    Jxm[0, 0] * np.random.binomial(1, Px[0, 0], (self.Ne, self.Nx))
-                ),
-                np.array(
-                    Jxm[1, 0] * np.random.binomial(1, Px[1, 0], (self.Ni, self.Nx))
-                ),
+                np.array(Jxm[0, 0] * np.random.binomial(1, Px[0, 0], (self.Ne, self.Nx))),
+                np.array(Jxm[1, 0] * np.random.binomial(1, Px[1, 0], (self.Ni, self.Nx))),
             )
         )
 
@@ -450,14 +414,10 @@ class PlasticNeuralNetwork:
         # Synaptic weights EE to record.
         # The first row of Jrecord is the postsynaptic indices
         # The second row is the presynaptic indices
-        IIJJ_rec = np.argwhere(
-            self.J[0 : self.Ne, 0 : self.Ne]
-        )  # Find non-zero E to E weights
+        IIJJ_rec = np.argwhere(self.J[0 : self.Ne, 0 : self.Ne])  # Find non-zero E to E weights
         II = IIJJ_rec[:, 0]
         JJ = IIJJ_rec[:, 1]
-        sampled_indices = np.random.choice(
-            len(IIJJ_rec[:, 0]), size=nJrecord0, replace=False
-        )
+        sampled_indices = np.random.choice(len(IIJJ_rec[:, 0]), size=nJrecord0, replace=False)
         II = II[sampled_indices]
         JJ = JJ[sampled_indices]
         self.Jrecord_ee = np.array([II, JJ])  # Record these
@@ -466,14 +426,10 @@ class PlasticNeuralNetwork:
         # Synaptic weights IE to record.
         # The first row of Jrecord is the postsynaptic indices
         # The second row is the presynaptic indices
-        IIJJ_rec = np.argwhere(
-            self.J[self.Ne : self.N, 0 : self.Ne]
-        )  # Find non-zero E to I weights
+        IIJJ_rec = np.argwhere(self.J[self.Ne : self.N, 0 : self.Ne])  # Find non-zero E to I weights
         II = IIJJ_rec[:, 0]
         JJ = IIJJ_rec[:, 1]
-        sampled_indices = np.random.choice(
-            len(IIJJ_rec[:, 0]), size=nJrecord0, replace=False
-        )
+        sampled_indices = np.random.choice(len(IIJJ_rec[:, 0]), size=nJrecord0, replace=False)
         II = II[sampled_indices]
         JJ = JJ[sampled_indices]
         self.Jrecord_ie = np.array([II + self.Ne, JJ])  # Record these
@@ -482,14 +438,10 @@ class PlasticNeuralNetwork:
         # Synaptic weights EI to record.
         # The first row of Jrecord is the postsynaptic indices
         # The second row is the presynaptic indices
-        IIJJ_rec = np.argwhere(
-            self.J[0 : self.Ne, self.Ne : self.N]
-        )  # Find non-zero I to E weights
+        IIJJ_rec = np.argwhere(self.J[0 : self.Ne, self.Ne : self.N])  # Find non-zero I to E weights
         II = IIJJ_rec[:, 0]
         JJ = IIJJ_rec[:, 1]
-        sampled_indices = np.random.choice(
-            len(IIJJ_rec[:, 0]), size=nJrecord0, replace=False
-        )
+        sampled_indices = np.random.choice(len(IIJJ_rec[:, 0]), size=nJrecord0, replace=False)
         II = II[sampled_indices]
         JJ = JJ[sampled_indices]
         self.Jrecord_ei = np.array([II, JJ + self.Ne])  # Record these
@@ -498,23 +450,17 @@ class PlasticNeuralNetwork:
         # Synaptic weights II to record.
         # The first row of Jrecord is the postsynaptic indices
         # The second row is the presynaptic indices
-        IIJJ_rec = np.argwhere(
-            self.J[self.Ne : self.N, self.Ne : self.N]
-        )  # Find non-zero I to I weights
+        IIJJ_rec = np.argwhere(self.J[self.Ne : self.N, self.Ne : self.N])  # Find non-zero I to I weights
         II = IIJJ_rec[:, 0]
         JJ = IIJJ_rec[:, 1]
-        sampled_indices = np.random.choice(
-            len(IIJJ_rec[:, 0]), size=nJrecord0, replace=False
-        )
+        sampled_indices = np.random.choice(len(IIJJ_rec[:, 0]), size=nJrecord0, replace=False)
         II = II[sampled_indices]
         JJ = JJ[sampled_indices]
         self.Jrecord_ii = np.array([II + self.Ne, JJ + self.Ne])  # Record these
         self.numrecordJ_ii = len(JJ)
 
         elapsed_time = time.time() - start_time
-        logging.info(
-            f"Time for building connectivity matrix: {round(elapsed_time/60,2)} minutes."
-        )
+        logging.info(f"Time for building connectivity matrix: {round(elapsed_time/60,2)} minutes.")
 
     def ffwd_spikes(self, T, cx=0.1, rx=10 / 1000, taujitter=5):
         """
@@ -590,29 +536,19 @@ class PlasticNeuralNetwork:
             st = np.random.uniform(0, 1, (1, self.nspikeX)) * T
             self.sx = np.zeros((2, len(st[0])))
             self.sx[0, :] = np.sort(st)[0]  # spike time
-            self.sx[1, :] = np.random.randint(
-                1, self.Nx, (1, len(st[0]))
-            )  # neuron index that spiked
-            logging.info(
-                f"Uncorrelated ffwd spike trains (cx={cx} and rate={rx} kHz) were generated successfully."
-            )
+            self.sx[1, :] = np.random.randint(1, self.Nx, (1, len(st[0])))  # neuron index that spiked
+            logging.info(f"Uncorrelated ffwd spike trains (cx={cx} and rate={rx} kHz) were generated successfully.")
         else:  # If correlated
             rm = rx / cx  # Firing rate of mother process
             nstm = np.random.poisson(rm * T)  # Number of mother spikes
-            stm = (
-                np.random.uniform(0, 1, (nstm, 1)) * T
-            )  # spike times of mother process
+            stm = np.random.uniform(0, 1, (nstm, 1)) * T  # spike times of mother process
             maxnsx = int(T * rx * self.Nx * 1.2)  # Max num spikes
             sx = np.zeros((2, maxnsx))
             ns = 0
             for j in np.arange(1, self.Nx, 1):  # For each ffwd spike train
-                ns0 = np.random.binomial(
-                    nstm, cx
-                )  # Number of spikes for this spike train
+                ns0 = np.random.binomial(nstm, cx)  # Number of spikes for this spike train
                 st = random2.sample(list(stm[:, 0]), ns0)  # Sample spike times randomly
-                st = st + taujitter * np.random.normal(
-                    0, 1, size=len(st)
-                )  # jitter spike times
+                st = st + taujitter * np.random.normal(0, 1, size=len(st))  # jitter spike times
                 st = st[(st > 0) & (st < T)]  # Get rid of out-of-bounds times
                 ns0 = len(st)  # Re-compute spike count
                 sx[0, ns + 1 : ns + ns0 + 1] = st  # Set the spike times and indices
@@ -627,14 +563,10 @@ class PlasticNeuralNetwork:
             self.sx = sx[:, I]
             self.nspikeX = len(sx[0, :])
 
-            logging.info(
-                f"Correlated ffwd spike trains (cx={cx} and rate={rx} kHz) were generated successfully."
-            )
+            logging.info(f"Correlated ffwd spike trains (cx={cx} and rate={rx} kHz) were generated successfully.")
 
         elapsed_time = time.time() - start_time
-        logging.info(
-            f"Time for generating feedforward Poisson spike trains: {round(elapsed_time/60,2)} minutes."
-        )
+        logging.info(f"Time for generating feedforward Poisson spike trains: {round(elapsed_time/60,2)} minutes.")
 
     def simulate(
         self,
@@ -891,9 +823,7 @@ class PlasticNeuralNetwork:
             logging.exception(err)
             raise err
         if eta_ee_hebb < 0:
-            err = ValueError(
-                "ERROR: eta_ee_hebb has to be greater than or equal to zero."
-            )
+            err = ValueError("ERROR: eta_ee_hebb has to be greater than or equal to zero.")
             logging.exception(err)
             raise err
         if jmax_ee <= 0:
@@ -901,9 +831,7 @@ class PlasticNeuralNetwork:
             logging.exception(err)
             raise err
         if eta_ee_koh < 0:
-            err = ValueError(
-                "ERROR: eta_ee_koh has to be greater than or equal to zero."
-            )
+            err = ValueError("ERROR: eta_ee_koh has to be greater than or equal to zero.")
             logging.exception(err)
             raise err
         if beta <= 0:
@@ -911,9 +839,7 @@ class PlasticNeuralNetwork:
             logging.exception(err)
             raise err
         if eta_ie_homeo < 0:
-            err = ValueError(
-                "ERROR: eta_ie_homeo has to be greater than or equal to zero."
-            )
+            err = ValueError("ERROR: eta_ie_homeo has to be greater than or equal to zero.")
             logging.exception(err)
             raise err
         if rho_ie <= 0:
@@ -921,9 +847,7 @@ class PlasticNeuralNetwork:
             logging.exception(err)
             raise err
         if eta_ie_hebb < 0:
-            err = ValueError(
-                "ERROR: eta_ie_hebb has to be greater than or equal to zero."
-            )
+            err = ValueError("ERROR: eta_ie_hebb has to be greater than or equal to zero.")
             logging.exception(err)
             raise err
         if jmax_ie_hebb <= 0:
@@ -948,9 +872,7 @@ class PlasticNeuralNetwork:
             raise err
         # We cannot allow for two plasticity rules to act on the same synapse type at the same time.
         if (eta_ee_hebb != 0) & (eta_ee_koh != 0):
-            err = ValueError(
-                "ERROR: You cannot have both Kohonen and Hebb STDP's at the same time on EE connections!"
-            )
+            err = ValueError("ERROR: You cannot have both Kohonen and Hebb STDP's at the same time on EE connections!")
             logging.exception(err)
             raise err
         if (eta_ie_hebb != 0) & (eta_ie_homeo != 0):
@@ -995,19 +917,13 @@ class PlasticNeuralNetwork:
         )
         Ierecord = np.sort(Irecord[0, 0]).astype(int)
         Iirecord = np.sort(Irecord[0, 1]).astype(int)
-        Ixrecord = np.sort(
-            random2.sample(list(np.arange(0, self.Ne)), numrecord)
-        ).astype(int)
+        Ixrecord = np.sort(random2.sample(list(np.arange(0, self.Ne)), numrecord)).astype(int)
         Vrecord = (
             np.sort(
                 [
                     [
-                        random2.sample(
-                            list(np.arange(0, self.Ne)), int(round(numrecord / 2))
-                        ),
-                        random2.sample(
-                            list(np.arange(self.Ne, self.N)), int(round(numrecord / 2))
-                        ),
+                        random2.sample(list(np.arange(0, self.Ne)), int(round(numrecord / 2))),
+                        random2.sample(list(np.arange(self.Ne, self.N)), int(round(numrecord / 2))),
                     ]
                 ]
             )[0]
@@ -1031,9 +947,7 @@ class PlasticNeuralNetwork:
         s = np.zeros((2, self.maxns))
         nspike = 0
 
-        logging.info(
-            f"We will record currents and membrane potential from {numrecord} E and {numrecord} I neurons."
-        )
+        logging.info(f"We will record currents and membrane potential from {numrecord} E and {numrecord} I neurons.")
 
         # If there is EE Hebbian plasticity
         if eta_ee_hebb != 0:
@@ -1067,9 +981,7 @@ class PlasticNeuralNetwork:
 
         for i in range(total):
             # Propagate ffwd spikes
-            while (self.sx[0, iFspike] <= self.total_time[i]) & (
-                iFspike < self.nspikeX - 1
-            ):
+            while (self.sx[0, iFspike] <= self.total_time[i]) & (iFspike < self.nspikeX - 1):
                 jpre = int(self.sx[1, iFspike])
                 Ix += self.Jx[:, jpre] / taux
                 iFspike += 1
@@ -1078,14 +990,7 @@ class PlasticNeuralNetwork:
             V += (
                 self.dt
                 / Cm
-                * (
-                    self.Istim[i] * self.Jstim
-                    + Ie
-                    + Ii
-                    + Ix
-                    + gL * (EL - V)
-                    + gL * DeltaT * np.exp((V - VT) / DeltaT)
-                )
+                * (self.Istim[i] * self.Jstim + Ie + Ii + Ix + gL * (EL - V) + gL * DeltaT * np.exp((V - VT) / DeltaT))
             )
 
             # Find which neurons spiked
@@ -1109,13 +1014,10 @@ class PlasticNeuralNetwork:
                 if eta_ee_hebb != 0:
                     # Update synaptic weights according to plasticity rules
                     # E to E after a pre spike
-                    self.J[0 : self.Ne, Ispike[Ispike <= self.Ne]] -= (
-                        np.tile(
-                            eta_ee_hebb * (x[0, 0 : self.Ne]),
-                            (np.count_nonzero(Ispike <= self.Ne), 1),
-                        ).transpose()
-                        * (self.J[0 : self.Ne, Ispike[Ispike <= self.Ne]])
-                    )
+                    self.J[0 : self.Ne, Ispike[Ispike <= self.Ne]] -= np.tile(
+                        eta_ee_hebb * (x[0, 0 : self.Ne]),
+                        (np.count_nonzero(Ispike <= self.Ne), 1),
+                    ).transpose() * (self.J[0 : self.Ne, Ispike[Ispike <= self.Ne]])
                     # E to E after a post spike
                     self.J[Ispike[Ispike < self.Ne], 0 : self.Ne] += (
                         np.tile(
@@ -1133,9 +1035,7 @@ class PlasticNeuralNetwork:
                     self.J[0 : self.Ne, Ispike[Ispike <= self.Ne]] += np.tile(
                         beta * eta_ee_koh * (x[0, 0 : self.Ne]),
                         (np.count_nonzero(Ispike <= self.Ne), 1),
-                    ).transpose() * (
-                        self.J[0 : self.Ne, Ispike[Ispike <= self.Ne]] != 0
-                    )
+                    ).transpose() * (self.J[0 : self.Ne, Ispike[Ispike <= self.Ne]] != 0)
                     # E to E after a post spike
                     self.J[Ispike[Ispike < self.Ne], 0 : self.Ne] -= (
                         eta_ee_koh * self.J[Ispike[Ispike < self.Ne], 0 : self.Ne]
@@ -1145,23 +1045,15 @@ class PlasticNeuralNetwork:
                 if eta_ie_homeo != 0:
                     # Update synaptic weights according to plasticity rules
                     # E to I after a pre spike
-                    self.J[self.Ne : self.N, Ispike[Ispike <= self.Ne]] -= (
-                        np.tile(
-                            eta_ie_homeo
-                            / Jnorm_ie
-                            * (x[0, self.Ne : self.N] - alpha_ie),
-                            (np.count_nonzero(Ispike <= self.Ne), 1),
-                        ).transpose()
-                        * (self.J[self.Ne : self.N, Ispike[Ispike <= self.Ne]])
-                    )
+                    self.J[self.Ne : self.N, Ispike[Ispike <= self.Ne]] -= np.tile(
+                        eta_ie_homeo / Jnorm_ie * (x[0, self.Ne : self.N] - alpha_ie),
+                        (np.count_nonzero(Ispike <= self.Ne), 1),
+                    ).transpose() * (self.J[self.Ne : self.N, Ispike[Ispike <= self.Ne]])
                     # E to I after a post spike
-                    self.J[Ispike[Ispike > self.Ne], 0 : self.Ne] -= (
-                        np.tile(
-                            eta_ie_homeo / Jnorm_ie * x[0, 0 : self.Ne].transpose(),
-                            (np.count_nonzero(Ispike > self.Ne), 1),
-                        )
-                        * (self.J[Ispike[Ispike > self.Ne], 0 : self.Ne])
-                    )
+                    self.J[Ispike[Ispike > self.Ne], 0 : self.Ne] -= np.tile(
+                        eta_ie_homeo / Jnorm_ie * x[0, 0 : self.Ne].transpose(),
+                        (np.count_nonzero(Ispike > self.Ne), 1),
+                    ) * (self.J[Ispike[Ispike > self.Ne], 0 : self.Ne])
 
                 # If there is IE *Hebbian* plasticity
                 if eta_ie_hebb != 0:
@@ -1170,9 +1062,7 @@ class PlasticNeuralNetwork:
                     self.J[self.Ne : self.N, Ispike[Ispike <= self.Ne]] -= np.tile(
                         eta_ie_hebb * (x[0, self.Ne : self.N]),
                         (np.count_nonzero(Ispike <= self.Ne), 1),
-                    ).transpose() * (
-                        self.J[self.Ne : self.N, Ispike[Ispike <= self.Ne]] != 0
-                    )
+                    ).transpose() * (self.J[self.Ne : self.N, Ispike[Ispike <= self.Ne]] != 0)
                     # E to I after a post spike
                     self.J[Ispike[Ispike > self.Ne], 0 : self.Ne] += (
                         np.tile(
@@ -1187,41 +1077,29 @@ class PlasticNeuralNetwork:
                 if eta_ei != 0:
                     # Update synaptic weights according to plasticity rules
                     # I to E after an I spike
-                    self.J[0 : self.Ne, Ispike[Ispike >= self.Ne]] -= (
-                        np.tile(
-                            eta_ei / Jnorm_ei * (x[0, 0 : self.Ne] - alpha_ei),
-                            (np.count_nonzero(Ispike >= self.Ne), 1),
-                        ).transpose()
-                        * (self.J[0 : self.Ne, Ispike[Ispike >= self.Ne]])
-                    )
+                    self.J[0 : self.Ne, Ispike[Ispike >= self.Ne]] -= np.tile(
+                        eta_ei / Jnorm_ei * (x[0, 0 : self.Ne] - alpha_ei),
+                        (np.count_nonzero(Ispike >= self.Ne), 1),
+                    ).transpose() * (self.J[0 : self.Ne, Ispike[Ispike >= self.Ne]])
                     # I to E after an E spike
-                    self.J[Ispike[Ispike < self.Ne], self.Ne : self.N] -= (
-                        np.tile(
-                            eta_ei / Jnorm_ei * x[0, self.Ne : self.N].transpose(),
-                            (np.count_nonzero(Ispike < self.Ne), 1),
-                        )
-                        * (self.J[Ispike[Ispike < self.Ne], self.Ne : self.N])
-                    )
+                    self.J[Ispike[Ispike < self.Ne], self.Ne : self.N] -= np.tile(
+                        eta_ei / Jnorm_ei * x[0, self.Ne : self.N].transpose(),
+                        (np.count_nonzero(Ispike < self.Ne), 1),
+                    ) * (self.J[Ispike[Ispike < self.Ne], self.Ne : self.N])
 
                 # If there is II plasticity
                 if eta_ii != 0:
                     # Update synaptic weights according to plasticity rules
                     # I to E after an I spike
-                    self.J[self.Ne : self.N, Ispike[Ispike >= self.Ne]] -= (
-                        np.tile(
-                            eta_ii / Jnorm_ii * (x[0, self.Ne : self.N] - alpha_ii),
-                            (np.count_nonzero(Ispike >= self.Ne), 1),
-                        ).transpose()
-                        * (self.J[self.Ne : self.N, Ispike[Ispike >= self.Ne]])
-                    )
+                    self.J[self.Ne : self.N, Ispike[Ispike >= self.Ne]] -= np.tile(
+                        eta_ii / Jnorm_ii * (x[0, self.Ne : self.N] - alpha_ii),
+                        (np.count_nonzero(Ispike >= self.Ne), 1),
+                    ).transpose() * (self.J[self.Ne : self.N, Ispike[Ispike >= self.Ne]])
                     # I to E after an E spike
-                    self.J[Ispike[Ispike > self.Ne], self.Ne : self.N] -= (
-                        np.tile(
-                            eta_ii / Jnorm_ii * x[0, self.Ne : self.N].transpose(),
-                            (np.count_nonzero(Ispike > self.Ne), 1),
-                        )
-                        * (self.J[Ispike[Ispike > self.Ne], self.Ne : self.N])
-                    )
+                    self.J[Ispike[Ispike > self.Ne], self.Ne : self.N] -= np.tile(
+                        eta_ii / Jnorm_ii * x[0, self.Ne : self.N].transpose(),
+                        (np.count_nonzero(Ispike > self.Ne), 1),
+                    ) * (self.J[Ispike[Ispike > self.Ne], self.Ne : self.N])
 
                 # Update rate estimates for plasticity rules
                 x[0, Ispike] += 1
@@ -1261,9 +1139,7 @@ class PlasticNeuralNetwork:
             if i % check_interval == 0:
                 elapsed_time = time.time() - start_time
                 progress = (i / total) * 100
-                print(
-                    f"Progress: {progress:.0f}%. Elapsed time: {elapsed_time/60:.2f} minutes."
-                )
+                print(f"Progress: {progress:.0f}%. Elapsed time: {elapsed_time/60:.2f} minutes.")
 
         IeRec = IeRec / self.nBinsRecord  # Normalize recorded variables by # bins
         IiRec = IiRec / self.nBinsRecord

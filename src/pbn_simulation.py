@@ -57,9 +57,7 @@ DATA_FILE_PATH = f"{DATA_DIR}/pbn_data_{datadatetime}.npz"
 
 # %%
 # Set up logging.
-log_format = (
-    "%(asctime)s - %(levelname)-8s - %(name)s - %(funcName)s:%(lineno)d - %(message)s"
-)
+log_format = "%(asctime)s - %(levelname)-8s - %(name)s - %(funcName)s:%(lineno)d - %(message)s"
 # Use loglevel to filter out undesired logs.
 loglevel = "INFO"
 loglevel = str(loglevel).replace('"', "")
@@ -410,9 +408,7 @@ plt.show()
 
 # %% [markdown]
 # Time course of firing rates.
-eRateT, iRateT, timeVector = compute_firing_rate(
-    s, T, N, frac_exc=0.8, dtRate=10, window_size=10
-)
+eRateT, iRateT, timeVector = compute_firing_rate(s, T, N, frac_exc=0.8, dtRate=10, window_size=10)
 
 # Start the figure.
 fig = plt.figure(figsize=(8, 5))

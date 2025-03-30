@@ -15,7 +15,7 @@ jobs:
 
     - name: Read version
       id: read_version
-      run: echo "::set-output name=version::$(cat src/plastic_balanced_network/VERSION)"
+      run: echo "{name}={value} >> $(cat src/plastic_balanced_network/VERSION)"
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3

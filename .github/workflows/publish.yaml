@@ -42,9 +42,12 @@ jobs:
       - name: Download artifacts for all Pythons
         uses: actions/download-artifact@v4
         with:
-          # Pick up all artifacts whose name starts with 'dist-'
-          name: dist-*
-          path: dist
+          names: |
+            dist-3.9
+            dist-3.10
+            dist-3.11
+            dist-3.12
+          path: dist/
 
       - name: Publish to PyPI
         env:

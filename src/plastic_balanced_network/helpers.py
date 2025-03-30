@@ -54,7 +54,7 @@ def compute_firing_rate(s, T, N, frac_exc=0.8, dtRate=10, window_size=10):
     iRateT = np.convolve(iRateT, np.ones(window_size) / window_size, mode="same")
 
     elapsed_time = time.time() - start_time
-    logging.info(f"Time for computing rates: {round(elapsed_time/60,2)} minutes.")
+    logging.info(f"Time for computing rates: {round(elapsed_time / 60, 2)} minutes.")
 
     return eRateT, iRateT, timeVector
 
@@ -111,7 +111,7 @@ def spike_count_cov(s, N, T1, T2, winsize=250):
     C = np.array(np.cov(counts.transpose()))
 
     elapsed_time = time.time() - start_time
-    logging.info(f"Time for computing covariance matrix: {round(elapsed_time/60,2)} minutes.")
+    logging.info(f"Time for computing covariance matrix: {round(elapsed_time / 60, 2)} minutes.")
 
     return C
 
@@ -135,7 +135,7 @@ def cov2corr(cov):
     corr = cov / np.outer(std_, std_)
 
     elapsed_time = time.time() - start_time
-    logging.info(f"Time for converting covariance matrix into correlation matrix: {round(elapsed_time/60,2)} minutes.")
+    logging.info(f"Time for converting covariance matrix into correlation matrix: {round(elapsed_time / 60, 2)} minutes.")
     return corr
 
 
@@ -169,5 +169,5 @@ def average_cov_corr_over_subpops(C, N, frac_exc=0.8):
     mC = [[mCee, mCei], [mCei, mCii]]
 
     elapsed_time = time.time() - start_time
-    logging.info(f"Time for averaging corrs or covs: {round(elapsed_time/60,2)} minutes.")
+    logging.info(f"Time for averaging corrs or covs: {round(elapsed_time / 60, 2)} minutes.")
     return mC

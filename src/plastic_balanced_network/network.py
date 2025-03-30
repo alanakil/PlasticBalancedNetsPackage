@@ -175,10 +175,10 @@ class PlasticNeuralNetwork:
         logging.info(f"{self.Ne} neurons are excitatory.")
         logging.info(f"{self.Ni} neurons are inhibitory.")
         logging.info(f"The external layer, X, provides input from {self.Nx} excitatory neurons.")
-        logging.info(f"The network will be simulated for {T/1000} seconds.")
+        logging.info(f"The network will be simulated for {T / 1000} seconds.")
 
         elapsed_time = time.time() - start_time
-        logging.info(f"Time for initializing the class: {round(elapsed_time/60,2)} minutes.")
+        logging.info(f"Time for initializing the class: {round(elapsed_time / 60, 2)} minutes.")
 
     def connectivity(
         self,
@@ -460,7 +460,7 @@ class PlasticNeuralNetwork:
         self.numrecordJ_ii = len(JJ)
 
         elapsed_time = time.time() - start_time
-        logging.info(f"Time for building connectivity matrix: {round(elapsed_time/60,2)} minutes.")
+        logging.info(f"Time for building connectivity matrix: {round(elapsed_time / 60, 2)} minutes.")
 
     def ffwd_spikes(self, T, cx=0.1, rx=10 / 1000, taujitter=5):
         """
@@ -566,7 +566,7 @@ class PlasticNeuralNetwork:
             logging.info(f"Correlated ffwd spike trains (cx={cx} and rate={rx} kHz) were generated successfully.")
 
         elapsed_time = time.time() - start_time
-        logging.info(f"Time for generating feedforward Poisson spike trains: {round(elapsed_time/60,2)} minutes.")
+        logging.info(f"Time for generating feedforward Poisson spike trains: {round(elapsed_time / 60, 2)} minutes.")
 
     def simulate(
         self,
@@ -1139,7 +1139,7 @@ class PlasticNeuralNetwork:
             if i % check_interval == 0:
                 elapsed_time = time.time() - start_time
                 progress = (i / total) * 100
-                print(f"Progress: {progress:.0f}%. Elapsed time: {elapsed_time/60:.2f} minutes.")
+                print(f"Progress: {progress:.0f}%. Elapsed time: {elapsed_time / 60:.2f} minutes.")
 
         IeRec = IeRec / self.nBinsRecord  # Normalize recorded variables by # bins
         IiRec = IiRec / self.nBinsRecord
@@ -1155,7 +1155,7 @@ class PlasticNeuralNetwork:
         logging.info(f"The plastic balanced network has been simulated successfully.")
 
         elapsed_time = time.time() - start_time
-        logging.info(f"Time for simulation: {round(elapsed_time/60,2)} minutes.")
+        logging.info(f"Time for simulation: {round(elapsed_time / 60, 2)} minutes.")
 
         return (
             s,

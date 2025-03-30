@@ -23,10 +23,10 @@ jobs:
       - name: Upgrade pip and install build
         run: |
           python -m pip install --upgrade pip
-          pip install build twine
+          pip install setuptools wheel twine
 
       - name: Build package
-        run: python -m build
+        run: python setup.py sdist bdist_wheel
 
       # Save the dist/ artifacts (the wheels & sdist) with a name
       - name: Upload artifacts

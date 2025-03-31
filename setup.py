@@ -13,7 +13,7 @@ LDESCRIPTION = open('README.md').read()
 # URL = text/markdown
 MAINTAINER = "Alan Akil"
 EMAIL = "alan.akil@yahoo.com"
-REQUIRES_PYTHON = ">3.8,<3.13"
+REQUIRES_PYTHON = ">3.8,<3.14"
 PACKAGES = find_packages(where = "src", exclude=("tests",))
 
 ROOT_DIR = Path(__file__).parent
@@ -59,6 +59,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],

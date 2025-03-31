@@ -1,4 +1,4 @@
-![Python version](https://img.shields.io/badge/python-3.9%20|%203.10%20|%203.11%20|%203.12-blue)
+![Python version](https://img.shields.io/badge/python-3.9%20|%203.10%20|%203.11%20|%203.12%20|%203.13-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/alanakil/PlasticBalancedNetsPackage)
 [![Downloads](https://pepy.tech/badge/plastic-balanced-network)](https://pepy.tech/project/plastic-balanced-network)
